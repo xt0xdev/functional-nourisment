@@ -25,4 +25,11 @@ Default admin after seed:
 - Email: `admin@functional-nourishment.com`
 - Password: `NourishAdmin2026!`
 
-Change that password in production.
+If the build compiles Next.js then fails with **No Output Directory named "public"**, the Vercel project is not using the Next.js preset. In **Project Settings → General**:
+
+- Framework Preset: **Next.js**
+- Output Directory: **leave empty** (do not set `public`)
+- Build Command: leave default, or `npm run vercel-build`
+
+`vercel.json` in the repo now sets `framework` to `nextjs`.
+
