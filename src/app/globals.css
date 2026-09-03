@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@theme {
+  --color-forest: #16332a;
+  --color-moss: #2f5d45;
+  --color-sage: #6b8f71;
+  --color-leaf: #8aa888;
+  --color-cream: #f6f1e7;
+  --color-sand: #ebe3d4;
+  --color-clay: #c4785a;
+  --color-gold: #c4a574;
+  --color-ink: #1c211e;
+  --color-muted: #5b625c;
+  --font-serif: "Cormorant Garamond", ui-serif, Georgia, serif;
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: #cfe0c8;
+  color: var(--color-forest);
+}
+
+.prose-fn {
+  max-width: 70ch;
+}
+
+.prose-fn h2 {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  color: var(--color-forest);
+  margin: 2rem 0 0.75rem;
+}
+
+.prose-fn h3 {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  color: var(--color-moss);
+  margin: 1.5rem 0 0.5rem;
+}
+
+.prose-fn p,
+.prose-fn li {
+  color: var(--color-muted);
+  line-height: 1.75;
+  margin-bottom: 1rem;
+}
+
+.prose-fn ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+}
+
+.grain {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+}

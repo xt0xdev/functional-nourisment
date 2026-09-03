@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Setting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+model Page {
+  id               String   @id @default(cuid())
+  slug             String   @unique
+  title            String
+  metaTitle        String
+  metaDescription  String
+  heroHeading      String
+  heroSubheading   String   @default("")
+  content          String
+  published        Boolean  @default(true)
+  updatedAt        DateTime @updatedAt
+}
+
+model Service {
+  id        String  @id @default(cuid())
+  slug      String  @unique
+  title     String
+  excerpt   String
+  body      String
+  icon      String  @default("leaf")
+  sortOrder Int     @default(0)
+  published Boolean @default(true)
+}
+
+model Experience {
+  id        String  @id @default(cuid())
+  slug      String  @unique
+  title     String
+  subtitle  String  @default("")
+  excerpt   String
+  body      String
+  sortOrder Int     @default(0)
+  published Boolean @default(true)
+}
+
+model Event {
+  id          String    @id @default(cuid())
+  title       String
+  description String
+  startsAt    DateTime?
+  endsAt      DateTime?
+  location    String    @default("")
+  published   Boolean   @default(true)
+  sortOrder   Int       @default(0)
+}
+
+model Post {
+  id              String    @id @default(cuid())
+  slug            String    @unique
+  title           String
+  excerpt         String
+  body            String
+  metaTitle       String
+  metaDescription String
+  published       Boolean   @default(true)
+  publishedAt     DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model Inquiry {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String   @default("")
+  topic     String   @default("General")
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
