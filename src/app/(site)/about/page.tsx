@@ -29,7 +29,7 @@ export default async function AboutPage() {
       <section className="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-[1fr_1.2fr] md:px-6">
         <div className="relative aspect-[3/4] overflow-hidden rounded-3xl">
           <Image
-            src="/images/anna-almiroudis.png"
+            src="/images/anna-almiroudis.webp"
             alt="Anna Almiroudis, MS, CNS, LN, CDN, CHHC"
             fill
             className="object-cover object-top"
