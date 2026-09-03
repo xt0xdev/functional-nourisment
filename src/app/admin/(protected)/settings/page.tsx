@@ -23,6 +23,7 @@ const fields = [
   ["footerText", "Footer text"],
   ["footerBlurb", "Footer description"],
   ["clientPortalUrl", "Client portal URL"],
+  ["bookingUrl", "Book a Discovery Call URL"],
 ];
 
 export default async function SettingsPage() {

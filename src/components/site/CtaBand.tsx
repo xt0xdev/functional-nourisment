@@ -1,12 +1,15 @@
-import Link from "next/link";
-
 export function CtaBand({
   berryStreetUrl,
+  bookingUrl = "/book",
 }: {
   berryStreetUrl: string;
+  bookingUrl?: string;
 }) {
+  const bookHref = bookingUrl || "/book";
+  const bookIsExternal = bookHref.startsWith("http");
+
   return (
-    <section className="bg-navy text-white">
+    <section className="bg-deep text-white">
       <div className="mx-auto max-w-6xl px-4 py-16 md:px-6">
         <h2 className="max-w-3xl font-serif text-3xl md:text-5xl">
           Ready to take a more personalized approach to your health?
@@ -22,9 +25,13 @@ export function CtaBand({
               Schedule a complimentary 20-minute call to share what you’re looking for, ask
               questions, and see if working together feels like the right fit.
             </p>
-            <Link href="/book" className="btn-teal mt-5">
+            <a
+              href={bookHref}
+              className="btn-primary mt-5"
+              {...(bookIsExternal ? { target: "_blank", rel: "noreferrer" } : {})}
+            >
               Book a Discovery Call
-            </Link>
+            </a>
           </article>
           <article className="rounded-3xl bg-white/6 p-6 ring-1 ring-white/10">
             <h3 className="font-serif text-2xl">Insurance</h3>
@@ -32,7 +39,7 @@ export function CtaBand({
               I am currently in network with United Healthcare, Aetna and Blue Cross Blue Shield.
               To book a nutrition appointment through your insurance, please use Berry Street.
             </p>
-            <a href={berryStreetUrl} target="_blank" rel="noreferrer" className="mt-5 inline-flex text-teal hover:underline">
+            <a href={berryStreetUrl} target="_blank" rel="noreferrer" className="mt-5 inline-flex text-accent hover:underline">
               Book via Berry Street →
             </a>
           </article>

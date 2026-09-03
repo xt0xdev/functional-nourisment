@@ -28,7 +28,8 @@ const settings: Record<string, string> = {
   footerText: "Functional Nourishment, LLC · Astoria, NY",
   footerBlurb:
     "A whole-person approach to health that combines personalized functional nutrition with integrative mind-body practices to address root causes, restore balance, and support lasting well-being.",
-  clientPortalUrl: "https://www.berrystreet.co/provider-details/anna-almiroudis",
+  clientPortalUrl: "https://client.practicebetter.io/#/signin",
+  bookingUrl: "https://my.practicebetter.io/#/6a98aeab3815665e47eb56c5/bookings",
 };
 
 const pages = [
@@ -452,6 +453,7 @@ async function main() {
   });
 
   await seedMenu();
+  await syncCanonicalMenu();
 
   for (const service of services) {
     await prisma.service.upsert({
@@ -493,6 +495,27 @@ async function main() {
   console.log(`Admin login: ${email}`);
 }
 
+async function syncCanonicalMenu() {
+  await prisma.menuItem.updateMany({
+    where: { label: { in: ["Events", "Sound Bath Meditations"] } },
+    data: { label: "Sound Bath Meditations", href: "/events" },
+  });
+  await prisma.menuItem.updateMany({
+    where: { label: "Client Portal" },
+    data: {
+      href: "https://client.practicebetter.io/#/signin",
+      openInNew: true,
+    },
+  });
+  await prisma.menuItem.updateMany({
+    where: { label: "Book a Discovery Call" },
+    data: {
+      href: "https://my.practicebetter.io/#/6a98aeab3815665e47eb56c5/bookings",
+      openInNew: true,
+    },
+  });
+}
+
 async function seedMenu() {
   const existing = await prisma.menuItem.count();
   if (existing > 0) return;
@@ -520,7 +543,7 @@ async function seedMenu() {
     { parentId: services.id, label: "Nourish Mind", href: "/sound-healing", sortOrder: 11 },
     { parentId: services.id, label: "Nourish Body", href: "/nutrition", sortOrder: 12 },
     { parentId: services.id, label: "Nourish Spirit", href: "/meditation", sortOrder: 13 },
-    { parentId: community.id, label: "Events", href: "/events", sortOrder: 21 },
+    { parentId: community.id, label: "Sound Bath Meditations", href: "/events", sortOrder: 21 },
     { parentId: community.id, label: "Wellness Experiences", href: "/experiences", sortOrder: 22 },
     { parentId: community.id, label: "News", href: "/journal", sortOrder: 23 },
   ];
@@ -532,18 +555,18 @@ async function seedMenu() {
     data: [
       { label: "About", href: "/about", location: "header", sortOrder: 30, style: "link" },
       { label: "Contact", href: "/contact", location: "header", sortOrder: 40, style: "link" },
-      { label: "Client Portal", href: "/book", location: "header", sortOrder: 50, style: "ghost" },
-      { label: "Book a Discovery Call", href: "/book", location: "header", sortOrder: 60, style: "cta" },
+      { label: "Client Portal", href: "https://client.practicebetter.io/#/signin", location: "header", sortOrder: 50, style: "ghost", openInNew: true },
+      { label: "Book a Discovery Call", href: "https://my.practicebetter.io/#/6a98aeab3815665e47eb56c5/bookings", location: "header", sortOrder: 60, style: "cta", openInNew: true },
       { label: "Nourish Mind", href: "/sound-healing", location: "footer", groupName: "Services", sortOrder: 10 },
       { label: "Nourish Body", href: "/nutrition", location: "footer", groupName: "Services", sortOrder: 20 },
       { label: "Nourish Spirit", href: "/meditation", location: "footer", groupName: "Services", sortOrder: 30 },
-      { label: "Events", href: "/events", location: "footer", groupName: "Community", sortOrder: 10 },
+      { label: "Sound Bath Meditations", href: "/events", location: "footer", groupName: "Community", sortOrder: 10 },
       { label: "Wellness Experiences", href: "/experiences", location: "footer", groupName: "Community", sortOrder: 20 },
       { label: "News", href: "/journal", location: "footer", groupName: "Community", sortOrder: 30 },
       { label: "About", href: "/about", location: "footer", groupName: "Connect", sortOrder: 10 },
       { label: "Contact", href: "/contact", location: "footer", groupName: "Connect", sortOrder: 20 },
-      { label: "Book a Discovery Call", href: "/book", location: "footer", groupName: "Connect", sortOrder: 30 },
-      { label: "Client Portal", href: "/book", location: "footer", groupName: "Connect", sortOrder: 40 },
+      { label: "Book a Discovery Call", href: "https://my.practicebetter.io/#/6a98aeab3815665e47eb56c5/bookings", location: "footer", groupName: "Connect", sortOrder: 30, openInNew: true },
+      { label: "Client Portal", href: "https://client.practicebetter.io/#/signin", location: "footer", groupName: "Connect", sortOrder: 40, openInNew: true },
     ],
   });
 }

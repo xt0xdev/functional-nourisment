@@ -15,10 +15,10 @@ function NavLink({
   onClick?: () => void;
   className?: string;
 }) {
-  const classes = className || "text-sm text-navy/80 transition hover:text-navy";
+  const classes = className || "text-sm text-primary/80 transition hover:text-primary";
   if (item.href.startsWith("http")) {
     return (
-      <a href={item.href} target={item.openInNew ? "_blank" : undefined} rel="noreferrer" className={classes} onClick={onClick}>
+      <a href={item.href} target="_blank" rel="noreferrer" className={classes} onClick={onClick}>
         {item.label}
       </a>
     );
@@ -38,12 +38,12 @@ export function Header({ menu }: { menu: MenuNode[] }) {
   const [openGroup, setOpenGroup] = useState<string | null>(null);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-navy/8 bg-white/95 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-primary/10 bg-background/95 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 md:px-6">
-        <Link href="/" className="flex items-center gap-2 text-navy" onClick={() => setOpen(false)}>
+        <Link href="/" className="flex items-center gap-2 text-primary" onClick={() => setOpen(false)}>
           <Logo className="h-8 w-8" />
           <span className="font-serif text-xl tracking-wide md:text-2xl">
-            Functional <em className="italic text-teal-dark">Nourishment</em>
+            Functional <em className="italic">Nourishment</em>
           </span>
         </Link>
         <nav className="hidden items-center gap-5 lg:flex" aria-label="Primary">
@@ -57,7 +57,7 @@ export function Header({ menu }: { menu: MenuNode[] }) {
               >
                 <button
                   type="button"
-                  className="inline-flex items-center gap-1 text-sm text-navy/80 hover:text-navy"
+                  className="inline-flex items-center gap-1 text-sm text-primary/80 hover:text-primary"
                   aria-expanded={openGroup === item.id}
                   onClick={() => setOpenGroup((current) => (current === item.id ? null : item.id))}
                 >
@@ -65,12 +65,12 @@ export function Header({ menu }: { menu: MenuNode[] }) {
                   <ChevronDown className="h-3.5 w-3.5" />
                 </button>
                 {openGroup === item.id ? (
-                  <div className="absolute left-0 top-full z-20 min-w-52 rounded-2xl bg-white p-2 shadow-lg ring-1 ring-navy/10">
+                  <div className="absolute left-0 top-full z-20 min-w-56 rounded-2xl bg-background p-2 shadow-lg ring-1 ring-primary/10">
                     {item.children.map((child) => (
                       <NavLink
                         key={child.id}
                         item={child}
-                        className="block rounded-xl px-3 py-2 text-sm text-navy/80 hover:bg-sky"
+                        className="block rounded-xl px-3 py-2 text-sm text-primary/80 hover:bg-mist"
                       />
                     ))}
                   </div>
@@ -80,10 +80,10 @@ export function Header({ menu }: { menu: MenuNode[] }) {
               <NavLink
                 key={item.id}
                 item={item}
-                className="rounded-full bg-teal px-4 py-2 text-sm font-medium text-navy hover:bg-teal-dark hover:text-white"
+                className="rounded-full bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-accent hover:text-deep"
               />
             ) : item.style === "ghost" ? (
-              <NavLink key={item.id} item={item} className="text-sm text-navy/70 hover:text-navy" />
+              <NavLink key={item.id} item={item} className="text-sm text-primary/80 hover:text-primary" />
             ) : (
               <NavLink key={item.id} item={item} />
             ),
@@ -91,7 +91,7 @@ export function Header({ menu }: { menu: MenuNode[] }) {
         </nav>
         <button
           type="button"
-          className="rounded-md p-2 text-navy lg:hidden"
+          className="rounded-md p-2 text-primary lg:hidden"
           aria-expanded={open}
           aria-controls="mobile-nav"
           onClick={() => setOpen((value) => !value)}
@@ -101,7 +101,7 @@ export function Header({ menu }: { menu: MenuNode[] }) {
         </button>
       </div>
       {open ? (
-        <div id="mobile-nav" className="border-t border-navy/8 bg-white px-4 py-4 lg:hidden">
+        <div id="mobile-nav" className="border-t border-primary/10 bg-background px-4 py-4 lg:hidden">
           <nav className="flex flex-col gap-2" aria-label="Mobile">
             {menu.map((item) => (
               <div key={item.id}>
@@ -109,7 +109,7 @@ export function Header({ menu }: { menu: MenuNode[] }) {
                   <>
                     <button
                       type="button"
-                      className="flex w-full items-center justify-between py-1 text-navy"
+                      className="flex w-full items-center justify-between py-1 text-primary"
                       onClick={() => setOpenGroup((current) => (current === item.id ? null : item.id))}
                     >
                       {item.label}
@@ -132,8 +132,8 @@ export function Header({ menu }: { menu: MenuNode[] }) {
                     onClick={() => setOpen(false)}
                     className={
                       item.style === "cta"
-                        ? "mt-2 block rounded-full bg-teal px-4 py-2 text-center text-navy"
-                        : "block py-1 text-navy"
+                        ? "mt-2 block rounded-full bg-primary px-4 py-2 text-center text-white"
+                        : "block py-1 text-primary"
                     }
                   />
                 )}

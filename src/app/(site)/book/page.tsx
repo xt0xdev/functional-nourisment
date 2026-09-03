@@ -30,14 +30,24 @@ export default async function BookPage() {
           {content.paragraphs.map((paragraph) => (
             <p key={paragraph.slice(0, 28)}>{paragraph}</p>
           ))}
-          <a
-            href={settings.berryStreetUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex rounded-full bg-forest px-5 py-3 text-cream no-underline"
-          >
-            Book through Berry Street
-          </a>
+          <div className="flex flex-wrap gap-3">
+            <a
+              href={settings.bookingUrl || "https://my.practicebetter.io/#/6a98aeab3815665e47eb56c5/bookings"}
+              target="_blank"
+              rel="noreferrer"
+              className="btn-primary no-underline"
+            >
+              Book a Discovery Call
+            </a>
+            <a
+              href={settings.berryStreetUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="btn-outline no-underline"
+            >
+              Book through Berry Street
+            </a>
+          </div>
         </div>
         <div className="rounded-3xl bg-white p-6 shadow-sm">
           <h2 className="font-serif text-3xl text-forest">Free 20-minute discovery call</h2>

@@ -14,11 +14,11 @@ export function PageHero({
   imageAlt?: string;
 }) {
   return (
-    <section className="bg-white">
+    <section className="bg-background">
       <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-14 md:grid-cols-2 md:px-6 md:py-20">
         <div>
           {eyebrow ? <p className="eyebrow">{eyebrow}</p> : null}
-          <h1 className="mt-3 font-serif text-4xl leading-tight text-navy md:text-6xl">{heading}</h1>
+          <h1 className="mt-3 font-serif text-4xl leading-tight text-primary md:text-6xl">{heading}</h1>
           {subheading ? <p className="mt-5 max-w-xl text-lg text-muted">{subheading}</p> : null}
         </div>
         {image ? (

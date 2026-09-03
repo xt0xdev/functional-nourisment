@@ -59,7 +59,7 @@ export default async function LocationPage({ params }: { params: Promise<{ slug:
           .
         </p>
       </section>
-      <CtaBand berryStreetUrl={settings.berryStreetUrl} />
+      <CtaBand berryStreetUrl={settings.berryStreetUrl} bookingUrl={settings.bookingUrl} />
     </>
   );
 }

@@ -10,7 +10,7 @@ export function Footer({
   groups: Awaited<ReturnType<typeof getFooterMenu>>;
 }) {
   return (
-    <footer className="bg-navy text-white">
+    <footer className="bg-deep text-white">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 md:grid-cols-4 md:px-6">
         <div>
           <div className="flex items-center gap-2">
@@ -26,7 +26,7 @@ export function Footer({
         </div>
         {groups.map((group) => (
           <div key={group.name}>
-            <p className="text-xs uppercase tracking-[0.2em] text-teal">{group.name}</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-accent">{group.name}</p>
             <ul className="mt-4 space-y-2 text-sm text-white/85">
               {group.links.map((item) => (
                 <li key={item.id}>

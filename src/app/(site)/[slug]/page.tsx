@@ -54,7 +54,7 @@ export default async function DynamicPage({ params }: { params: Promise<{ slug: 
         image={page.heroImage || undefined}
       />
       <section className="prose-fn mx-auto px-4 py-12 md:px-6">{renderBody(page.content)}</section>
-      <CtaBand berryStreetUrl={settings.berryStreetUrl} />
+      <CtaBand berryStreetUrl={settings.berryStreetUrl} bookingUrl={settings.bookingUrl} />
     </>
   );
 }

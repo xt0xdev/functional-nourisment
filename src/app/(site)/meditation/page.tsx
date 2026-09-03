@@ -32,7 +32,7 @@ export default async function MeditationPage() {
           ))}
         </div>
       </section>
-      <CtaBand berryStreetUrl={settings.berryStreetUrl} />
+      <CtaBand berryStreetUrl={settings.berryStreetUrl} bookingUrl={settings.bookingUrl} />
     </>
   );
 }

@@ -51,7 +51,7 @@ export default async function AboutPage() {
           </ul>
         </div>
       </section>
-      <CtaBand berryStreetUrl={settings.berryStreetUrl} />
+      <CtaBand berryStreetUrl={settings.berryStreetUrl} bookingUrl={settings.bookingUrl} />
     </>
   );
 }

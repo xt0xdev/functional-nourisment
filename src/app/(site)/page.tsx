@@ -68,17 +68,23 @@ export default async function HomePage() {
         }}
       />
 
-      <section className="bg-white">
+      <section className="bg-background">
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 md:grid-cols-2 md:px-6 md:py-24">
           <div>
-            <h1 className="font-serif text-4xl leading-tight text-navy md:text-6xl">
+            <h1 className="font-serif text-4xl leading-tight text-primary md:text-6xl">
               Nourishing your <em className="italic">whole self</em> from the inside out.
             </h1>
             <p className="mt-5 max-w-xl text-lg text-muted">{content.intro}</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link href="/book" className="btn-teal">
+              <a
+                href={settings.bookingUrl || "/book"}
+                className="btn-primary"
+                {...((settings.bookingUrl || "").startsWith("http")
+                  ? { target: "_blank", rel: "noreferrer" }
+                  : {})}
+              >
                 Book a Discovery Call
-              </Link>
+              </a>
               <Link href="/nutrition" className="btn-outline">
                 Explore Services
               </Link>
@@ -96,18 +102,18 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="bg-sky">
+      <section className="bg-mist">
         <div className="mx-auto max-w-6xl px-4 py-16 md:px-6">
           <p className="eyebrow">A whole-person approach</p>
-          <h2 className="mt-3 font-serif text-4xl text-navy md:text-5xl">Our core pillars</h2>
+            <h2 className="mt-3 font-serif text-4xl text-primary md:text-5xl">Our core pillars</h2>
           <p className="mt-3 text-muted">A comprehensive approach to your well-being.</p>
           <div className="mt-10 grid gap-5 md:grid-cols-3">
             {pillars.map((pillar) => (
-              <article key={pillar.title} className="rounded-3xl bg-white p-6 shadow-sm">
-                <pillar.icon className="h-7 w-7 text-teal-dark" />
-                <h3 className="mt-4 font-serif text-2xl text-navy">{pillar.title}</h3>
+              <article key={pillar.title} className="rounded-3xl bg-background p-6 shadow-sm">
+                <pillar.icon className="h-7 w-7 text-teal" />
+                <h3 className="mt-4 font-serif text-2xl text-primary">{pillar.title}</h3>
                 <p className="mt-3 text-sm leading-relaxed text-muted">{pillar.text}</p>
-                <Link href={pillar.href} className="mt-5 inline-flex text-sm text-teal-dark hover:underline">
+                <Link href={pillar.href} className="mt-5 inline-flex text-sm text-teal hover:underline">
                   Learn more →
                 </Link>
               </article>
@@ -116,7 +122,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="bg-white">
+      <section className="bg-background">
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-16 md:grid-cols-2 md:px-6">
           <div className="relative aspect-[4/5] overflow-hidden rounded-3xl">
             <Image
@@ -131,7 +137,7 @@ export default async function HomePage() {
           </div>
           <div>
             <p className="eyebrow">Meet your practitioner</p>
-            <h2 className="mt-3 font-serif text-4xl text-navy md:text-5xl">Anna Almiroudis</h2>
+            <h2 className="mt-3 font-serif text-4xl text-primary md:text-5xl">Anna Almiroudis</h2>
             <p className="mt-5 leading-relaxed text-muted">
               {content.practitioner ||
                 "As a board certified nutrition specialist, licensed nutritionist, certified dietitian-nutritionist and certified holistic health coach based in Astoria, NY, I bridge the gap between clinical science and intuitive wellness."}
@@ -140,14 +146,14 @@ export default async function HomePage() {
               {content.practitionerMore ||
                 "My practice is rooted in functional nutrition and medical nutrition therapy, with a whole-person view of health."}
             </p>
-            <Link href="/about" className="mt-6 inline-flex text-teal-dark hover:underline">
+            <Link href="/about" className="mt-6 inline-flex text-teal hover:underline">
               Read more about Anna →
             </Link>
           </div>
         </div>
       </section>
 
-      <CtaBand berryStreetUrl={settings.berryStreetUrl} />
+      <CtaBand berryStreetUrl={settings.berryStreetUrl} bookingUrl={settings.bookingUrl} />
     </>
   );
 }

@@ -1,20 +1,25 @@
 @import "tailwindcss";
 
 @theme {
-  --color-navy: #1a2942;
-  --color-teal: #3ecfc0;
-  --color-teal-dark: #2bb3a6;
-  --color-sky: #e8f2f4;
-  --color-forest: #1a2942;
-  --color-moss: #2aa89c;
-  --color-sage: #4db8ad;
-  --color-leaf: #3ecfc0;
-  --color-cream: #ffffff;
-  --color-sand: #e8f2f4;
-  --color-clay: #2aa89c;
-  --color-gold: #3ecfc0;
-  --color-ink: #1a1f2b;
-  --color-muted: #5a6573;
+  --color-background: #fcfdfd;
+  --color-deep: #0c2340;
+  --color-primary: #1a4a6e;
+  --color-teal: #2d8a9e;
+  --color-accent: #5cbdb9;
+  --color-mist: #f0f7f7;
+  --color-navy: #0c2340;
+  --color-teal-dark: #2d8a9e;
+  --color-sky: #e8f4f4;
+  --color-forest: #0c2340;
+  --color-moss: #2d8a9e;
+  --color-sage: #5cbdb9;
+  --color-leaf: #5cbdb9;
+  --color-cream: #fcfdfd;
+  --color-sand: #f0f7f7;
+  --color-clay: #2d8a9e;
+  --color-gold: #5cbdb9;
+  --color-ink: #0c2340;
+  --color-muted: #5a6b7a;
   --font-serif: "Cormorant Garamond", ui-serif, Georgia, serif;
   --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
 }
@@ -24,14 +29,14 @@ html {
 }
 
 body {
-  background: #ffffff;
+  background: var(--color-background);
   color: var(--color-ink);
   font-family: var(--font-sans);
 }
 
 ::selection {
-  background: #c8f3ee;
-  color: var(--color-navy);
+  background: #d7efef;
+  color: var(--color-deep);
 }
 
 .prose-fn {
@@ -41,14 +46,14 @@ body {
 .prose-fn h2 {
   font-family: var(--font-serif);
   font-size: 2rem;
-  color: var(--color-navy);
+  color: var(--color-primary);
   margin: 2rem 0 0.75rem;
 }
 
 .prose-fn h3 {
   font-family: var(--font-serif);
   font-size: 1.5rem;
-  color: var(--color-navy);
+  color: var(--color-primary);
   margin: 1.5rem 0 0.5rem;
 }
 
@@ -68,24 +73,26 @@ body {
   font-size: 0.72rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--color-teal-dark);
+  color: var(--color-teal);
   font-weight: 500;
 }
 
-.btn-teal {
+.btn-teal,
+.btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border-radius: 999px;
-  background: var(--color-teal);
-  color: var(--color-navy);
+  background: var(--color-primary);
+  color: #ffffff;
   padding: 0.75rem 1.4rem;
   font-weight: 500;
 }
 
-.btn-teal:hover {
-  background: var(--color-teal-dark);
-  color: white;
+.btn-teal:hover,
+.btn-primary:hover {
+  background: var(--color-accent);
+  color: var(--color-deep);
 }
 
 .btn-outline {
@@ -93,11 +100,16 @@ body {
   align-items: center;
   justify-content: center;
   border-radius: 999px;
-  border: 1px solid var(--color-navy);
-  color: var(--color-navy);
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
   padding: 0.75rem 1.4rem;
 }
 
 .btn-outline:hover {
-  background: var(--color-sky);
+  background: var(--color-mist);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-teal);
+  outline-offset: 3px;
 }
