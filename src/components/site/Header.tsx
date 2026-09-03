@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { ChevronDown, Menu, X } from "lucide-react";
 import { Logo } from "@/components/Logo";
+import { applyBookingUrl } from "@/lib/booking";
 import type { MenuNode } from "@/lib/menu";
 
 function NavLink({
@@ -33,9 +34,15 @@ function NavLink({
   );
 }
 
-export function Header({ menu }: { menu: MenuNode[] }) {
+export function Header({ menu, bookingUrl }: { menu: MenuNode[]; bookingUrl?: string }) {
   const [open, setOpen] = useState(false);
   const [openGroup, setOpenGroup] = useState<string | null>(null);
+  const items = bookingUrl
+    ? menu.map((item) => ({
+        ...applyBookingUrl(item, bookingUrl),
+        children: item.children.map((child) => applyBookingUrl(child, bookingUrl)),
+      }))
+    : menu;
 
   return (
     <header className="sticky top-0 z-50 border-b border-primary/10 bg-background/95 backdrop-blur-md">
@@ -47,7 +54,7 @@ export function Header({ menu }: { menu: MenuNode[] }) {
           </span>
         </Link>
         <nav className="hidden items-center gap-5 lg:flex" aria-label="Primary">
-          {menu.map((item) =>
+          {items.map((item) =>
             item.children.length ? (
               <div
                 key={item.id}
@@ -103,7 +110,7 @@ export function Header({ menu }: { menu: MenuNode[] }) {
       {open ? (
         <div id="mobile-nav" className="border-t border-primary/10 bg-background px-4 py-4 lg:hidden">
           <nav className="flex flex-col gap-2" aria-label="Mobile">
-            {menu.map((item) => (
+            {items.map((item) => (
               <div key={item.id}>
                 {item.children.length ? (
                   <>

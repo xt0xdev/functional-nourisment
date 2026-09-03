@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Brain, HeartPulse, Sparkles } from "lucide-react";
 import { getPage, getSettings, parseContent } from "@/lib/content";
+import { bookingLinkProps, resolveBookingUrl } from "@/lib/booking";
 import { buildMetadata, JsonLd } from "@/lib/seo";
 import { CtaBand } from "@/components/site/CtaBand";
 
@@ -76,13 +77,7 @@ export default async function HomePage() {
             </h1>
             <p className="mt-5 max-w-xl text-lg text-muted">{content.intro}</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <a
-                href={settings.bookingUrl || "/book"}
-                className="btn-primary"
-                {...((settings.bookingUrl || "").startsWith("http")
-                  ? { target: "_blank", rel: "noreferrer" }
-                  : {})}
-              >
+              <a className="btn-primary" {...bookingLinkProps(resolveBookingUrl(settings))}>
                 Book a Discovery Call
               </a>
               <Link href="/nutrition" className="btn-outline">

@@ -1,4 +1,5 @@
 import { getPage, getSettings, parseContent } from "@/lib/content";
+import { bookingLinkProps, resolveBookingUrl } from "@/lib/booking";
 import { buildMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/site/PageHero";
 import { ContactForm } from "@/components/site/ContactForm";
@@ -31,12 +32,7 @@ export default async function BookPage() {
             <p key={paragraph.slice(0, 28)}>{paragraph}</p>
           ))}
           <div className="flex flex-wrap gap-3">
-            <a
-              href={settings.bookingUrl || "https://my.practicebetter.io/#/6a98aeab3815665e47eb56c5/bookings"}
-              target="_blank"
-              rel="noreferrer"
-              className="btn-primary no-underline"
-            >
+            <a className="btn-primary no-underline" {...bookingLinkProps(resolveBookingUrl(settings))}>
               Book a Discovery Call
             </a>
             <a

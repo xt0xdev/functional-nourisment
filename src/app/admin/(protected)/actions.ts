@@ -23,8 +23,28 @@ export async function saveSettings(formData: FormData) {
       create: { key, value: String(value) },
     });
   }
+
+  const bookingUrl = String(formData.get("bookingUrl") || "").trim();
+  if (bookingUrl) {
+    await prisma.menuItem.updateMany({
+      where: {
+        OR: [
+          { label: { equals: "Book a Discovery Call", mode: "insensitive" } },
+          { label: { equals: "Book Now", mode: "insensitive" } },
+          { href: "/book" },
+          { href: { contains: "bookings" } },
+        ],
+      },
+      data: {
+        href: bookingUrl,
+        openInNew: bookingUrl.startsWith("http"),
+      },
+    });
+  }
+
   revalidatePath("/", "layout");
   revalidatePath("/admin/settings");
+  revalidatePath("/admin/menu");
 }
 
 export async function savePage(formData: FormData) {

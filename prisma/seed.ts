@@ -29,7 +29,7 @@ const settings: Record<string, string> = {
   footerBlurb:
     "A whole-person approach to health that combines personalized functional nutrition with integrative mind-body practices to address root causes, restore balance, and support lasting well-being.",
   clientPortalUrl: "https://client.practicebetter.io/#/signin",
-  bookingUrl: "https://my.practicebetter.io/#/6a98aeab3815665e47eb56c5/bookings",
+  bookingUrl: "https://www.berrystreet.co/provider-details/anna-almiroudis",
 };
 
 const pages = [
@@ -508,9 +508,9 @@ async function syncCanonicalMenu() {
     },
   });
   await prisma.menuItem.updateMany({
-    where: { label: "Book a Discovery Call" },
+    where: { label: { in: ["Book a Discovery Call", "Book Now"] } },
     data: {
-      href: "https://my.practicebetter.io/#/6a98aeab3815665e47eb56c5/bookings",
+      href: "https://www.berrystreet.co/provider-details/anna-almiroudis",
       openInNew: true,
     },
   });
@@ -556,7 +556,7 @@ async function seedMenu() {
       { label: "About", href: "/about", location: "header", sortOrder: 30, style: "link" },
       { label: "Contact", href: "/contact", location: "header", sortOrder: 40, style: "link" },
       { label: "Client Portal", href: "https://client.practicebetter.io/#/signin", location: "header", sortOrder: 50, style: "ghost", openInNew: true },
-      { label: "Book a Discovery Call", href: "https://my.practicebetter.io/#/6a98aeab3815665e47eb56c5/bookings", location: "header", sortOrder: 60, style: "cta", openInNew: true },
+      { label: "Book a Discovery Call", href: "https://www.berrystreet.co/provider-details/anna-almiroudis", location: "header", sortOrder: 60, style: "cta", openInNew: true },
       { label: "Nourish Mind", href: "/sound-healing", location: "footer", groupName: "Services", sortOrder: 10 },
       { label: "Nourish Body", href: "/nutrition", location: "footer", groupName: "Services", sortOrder: 20 },
       { label: "Nourish Spirit", href: "/meditation", location: "footer", groupName: "Services", sortOrder: 30 },
@@ -565,7 +565,7 @@ async function seedMenu() {
       { label: "News", href: "/journal", location: "footer", groupName: "Community", sortOrder: 30 },
       { label: "About", href: "/about", location: "footer", groupName: "Connect", sortOrder: 10 },
       { label: "Contact", href: "/contact", location: "footer", groupName: "Connect", sortOrder: 20 },
-      { label: "Book a Discovery Call", href: "https://my.practicebetter.io/#/6a98aeab3815665e47eb56c5/bookings", location: "footer", groupName: "Connect", sortOrder: 30, openInNew: true },
+      { label: "Book a Discovery Call", href: "https://www.berrystreet.co/provider-details/anna-almiroudis", location: "footer", groupName: "Connect", sortOrder: 30, openInNew: true },
       { label: "Client Portal", href: "https://client.practicebetter.io/#/signin", location: "footer", groupName: "Connect", sortOrder: 40, openInNew: true },
     ],
   });

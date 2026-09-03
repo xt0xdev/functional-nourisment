@@ -51,6 +51,12 @@ export default async function SettingsPage() {
                 className="rounded-xl border border-forest/15 bg-white px-3 py-2"
               />
             )}
+            {key === "bookingUrl" ? (
+              <p className="text-xs text-muted">
+                Used by the header Book a Discovery Call button, footer link, homepage, and other
+                booking CTAs.
+              </p>
+            ) : null}
           </label>
         ))}
         <button className="mt-2 w-fit rounded-full bg-forest px-6 py-3 text-cream">Save settings</button>

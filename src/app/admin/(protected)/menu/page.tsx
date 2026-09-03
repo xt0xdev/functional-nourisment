@@ -12,7 +12,8 @@ export default async function AdminMenuPage() {
       <p className="mt-2 max-w-2xl text-sm text-muted">
         Control the public header and footer. Header items can be nested under a parent for dropdowns.
         Use style <strong>cta</strong> for the teal booking button and <strong>ghost</strong> for Client Portal.
-        Leave href blank on a parent used only as a dropdown label.
+        Leave href blank on a parent used only as a dropdown label. Items labeled Book a Discovery
+        Call or Book Now use the Book a Discovery Call URL from Site settings on the public site.
       </p>
 
       <form action={saveMenuItem} className="mt-6 grid gap-3 rounded-2xl border border-dashed border-forest/20 bg-white p-5">

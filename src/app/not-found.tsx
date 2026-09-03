@@ -1,6 +1,10 @@
 import Link from "next/link";
+import { bookingLinkProps, resolveBookingUrl } from "@/lib/booking";
+import { getSettings } from "@/lib/content";
 
-export default function NotFound() {
+export default async function NotFound() {
+  const settings = await getSettings();
+
   return (
     <div className="mx-auto max-w-xl px-4 py-24 text-center">
       <p className="text-xs uppercase tracking-[0.25em] text-clay">404</p>
@@ -10,9 +14,12 @@ export default function NotFound() {
         <Link href="/" className="rounded-full bg-forest px-5 py-2 text-cream">
           Home
         </Link>
-        <Link href="/book" className="rounded-full border border-forest px-5 py-2 text-forest">
+        <a
+          className="rounded-full border border-forest px-5 py-2 text-forest"
+          {...bookingLinkProps(resolveBookingUrl(settings))}
+        >
           Book
-        </Link>
+        </a>
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
+import { applyBookingUrl, resolveBookingUrl } from "@/lib/booking";
 import type { getFooterMenu } from "@/lib/menu";
 
 export function Footer({
@@ -9,6 +10,12 @@ export function Footer({
   settings: Record<string, string>;
   groups: Awaited<ReturnType<typeof getFooterMenu>>;
 }) {
+  const bookingUrl = resolveBookingUrl(settings);
+  const resolvedGroups = groups.map((group) => ({
+    ...group,
+    links: group.links.map((item) => applyBookingUrl(item, bookingUrl)),
+  }));
+
   return (
     <footer className="bg-deep text-white">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 md:grid-cols-4 md:px-6">
@@ -24,7 +31,7 @@ export function Footer({
               "A whole-person approach to health that combines personalized functional nutrition with integrative mind-body practices."}
           </p>
         </div>
-        {groups.map((group) => (
+        {resolvedGroups.map((group) => (
           <div key={group.name}>
             <p className="text-xs uppercase tracking-[0.2em] text-accent">{group.name}</p>
             <ul className="mt-4 space-y-2 text-sm text-white/85">

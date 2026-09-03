@@ -1,12 +1,14 @@
+import { bookingLinkProps, resolveBookingUrl } from "@/lib/booking";
+
 export function CtaBand({
   berryStreetUrl,
-  bookingUrl = "/book",
+  bookingUrl,
 }: {
   berryStreetUrl: string;
   bookingUrl?: string;
 }) {
-  const bookHref = bookingUrl || "/book";
-  const bookIsExternal = bookHref.startsWith("http");
+  const bookHref = resolveBookingUrl(bookingUrl);
+  const bookProps = bookingLinkProps(bookHref);
 
   return (
     <section className="bg-deep text-white">
@@ -25,11 +27,7 @@ export function CtaBand({
               Schedule a complimentary 20-minute call to share what you’re looking for, ask
               questions, and see if working together feels like the right fit.
             </p>
-            <a
-              href={bookHref}
-              className="btn-primary mt-5"
-              {...(bookIsExternal ? { target: "_blank", rel: "noreferrer" } : {})}
-            >
+            <a className="btn-primary mt-5" {...bookProps}>
               Book a Discovery Call
             </a>
           </article>
