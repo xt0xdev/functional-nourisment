@@ -49,20 +49,32 @@ export function Header({ menu }: { menu: MenuNode[] }) {
         <nav className="hidden items-center gap-5 lg:flex" aria-label="Primary">
           {menu.map((item) =>
             item.children.length ? (
-              <div key={item.id} className="group relative">
-                <button type="button" className="inline-flex items-center gap-1 text-sm text-navy/80 hover:text-navy">
+              <div
+                key={item.id}
+                className="relative"
+                onMouseEnter={() => setOpenGroup(item.id)}
+                onMouseLeave={() => setOpenGroup(null)}
+              >
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-1 text-sm text-navy/80 hover:text-navy"
+                  aria-expanded={openGroup === item.id}
+                  onClick={() => setOpenGroup((current) => (current === item.id ? null : item.id))}
+                >
                   {item.label}
                   <ChevronDown className="h-3.5 w-3.5" />
                 </button>
-                <div className="invisible absolute left-0 top-full z-20 min-w-52 translate-y-1 rounded-2xl bg-white p-2 opacity-0 shadow-lg ring-1 ring-navy/8 transition group-hover:visible group-hover:opacity-100">
-                  {item.children.map((child) => (
-                    <NavLink
-                      key={child.id}
-                      item={child}
-                      className="block rounded-xl px-3 py-2 text-sm text-navy/80 hover:bg-sky"
-                    />
-                  ))}
-                </div>
+                {openGroup === item.id ? (
+                  <div className="absolute left-0 top-full z-20 min-w-52 rounded-2xl bg-white p-2 shadow-lg ring-1 ring-navy/10">
+                    {item.children.map((child) => (
+                      <NavLink
+                        key={child.id}
+                        item={child}
+                        className="block rounded-xl px-3 py-2 text-sm text-navy/80 hover:bg-sky"
+                      />
+                    ))}
+                  </div>
+                ) : null}
               </div>
             ) : item.style === "cta" ? (
               <NavLink
