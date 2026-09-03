@@ -1,28 +1,28 @@
-# Vercel deployment
+# Vercel + Neon
 
 ## Why you saw a 404
 
-Vercel was deploying commit `7503ea0` ("Initial commit") on `mikes-branch`, which only contained an empty README — not the Next.js app. The site code is now merged into `mikes-branch`.
+The first deploy used commit `7503ea0` ("Initial commit") on `mikes-branch`, which only had an empty README. The Next.js app is now on `mikes-branch`.
 
-## Deploy steps
+## Database
 
-1. **Redeploy** from the Vercel dashboard (or push triggers auto-deploy).
-2. **Add a Postgres database** (required — SQLite does not work on Vercel):
-   - Vercel project → **Storage** → **Create Database** → **Postgres**
-   - Connect it to the project; Vercel adds `POSTGRES_URL` (and related vars).
-3. **Set environment variables** in Vercel → Settings → Environment Variables:
-   - `DATABASE_URL` = your Postgres connection string (often `POSTGRES_URL` or `POSTGRES_PRISMA_URL`)
-   - `SESSION_SECRET` = long random string
-   - `ADMIN_EMAIL` = admin login email
-   - `ADMIN_PASSWORD` = strong password
-   - `NEXT_PUBLIC_SITE_URL` = `https://your-domain.vercel.app` (or custom domain)
-4. **Redeploy again** after env vars are set (build runs `prisma db push` via `vercel-build`).
-5. **Seed content once** (from your machine with production `DATABASE_URL`):
-   ```bash
-   DATABASE_URL="your-postgres-url" npm run db:seed
-   ```
+Use **Neon** from Vercel Storage (free plan is enough). Vercel injects:
 
-## Build commands
+- `DATABASE_URL` — pooled (runtime queries)
+- `DATABASE_URL_UNPOOLED` — direct (Prisma schema push / migrations)
 
-- `vercel-build`: schema sync + Next.js build (used on Vercel)
-- `build`: local/production build without DB migration
+Also set in Vercel → Settings → Environment Variables (Production + Preview):
+
+- `SESSION_SECRET` — long random string
+- `ADMIN_EMAIL` — admin login email
+- `ADMIN_PASSWORD` — strong password
+- `NEXT_PUBLIC_SITE_URL` — `https://functional-nourishment.vercel.app` (or your custom domain)
+
+Redeploy after env vars are saved. Build runs `prisma db push` via `vercel-build`.
+
+Default admin after seed:
+
+- Email: `admin@functional-nourishment.com`
+- Password: `NourishAdmin2026!`
+
+Change that password in production.

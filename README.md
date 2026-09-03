@@ -7,7 +7,7 @@ The public site is rebuilt from the content on [functional-nourishment.com](http
 ## Stack
 
 - Next.js 15 (App Router) + TypeScript + Tailwind CSS
-- Prisma + SQLite content database
+- Prisma + Postgres (Neon on Vercel) content database
 - Cookie-based admin auth
 
 ## Local development
@@ -47,4 +47,11 @@ Set `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `SESSION_SECRET`, and `NEXT_PUBLIC_SITE_URL
 
 ## Notes
 
-SQLite is file-based (`prisma/dev.db`). For production on a platform without a persistent disk, point `DATABASE_URL` at a hosted Postgres instance or keep the SQLite file on persistent storage.
+## Deploy on Vercel
+
+See **[VERCEL.md](./VERCEL.md)** for the full checklist. Summary:
+
+1. Deploy from `mikes-branch` (must include the Next.js app, not the empty initial commit).
+2. Add **Neon** (free serverless Postgres) and connect it to the project.
+3. Confirm `DATABASE_URL` and `DATABASE_URL_UNPOOLED` are set, plus `SESSION_SECRET`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, and `NEXT_PUBLIC_SITE_URL`.
+4. Redeploy. Production schema is applied on build; seed once if the site is empty.
