@@ -4,9 +4,9 @@ import { buildMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/site/PageHero";
 
 export const metadata = buildMetadata({
-  title: "Nutrition Journal | NYC Functional Nutrition Insights",
+  title: "Nutrition Journal | Insights from an Astoria & NYC Nutritionist",
   description:
-    "Guides on functional nutrition, IBS, prediabetes, and booking an in-network nutritionist in New York City.",
+    "Guides on functional nutrition, IBS, prediabetes, and booking an in-network nutritionist in Astoria, Queens, and New York City.",
   path: "/journal",
 });
 
@@ -17,10 +17,10 @@ export default async function JournalPage() {
     <>
       <PageHero
         eyebrow="News"
-        heading="Notes on food, mood, and metro-area care"
-        subheading="Practical writing for New Yorkers looking for a nutritionist who takes the whole person seriously."
+        heading="Notes on food, mood, and care in Astoria, Queens & NYC"
+        subheading="Practical writing for New Yorkers in Astoria, Queens, and across the city looking for a nutritionist who takes the whole person seriously."
         image="https://images.unsplash.com/photo-1456327102063-fb5054efe647?auto=format&fit=crop&w=1400&q=80"
-        imageAlt="Notebook and pen for nutrition writing"
+        imageAlt="Notebook for nutrition writing from an Astoria, Queens practice"
       />
       <section className="mx-auto max-w-4xl px-4 py-16 md:px-6">
         <div className="space-y-6">

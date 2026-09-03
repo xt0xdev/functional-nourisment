@@ -16,7 +16,7 @@ const settings: Record<string, string> = {
   city: "Astoria",
   region: "NY",
   postalCode: "11105",
-  serviceArea: "New York City metro area — Astoria, Queens, Manhattan, Brooklyn, and remote care across NY, NJ, and CT",
+  serviceArea: "Astoria, Queens, and New York City — plus remote care across NY, NJ, and CT",
   instagram: "https://www.instagram.com/functionalnourishment/",
   berryStreetUrl: "https://www.berrystreet.co/provider-details/anna-almiroudis",
   insurance:
@@ -25,9 +25,9 @@ const settings: Record<string, string> = {
     "All nutrition appointments are conducted remotely. In-person Reiki and sound bath meditation sessions are offered in Astoria, NY.",
   npi: "1326877432",
   languages: "English, Greek",
-  footerText: "Functional Nourishment, LLC · Astoria, NY",
+  footerText: "Functional Nourishment, LLC · Astoria, Queens, NY",
   footerBlurb:
-    "A whole-person approach to health that combines personalized functional nutrition with integrative mind-body practices to address root causes, restore balance, and support lasting well-being.",
+    "A whole-person functional nutrition practice in Astoria, Queens, serving New York City. Personalized Medical Nutrition Therapy and mind-body care to address root causes and support lasting well-being.",
   clientPortalUrl: "https://client.practicebetter.io/#/signin",
   bookingUrl: "https://www.berrystreet.co/provider-details/anna-almiroudis",
 };
@@ -36,22 +36,22 @@ const pages = [
   {
     slug: "home",
     title: "Home",
-    metaTitle: "Functional Nutritionist in NYC | Anna Almiroudis, MS, CNS | Astoria",
+    metaTitle: "Nutritionist in Astoria, Queens & NYC | Anna Almiroudis, MS, CNS",
     metaDescription:
-      "Anna Almiroudis, MS, CNS, LN, CDN is a functional nutritionist in Astoria serving the NYC metro area. Insurance-covered medical nutrition therapy for gut health, cardiometabolic health, weight, and mental health.",
+      "Anna Almiroudis, MS, CNS is a functional nutritionist in Astoria, Queens offering insurance-covered Medical Nutrition Therapy across New York City for gut health, heart health, weight, and mental health.",
     heroHeading: "Nourishing your whole self from the inside out.",
     heroSubheading:
-      "Holistic functional nutrition and mind-body modalities designed to help you find balance, healing, and sustainable vitality.",
+      "Holistic functional nutrition and mind-body care from Astoria, Queens — serving New York City by telehealth, with in-person Reiki and sound baths locally.",
     content: JSON.stringify({
       intro:
-        "Holistic functional nutrition and mind-body modalities designed to help you find balance, healing, and sustainable vitality.",
+        "Holistic functional nutrition and mind-body care from Astoria, Queens — serving New York City by telehealth, with in-person Reiki and sound baths locally.",
       mind: "Sound healing, meditation and breathwork to quiet the nervous system, deepen self-awareness, and restore mental clarity.",
       body: "Functional nutrition counseling and medical nutrition therapy tailored to your biochemistry, lifestyle, and root-cause goals.",
       spirit:
         "Meditation, breathwork and sound bath experiences that reconnect you with purpose, peace, and a sense of inner alignment.",
       quote: "True nourishment begins with listening to the body.",
       practitioner:
-        "As a board certified nutrition specialist, licensed nutritionist, certified dietitian-nutritionist and certified holistic health coach based in Astoria, NY, I bridge the gap between clinical science and intuitive wellness.",
+        "As a board certified nutrition specialist, licensed nutritionist, certified dietitian-nutritionist and certified holistic health coach based in Astoria, Queens, I bridge the gap between clinical science and intuitive wellness for clients across New York City.",
       practitionerMore:
         "My practice is rooted in functional nutrition and medical nutrition therapy, with a whole-person view of health. I consider your bio-individuality, your environment and your emotional well-being together, because lasting change rarely comes from a meal plan alone.",
       support: [
@@ -65,12 +65,12 @@ const pages = [
   {
     slug: "about",
     title: "About",
-    metaTitle: "About Anna Almiroudis, MS, CNS | Functional Nutritionist in Astoria, NYC",
+    metaTitle: "About Anna Almiroudis | Functional Nutritionist in Astoria, NYC",
     metaDescription:
-      "Meet Anna Almiroudis, MS, CNS, LN, CDN, CHHC — a Certified Nutrition Specialist, licensed nutritionist, Reiki Master, and sound bath facilitator serving Astoria and the New York City metro area.",
+      "Meet Anna Almiroudis, MS, CNS, LN, CDN — a Certified Nutrition Specialist and licensed nutritionist in Astoria, Queens, offering Medical Nutrition Therapy across New York City.",
     heroHeading: "Anna Almiroudis, MS, CNS, LN, CDN, CHHC",
     heroSubheading:
-      "Certified Nutrition Specialist, licensed nutritionist, and integrative practitioner serving Astoria and the NYC metro area.",
+      "Certified Nutrition Specialist, licensed nutritionist, and integrative practitioner based in Astoria, serving Queens and the New York City metro area.",
     content: JSON.stringify({
       paragraphs: [
         "As a Certified Nutritionist Specialist (CNS), Certified Health Coach, Nutrition Educator, Writer, Karuna® and Usui Reiki Master, and Sound Bath & Meditation Facilitator, I bring a uniquely integrative approach to wellness—grounded in science, rooted in nature, and powered by compassion. With advanced training in functional nutrition and a specialization in herbal medicine, I blend evidence-based nutrition with holistic healing practices to support mind-body transformation.",
@@ -78,19 +78,19 @@ const pages = [
         "My clinical approach integrates functional nutrition and mind-body medicine to identify and address the root causes of health imbalances. By integrating nutrition interventions, lifestyle modifications, and mind-body stress reduction interventions such as Reiki, Sound Healing and Meditation, I help clients restore metabolic balance, improve gut-health, mitigate stress and barriers to their health and wellness goals.",
         "My ultimate goal is to educate, support and empower individuals to improve their health and mental well-being through sustainable, whole-person, personalized care. Whether I am guiding a private client, leading a corporate wellness workshop, teaching a class, or writing, my goal is to create sustainable pathways to health that nourish all aspects of one’s being, mind, body and spirit.",
         "I am especially passionate about the intersection of nutrition and mental health—helping individuals harness the power of food, meditation, self-awareness and energy healing practices to reduce stress, improve mood, resilience, and overall wellbeing.",
-        "With over 10 years of experience, my work is deeply plant-powered, personalized, and client-centered. I work with pediatric and adult clients across the New York City metro area, and I offer services in English and Greek.",
+        "With over 10 years of experience, my work is deeply plant-powered, personalized, and client-centered. I work with pediatric and adult clients from my Astoria, Queens practice and across New York City, and I offer services in English and Greek.",
       ],
     }),
   },
   {
     slug: "nutrition",
     title: "Nourish Body",
-    metaTitle: "Functional Nutrition Counseling in NYC | Medical Nutrition Therapy",
+    metaTitle: "Nutritionist in Queens & NYC | Functional Nutrition Counseling",
     metaDescription:
-      "Personalized functional nutrition programs in Astoria and across the NYC metro area. 3-month Medical Nutrition Therapy for gut health, diabetes, heart health, and weight management.",
+      "Personalized functional nutrition in Astoria, Queens, and across NYC. Three-month Medical Nutrition Therapy for gut health, diabetes, heart health, and weight management.",
     heroHeading: "Nourish Body",
     heroSubheading:
-      "Evidence-based functional nutrition and Medical Nutrition Therapy for sustainable, whole-person change.",
+      "Evidence-based functional nutrition and Medical Nutrition Therapy for clients in Astoria, Queens, and New York City.",
     content: JSON.stringify({
       questions: [
         "Are you ready to blossom into the best version of yourself but don’t know where to start?",
@@ -104,7 +104,7 @@ const pages = [
       ],
       howItWorks: [
         "Wellness isn’t a final destination or something you do once and check off your list. It’s an evolving practice of daily self-care. True power comes from within by connecting with your authentic, higher self. By being in tune with your body through self-awareness, self-love and mindfulness, you can identify what lifestyle habits and dietary behaviors are working and which ones are holding you back.",
-        "My functional nutrition programs are a minimum of 3 months long because they are designed for sustainable change. We conduct a thorough assessment of your current diet and lifestyle and identify your goals at our 90–120 minute initial nutrition-intake consultation. We meet again shortly after to go over your nutrition assessment and kick off your individualized plan. We then establish a set schedule of meeting via a telehealth platform for 30 to 60 minute nutrition counseling sessions.",
+        "My functional nutrition programs are a minimum of 3 months long because they are designed for sustainable change. We conduct a thorough assessment of your current diet and lifestyle and identify your goals at our 90–120 minute initial nutrition-intake consultation. We meet again shortly after to go over your nutrition assessment and kick off your individualized plan. We then establish a set schedule of meeting via a telehealth platform for 30 to 60 minute nutrition counseling sessions — convenient if you live in Astoria, elsewhere in Queens, or anywhere in New York City.",
         "Programs are all-encompassing and cater to both individuals who want to strive for optimal health and clients who need support with chronic health conditions. I work with pediatric and adult clients. In addition to nutritional counseling, clients are educated on healthy lifestyle practices which include guidance on following a nutrient dense diet of whole-foods and antioxidant-rich herbs, stress mitigation and healthy cooking recipes and practices.",
         "We address spiritual and mental health by including Reiki energy balancing, meditation, breathwork and/or sound healing in most packages. Most clients report that their Reiki/Sound healing sessions help them relax and increase self-awareness around identifying subconscious blocks that are preventing them from achieving their health and wellness goals.",
       ],
@@ -113,43 +113,44 @@ const pages = [
   {
     slug: "sound-healing",
     title: "Nourish Mind",
-    metaTitle: "Sound Healing & Reiki in Astoria, NY | Functional Nourishment",
+    metaTitle: "Sound Healing & Reiki in Astoria, NY | Queens & NYC",
     metaDescription:
-      "Sound bath meditations and Reiki in Astoria, NY. Crystal and Tibetan singing bowls to calm the nervous system, reduce stress, and support mind-body healing.",
+      "Sound bath meditations and Reiki in Astoria, Queens. Crystal and Tibetan singing bowls to calm the nervous system, reduce stress, and support mind-body healing.",
     heroHeading: "Nourish Mind",
-    heroSubheading: "Sound healing, Reiki, and nervous-system restoration in Astoria and across NYC.",
+    heroSubheading: "Sound healing, Reiki, and nervous-system restoration in Astoria — a local mind-body offering for Queens and New York City.",
     content: JSON.stringify({
       what: "Music, and moving to music, are outlets of human expression that have existed cross-culturally since antiquity. The art of sound healing has also existed across cultures, with various forms used for both religious and spiritual ceremonies (i.e. Tibetan monks use Himalayan/Tibetan singing bowls for spiritual ceremonies) for many centuries. Modern-day sound healing uses various instruments (including but not limited to crystal singing bowls, Tibetan singing bowls, gongs and drums) that create vibrational frequencies that initiate a relaxing, meditative state in the sound bath participants.",
       how: "Similarly to the way breath is used to induce the parasympathetic nervous system during meditation, sound healing uses vibrational frequencies to help activate the parasympathetic nervous system and slow down your breathing and heart rate as you go into a relaxed state. The various frequencies emitted by the singing bowls can also influence brain wave patterns, helping you go into alpha, theta or even delta brainwaves, supporting a restful and relaxed state. Since everything in the universe is in motion and has a vibrational frequency, it is hypothesized that the frequency of the instruments is interacting with both the Biofield (energy field) and physical body, creating effects all the way down to the cellular level. Different singing bowls are tuned to different musical notes or frequencies which are associated with different chakras (energy centers), therefore helping balance your energy field.",
       close:
-        "Sound healing therefore offers a mind, body, spirit experience and can be a great stress reducing and relaxing tool both on its own and as part of a Reiki session. I offer Sound Healing as part of my Reiki sessions and during Sound Bath and Reiki Meditations.",
+        "Sound healing therefore offers a mind, body, spirit experience and can be a great stress reducing and relaxing tool both on its own and as part of a Reiki session. I offer in-person Sound Healing and Reiki in Astoria, Queens — a local option for clients from across New York City.",
     }),
   },
   {
     slug: "meditation",
     title: "Nourish Spirit",
-    metaTitle: "Meditation & Breathwork in Astoria, NYC | Functional Nourishment",
+    metaTitle: "Meditation & Breathwork in Astoria, NYC",
     metaDescription:
-      "Meditation and breathwork with Anna Almiroudis in Astoria, NY. Evidence-informed practices to lower stress, improve sleep, and support sustainable lifestyle change.",
+      "Meditation and breathwork with Anna Almiroudis in Astoria, Queens. Evidence-informed practices to lower stress, improve sleep, and support sustainable lifestyle change.",
     heroHeading: "Nourish Spirit",
-    heroSubheading: "Meditation and breathwork as gentle, evidence-informed tools for inner balance.",
+    heroSubheading:
+      "Meditation and breathwork in Astoria as gentle, evidence-informed tools for inner balance — offered to clients across Queens and New York City.",
     content: JSON.stringify({
       paragraphs: [
         "Meditation is a simple yet powerful mind–body practice that trains your attention and awareness. Through techniques such as focused breathing, guided imagery, or sound-based practices, meditation helps shift the nervous system out of chronic “fight-or-flight” mode and into a more restorative, parasympathetic state.",
         "Regular meditation has been shown to support stress resilience by lowering cortisol levels, improving emotional regulation, enhancing sleep quality, and increasing mental clarity. Over time, this practice helps your body respond to stress more efficiently rather than remaining stuck in a state of overload.",
-        "At Functional Nourishment, meditation and breathwork are used as gentle, evidence-informed tools to support nervous system balance, emotional well-being, and sustainable lifestyle change from the inside out.",
+        "At Functional Nourishment in Astoria, Queens, meditation and breathwork are used as gentle, evidence-informed tools to support nervous system balance, emotional well-being, and sustainable lifestyle change for clients across New York City.",
       ],
     }),
   },
   {
     slug: "experiences",
     title: "Wellness Experiences",
-    metaTitle: "Corporate Wellness Workshops NYC | Nutrition, Sound Baths & Cooking",
+    metaTitle: "Corporate Wellness Workshops in NYC | Nutrition & Sound Baths",
     metaDescription:
-      "Bespoke corporate wellness workshops and small-group experiences in New York City: food and mood cooking classes, sound baths, breathwork, and skin nutrition workshops.",
+      "Bespoke corporate wellness workshops and small-group experiences in New York City and Queens: food-and-mood cooking classes, sound baths, breathwork, and skin nutrition.",
     heroHeading: "Wellness Experiences",
     heroSubheading:
-      "Bespoke corporate wellness workshops and intimate local experiences across New York City.",
+      "Bespoke corporate wellness workshops and intimate local experiences across New York City, Queens, and Astoria.",
     content: JSON.stringify({
       intro:
         "I offer bespoke corporate wellness workshops, as well as intimate small group and local experiences, that blend functional nutrition and culinary experiences, stress resilience, and immersive mind-body practices, including breathwork, meditation, and sound baths. Each session is thoughtfully designed to restore balance, elevate energy, and provide practical tools for sustained well-being. If you don’t see exactly what you’re looking for, you’re welcome to share your preferences — each experience can be thoughtfully customized to meet your needs.",
@@ -158,28 +159,29 @@ const pages = [
   {
     slug: "events",
     title: "Events",
-    metaTitle: "Workshops & Events | Functional Nourishment Astoria, NYC",
+    metaTitle: "Nutrition Workshops & Sound Baths in Astoria, NYC",
     metaDescription:
-      "Upcoming nutrition workshops, sound baths, and wellness events with Anna Almiroudis in Astoria and the New York City metro area.",
+      "Upcoming nutrition workshops, sound baths, and wellness events with Anna Almiroudis in Astoria, Queens, and the New York City metro area.",
     heroHeading: "Events & Workshops",
-    heroSubheading: "Join an upcoming class, sound bath, or community wellness gathering.",
+    heroSubheading:
+      "Join an upcoming class, sound bath, or community wellness gathering in Astoria and New York City.",
     content: JSON.stringify({
       intro:
-        "Check back for upcoming cooking classes, sound baths, and community workshops. Private and corporate bookings are available year-round.",
+        "Check back for upcoming cooking classes, sound baths, and community workshops in Astoria and across New York City. Private and corporate bookings are available year-round.",
     }),
   },
   {
     slug: "book",
     title: "Book",
-    metaTitle: "Book a Nutritionist in NYC | Insurance & Discovery Calls",
+    metaTitle: "Book a Nutritionist in Astoria, Queens & NYC",
     metaDescription:
-      "Book a free 20-minute discovery call or schedule insurance-covered nutrition counseling with Anna Almiroudis through Berry Street. Remote care for the NYC metro area.",
+      "Book a free 20-minute discovery call or insurance-covered nutrition counseling with Anna Almiroudis. Remote Medical Nutrition Therapy for Astoria, Queens, and NYC.",
     heroHeading: "Book an Appointment",
     heroSubheading:
-      "Remote nutrition counseling for the NYC metro area, plus in-person Reiki and sound bath sessions in Astoria.",
+      "Remote nutrition counseling for Astoria, Queens, and the NYC metro area, plus in-person Reiki and sound bath sessions in Astoria.",
     content: JSON.stringify({
       paragraphs: [
-        "Please note that all nutrition appointments are conducted remotely. I offer in-person Reiki-Sound Bath Meditation sessions in Astoria, NY.",
+        "Please note that all nutrition appointments are conducted remotely for clients in Astoria, Queens, and across New York City. I offer in-person Reiki-Sound Bath Meditation sessions in Astoria, NY.",
         "If you are out of network and interested in booking nutritional counseling services, please use the form below to book a free, 20-minute discovery call.",
         "I am currently in network with UnitedHealthcare, Aetna and Blue Cross Blue Shield insurance providers. To book a nutritional counseling appointment through your insurance, please book through Berry Street.",
         "Please email functionalnurture@gmail.com if you have any questions or would like to find out more about my services.",
@@ -189,11 +191,11 @@ const pages = [
   {
     slug: "contact",
     title: "Contact",
-    metaTitle: "Contact a Nutritionist in Astoria, NY | Functional Nourishment",
+    metaTitle: "Contact a Nutritionist in Astoria, Queens & NYC",
     metaDescription:
-      "Contact Anna Almiroudis at Functional Nourishment in Astoria, NY. In-person and remote appointments. Email functionalnurture@gmail.com.",
+      "Contact Anna Almiroudis at Functional Nourishment in Astoria, NY. Remote nutrition care across Queens and New York City. Email functionalnurture@gmail.com.",
     heroHeading: "Contact",
-    heroSubheading: "In-person and remote appointments offered in Astoria, NY and across the NYC metro area.",
+    heroSubheading: "In-person and remote appointments offered in Astoria, Queens, and across the New York City metro area.",
     content: JSON.stringify({
       intro: "In person and remote appointments offered in Astoria, NY. Email: functionalnurture@gmail.com",
     }),
@@ -431,7 +433,12 @@ async function main() {
     create: { email, passwordHash, name: "Anna Almiroudis" },
   });
 
+  const preserveKeys = new Set(["bookingUrl", "clientPortalUrl"]);
   for (const [key, value] of Object.entries(settings)) {
+    if (preserveKeys.has(key)) {
+      const existing = await prisma.setting.findUnique({ where: { key } });
+      if (existing) continue;
+    }
     await prisma.setting.upsert({
       where: { key },
       update: { value },
@@ -454,6 +461,7 @@ async function main() {
 
   await seedMenu();
   await syncCanonicalMenu();
+  await ensureServingFooterLinks();
 
   for (const service of services) {
     await prisma.service.upsert({
@@ -476,8 +484,8 @@ async function main() {
     data: {
       title: "Private & corporate bookings available",
       description:
-        "No public calendar events are scheduled right now. Email to arrange a private sound bath, cooking class, or corporate wellness workshop in the NYC metro area.",
-      location: "Astoria, NY and remote",
+        "No public calendar events are scheduled right now. Email to arrange a private sound bath, cooking class, or corporate wellness workshop in Astoria, Queens, or anywhere in the NYC metro area.",
+      location: "Astoria, Queens and remote across NYC",
       published: true,
       sortOrder: 1,
     },
@@ -567,8 +575,39 @@ async function seedMenu() {
       { label: "Contact", href: "/contact", location: "footer", groupName: "Connect", sortOrder: 20 },
       { label: "Book a Discovery Call", href: "https://www.berrystreet.co/provider-details/anna-almiroudis", location: "footer", groupName: "Connect", sortOrder: 30, openInNew: true },
       { label: "Client Portal", href: "https://client.practicebetter.io/#/signin", location: "footer", groupName: "Connect", sortOrder: 40, openInNew: true },
+      { label: "Nutritionist in Astoria", href: "/locations/astoria", location: "footer", groupName: "Serving", sortOrder: 10 },
+      { label: "Nutritionist in Queens", href: "/locations/queens", location: "footer", groupName: "Serving", sortOrder: 20 },
+      { label: "Nutritionist in NYC", href: "/locations/nyc", location: "footer", groupName: "Serving", sortOrder: 30 },
+      { label: "Nutritionist in Manhattan", href: "/locations/manhattan", location: "footer", groupName: "Serving", sortOrder: 40 },
+      { label: "Nutritionist in Brooklyn", href: "/locations/brooklyn", location: "footer", groupName: "Serving", sortOrder: 50 },
+      { label: "NYC Metro Area", href: "/locations/metro", location: "footer", groupName: "Serving", sortOrder: 60 },
     ],
   });
+}
+
+async function ensureServingFooterLinks() {
+  const serving = [
+    { label: "Nutritionist in Astoria", href: "/locations/astoria", sortOrder: 10 },
+    { label: "Nutritionist in Queens", href: "/locations/queens", sortOrder: 20 },
+    { label: "Nutritionist in NYC", href: "/locations/nyc", sortOrder: 30 },
+    { label: "Nutritionist in Manhattan", href: "/locations/manhattan", sortOrder: 40 },
+    { label: "Nutritionist in Brooklyn", href: "/locations/brooklyn", sortOrder: 50 },
+    { label: "NYC Metro Area", href: "/locations/metro", sortOrder: 60 },
+  ];
+
+  for (const item of serving) {
+    const existing = await prisma.menuItem.findFirst({
+      where: { location: "footer", href: item.href },
+    });
+    if (existing) continue;
+    await prisma.menuItem.create({
+      data: {
+        ...item,
+        location: "footer",
+        groupName: "Serving",
+      },
+    });
+  }
 }
 
 main()
