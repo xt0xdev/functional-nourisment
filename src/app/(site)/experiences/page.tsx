@@ -6,7 +6,7 @@ import { CtaBand } from "@/components/site/CtaBand";
 export async function generateMetadata() {
   const page = await getPage("experiences");
   return buildMetadata({
-    title: page?.metaTitle || "Experiences",
+    title: page?.metaTitle || "Corporate Wellness Workshops in NYC | Nutrition & Sound Baths",
     description: page?.metaDescription || "",
     path: "/experiences",
   });
@@ -23,11 +23,11 @@ export default async function ExperiencesPage() {
   return (
     <>
       <PageHero
-        eyebrow="Community"
+        eyebrow="Community · NYC, Queens & Astoria"
         heading={page?.heroHeading || ""}
         subheading={page?.heroSubheading}
         image="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=1400&q=80"
-        imageAlt="Hands preparing fresh herbs and whole foods"
+        imageAlt="Hands preparing whole foods for a wellness workshop in New York City"
       />
       <section className="mx-auto max-w-5xl px-4 py-16 md:px-6">
         <p className="max-w-3xl text-lg leading-relaxed text-muted">{content.intro}</p>

@@ -1,18 +1,20 @@
-import { getEvents, getPage } from "@/lib/content";
+import { getEvents, getPage, getSettings, parseContent } from "@/lib/content";
 import { buildMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/site/PageHero";
+import { CtaBand } from "@/components/site/CtaBand";
 
 export async function generateMetadata() {
   const page = await getPage("events");
   return buildMetadata({
-    title: page?.metaTitle || "Events",
+    title: page?.metaTitle || "Nutrition Workshops & Sound Baths in Astoria, NYC",
     description: page?.metaDescription || "",
     path: "/events",
   });
 }
 
 export default async function EventsPage() {
-  const [page, events] = await Promise.all([getPage("events"), getEvents()]);
+  const [page, events, settings] = await Promise.all([getPage("events"), getEvents(), getSettings()]);
+  const content = parseContent<{ intro?: string }>(page?.content || "{}", {});
 
   return (
     <>
@@ -21,9 +23,10 @@ export default async function EventsPage() {
         heading={page?.heroHeading || ""}
         subheading={page?.heroSubheading}
         image="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=80"
-        imageAlt="Ocean horizon from a meditation deck"
+        imageAlt="Calm horizon for sound bath and wellness events in Astoria, Queens"
       />
       <section className="mx-auto max-w-3xl px-4 py-16 md:px-6">
+        {content.intro ? <p className="mb-8 text-lg leading-relaxed text-muted">{content.intro}</p> : null}
         <div className="space-y-5">
           {events.map((event) => (
             <article key={event.id} className="rounded-2xl bg-white p-6 shadow-sm">
@@ -39,6 +42,7 @@ export default async function EventsPage() {
           ))}
         </div>
       </section>
+      <CtaBand berryStreetUrl={settings.berryStreetUrl} bookingUrl={settings.bookingUrl} />
     </>
   );
 }

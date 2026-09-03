@@ -17,11 +17,11 @@ const sans = Outfit({
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
   title: {
-    default: "Functional Nutritionist in NYC | Anna Almiroudis | Functional Nourishment",
+    default: "Nutritionist in Astoria, Queens & NYC | Functional Nourishment",
     template: "%s | Functional Nourishment",
   },
   description:
-    "Anna Almiroudis, MS, CNS, LN, CDN is a functional nutritionist in Astoria serving the NYC metro area with insurance-covered Medical Nutrition Therapy.",
+    "Anna Almiroudis, MS, CNS, LN, CDN is a functional nutritionist in Astoria, Queens offering insurance-covered Medical Nutrition Therapy across New York City.",
   robots: { index: true, follow: true },
 };
 
