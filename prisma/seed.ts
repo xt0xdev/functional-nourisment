@@ -479,17 +479,8 @@ async function main() {
     });
   }
 
-  await prisma.event.deleteMany();
-  await prisma.event.create({
-    data: {
-      title: "Private & corporate bookings available",
-      description:
-        "No public calendar events are scheduled right now. Email to arrange a private sound bath, cooking class, or corporate wellness workshop in Astoria, Queens, or anywhere in the NYC metro area.",
-      location: "Astoria, Queens and remote across NYC",
-      published: true,
-      sortOrder: 1,
-    },
-  });
+  await seedEvents();
+  await seedSampleMedia();
 
   for (const post of posts) {
     await prisma.post.upsert({
@@ -582,6 +573,61 @@ async function seedMenu() {
       { label: "Nutritionist in Brooklyn", href: "/locations/brooklyn", location: "footer", groupName: "Serving", sortOrder: 50 },
       { label: "NYC Metro Area", href: "/locations/metro", location: "footer", groupName: "Serving", sortOrder: 60 },
     ],
+  });
+}
+
+function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/['’]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+}
+
+async function seedEvents() {
+  const count = await prisma.event.count();
+  if (count === 0) {
+    await prisma.event.create({
+      data: {
+        title: "Private & corporate bookings available",
+        slug: "private-corporate-bookings",
+        description:
+          "No public calendar events are scheduled right now. Email to arrange a private sound bath, cooking class, or corporate wellness workshop in Astoria, Queens, or anywhere in the NYC metro area.",
+        location: "Astoria, Queens and remote across NYC",
+        published: true,
+        sortOrder: 1,
+      },
+    });
+  }
+
+  const events = await prisma.event.findMany();
+  const used = new Set(events.map((event) => event.slug).filter(Boolean) as string[]);
+  for (const event of events) {
+    if (event.slug) continue;
+    let slug = slugify(event.title) || `event-${event.id.slice(-6)}`;
+    const base = slug;
+    let n = 2;
+    while (used.has(slug)) slug = `${base}-${n++}`;
+    used.add(slug);
+    await prisma.event.update({ where: { id: event.id }, data: { slug } });
+  }
+}
+
+async function seedSampleMedia() {
+  const url = "/images/anna-almiroudis.webp";
+  const existing = await prisma.media.findFirst({ where: { url } });
+  if (existing) return;
+  await prisma.media.create({
+    data: {
+      filename: "anna-almiroudis.webp",
+      url,
+      mimeType: "image/webp",
+      size: 123300,
+      alt: "Anna Almiroudis, functional nutritionist in Astoria, Queens",
+      caption: "Practitioner portrait",
+    },
   });
 }
 

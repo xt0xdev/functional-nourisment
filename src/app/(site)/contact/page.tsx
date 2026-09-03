@@ -22,8 +22,11 @@ export default async function ContactPage() {
         eyebrow="Say hello"
         heading={page?.heroHeading || ""}
         subheading={page?.heroSubheading}
-        image="https://images.unsplash.com/photo-1467453678174-768ec283a940?auto=format&fit=crop&w=1400&q=80"
-        imageAlt="Tea and a notebook for contacting a nutritionist in Astoria, Queens"
+        image={
+          page?.heroImage ||
+          "https://images.unsplash.com/photo-1467453678174-768ec283a940?auto=format&fit=crop&w=1400&q=80"
+        }
+        imageAlt={page?.heroImageAlt || "Tea and a notebook for contacting a nutritionist in Astoria, Queens"}
       />
       <section className="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-2 md:px-6">
         <div>

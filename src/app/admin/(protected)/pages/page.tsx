@@ -11,7 +11,7 @@ export default async function AdminPagesPage() {
         <div>
           <h1 className="font-serif text-4xl text-forest">Pages</h1>
           <p className="mt-2 text-sm text-muted">
-            Edit existing pages or add a new one. New pages appear at /your-slug and can be added to the site menu.
+            Edit existing pages or add a new one. Choose a hero image from the media library on each page.
           </p>
         </div>
       </div>
@@ -22,9 +22,22 @@ export default async function AdminPagesPage() {
         <button className="rounded-full bg-forest px-5 py-2 text-cream">Add page</button>
       </form>
 
-      <div className="mt-6 divide-y divide-forest/10 rounded-2xl bg-white">
+      <div className="mt-6 overflow-hidden rounded-2xl bg-white">
+        <div className="hidden grid-cols-[72px_1fr_auto] gap-4 border-b border-forest/10 px-4 py-3 text-xs uppercase tracking-wide text-muted md:grid">
+          <span>Hero</span>
+          <span>Page</span>
+          <span>Status</span>
+        </div>
         {pages.map((page) => (
-          <div key={page.id} className="flex flex-wrap items-center justify-between gap-3 p-4">
+          <div key={page.id} className="grid items-center gap-3 border-t border-forest/10 p-4 md:grid-cols-[72px_1fr_auto]">
+            <div className="h-14 w-16 overflow-hidden rounded-lg bg-sand">
+              {page.heroImage ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={page.heroImage} alt={page.heroImageAlt || page.title} className="h-full w-full object-cover" />
+              ) : (
+                <div className="flex h-full items-center justify-center text-[10px] text-muted">—</div>
+              )}
+            </div>
             <Link href={`/admin/pages/${page.id}`} className="hover:underline">
               <p className="font-medium text-forest">{page.title}</p>
               <p className="text-sm text-muted">/{page.slug === "home" ? "" : page.slug}</p>

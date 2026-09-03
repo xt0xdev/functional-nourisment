@@ -2,6 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { savePage } from "../../actions";
+import { MediaPicker } from "@/components/admin/MediaPicker";
+import { InsertImageField } from "@/components/admin/InsertImageField";
 
 export default async function EditPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -18,7 +20,7 @@ export default async function EditPage({ params }: { params: Promise<{ id: strin
       <h1 className="mt-2 font-serif text-4xl text-forest">Edit {page.title}</h1>
       {page.system ? (
         <p className="mt-2 text-sm text-muted">
-          Built-in page. Content can be edited; the slug stays reserved for the designed template.
+          Built-in page. Hero image can come from the media library; the structured content JSON stays for the designed template.
         </p>
       ) : (
         <p className="mt-2 text-sm text-muted">
@@ -56,19 +58,29 @@ export default async function EditPage({ params }: { params: Promise<{ id: strin
           Hero subheading
           <textarea name="heroSubheading" defaultValue={page.heroSubheading} rows={3} className="rounded-xl border border-forest/15 bg-white px-3 py-2" />
         </label>
+        <MediaPicker
+          label="Hero image"
+          name="heroImage"
+          defaultUrl={page.heroImage}
+          help="Pick from the media library or paste a URL in the library dialog."
+        />
         <label className="grid gap-1 text-sm">
-          Hero image URL
-          <input name="heroImage" defaultValue={page.heroImage} className="rounded-xl border border-forest/15 bg-white px-3 py-2" />
+          Hero image alt text
+          <input name="heroImageAlt" defaultValue={page.heroImageAlt} className="rounded-xl border border-forest/15 bg-white px-3 py-2" />
         </label>
-        <label className="grid gap-1 text-sm">
-          {page.system ? "Content JSON" : "Page content"}
-          <textarea
-            name="content"
-            defaultValue={page.content}
-            rows={16}
-            className={`rounded-xl border border-forest/15 bg-white px-3 py-2 ${page.system ? "font-mono text-xs" : ""}`}
-          />
-        </label>
+        {page.system ? (
+          <label className="grid gap-1 text-sm">
+            Content JSON
+            <textarea
+              name="content"
+              defaultValue={page.content}
+              rows={16}
+              className="rounded-xl border border-forest/15 bg-white px-3 py-2 font-mono text-xs"
+            />
+          </label>
+        ) : (
+          <InsertImageField name="content" defaultValue={page.content} label="Page content" />
+        )}
         <label className="flex items-center gap-2 text-sm">
           <input type="checkbox" name="published" defaultChecked={page.published} />
           Published

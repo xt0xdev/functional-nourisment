@@ -4,6 +4,7 @@ import { RESERVED_SLUGS } from "@/lib/menu";
 import { buildMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/site/PageHero";
 import { CtaBand } from "@/components/site/CtaBand";
+import { renderRichText } from "@/lib/rich-text";
 
 function renderBody(content: string) {
   try {
@@ -12,20 +13,12 @@ function renderBody(content: string) {
       return parsed.paragraphs.map((paragraph) => <p key={paragraph.slice(0, 32)}>{paragraph}</p>);
     }
     if (parsed.body) {
-      return parsed.body.split(/\n\n+/).map((block, index) =>
-        block.startsWith("## ") ? (
-          <h2 key={index}>{block.replace(/^## /, "")}</h2>
-        ) : (
-          <p key={index}>{block}</p>
-        ),
-      );
+      return renderRichText(parsed.body);
     }
   } catch {
     /* plain text */
   }
-  return content.split(/\n\n+/).map((block, index) =>
-    block.startsWith("## ") ? <h2 key={index}>{block.replace(/^## /, "")}</h2> : <p key={index}>{block}</p>,
-  );
+  return renderRichText(content);
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -52,6 +45,7 @@ export default async function DynamicPage({ params }: { params: Promise<{ slug: 
         heading={page.heroHeading || page.title}
         subheading={page.heroSubheading}
         image={page.heroImage || undefined}
+        imageAlt={page.heroImageAlt || page.title}
       />
       <section className="prose-fn mx-auto px-4 py-12 md:px-6">{renderBody(page.content)}</section>
       <CtaBand berryStreetUrl={settings.berryStreetUrl} bookingUrl={settings.bookingUrl} />

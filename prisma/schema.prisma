@@ -32,6 +32,7 @@ model Page {
   heroHeading      String
   heroSubheading   String   @default("")
   heroImage        String   @default("")
+  heroImageAlt     String   @default("")
   content          String
   system           Boolean  @default(false)
   published        Boolean  @default(true)
@@ -76,27 +77,60 @@ model Experience {
 }
 
 model Event {
-  id          String    @id @default(cuid())
-  title       String
-  description String
-  startsAt    DateTime?
-  endsAt      DateTime?
-  location    String    @default("")
-  published   Boolean   @default(true)
-  sortOrder   Int       @default(0)
+  id           String       @id @default(cuid())
+  slug         String?      @unique
+  title        String
+  description  String
+  startsAt     DateTime?
+  endsAt       DateTime?
+  location     String       @default("")
+  published    Boolean      @default(true)
+  sortOrder    Int          @default(0)
+  coverImageId String?
+  coverImage   Media?       @relation("EventCover", fields: [coverImageId], references: [id], onDelete: SetNull)
+  images       EventImage[]
+}
+
+/// Image metadata only — never store file bytes in Postgres.
+model Media {
+  id           String       @id @default(cuid())
+  filename     String
+  url          String
+  mimeType     String
+  size         Int
+  width        Int?
+  height       Int?
+  alt          String       @default("")
+  caption      String       @default("")
+  createdAt    DateTime     @default(now())
+  coverEvents  Event[]      @relation("EventCover")
+  eventImages  EventImage[]
+}
+
+model EventImage {
+  id        String @id @default(cuid())
+  eventId   String
+  mediaId   String
+  sortOrder Int    @default(0)
+  event     Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  media     Media  @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  @@index([eventId, sortOrder])
 }
 
 model Post {
-  id              String    @id @default(cuid())
-  slug            String    @unique
-  title           String
-  excerpt         String
-  body            String
-  metaTitle       String
-  metaDescription String
-  published       Boolean   @default(true)
-  publishedAt     DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  id               String   @id @default(cuid())
+  slug             String   @unique
+  title            String
+  excerpt          String
+  body             String
+  metaTitle        String
+  metaDescription  String
+  featuredImage    String   @default("")
+  featuredImageAlt String   @default("")
+  published        Boolean  @default(true)
+  publishedAt      DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }
 
 model Inquiry {

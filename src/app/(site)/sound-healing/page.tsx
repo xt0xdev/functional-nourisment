@@ -27,8 +27,11 @@ export default async function SoundHealingPage() {
         eyebrow="Mind · In person in Astoria"
         heading={page?.heroHeading || ""}
         subheading={page?.heroSubheading}
-        image="https://images.unsplash.com/photo-1600618528240-fb9fc964b853?auto=format&fit=crop&w=1400&q=80"
-        imageAlt="Sound healing bowls for Reiki and sound baths in Astoria, Queens"
+        image={
+          page?.heroImage ||
+          "https://images.unsplash.com/photo-1600618528240-fb9fc964b853?auto=format&fit=crop&w=1400&q=80"
+        }
+        imageAlt={page?.heroImageAlt || "Sound healing bowls for Reiki and sound baths in Astoria, Queens"}
       />
       <section className="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-2 md:px-6">
         <div className="relative min-h-80 overflow-hidden rounded-3xl">

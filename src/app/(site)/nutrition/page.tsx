@@ -32,8 +32,11 @@ export default async function NutritionPage() {
         eyebrow="Body · Astoria, Queens & NYC"
         heading={page?.heroHeading || ""}
         subheading={page?.heroSubheading}
-        image="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1400&q=80"
-        imageAlt="Nourishing bowl for functional nutrition clients in Astoria, Queens, and NYC"
+        image={
+          page?.heroImage ||
+          "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1400&q=80"
+        }
+        imageAlt={page?.heroImageAlt || "Nourishing bowl for functional nutrition clients in Astoria, Queens, and NYC"}
       />
       <section className="mx-auto max-w-4xl px-4 py-16 md:px-6">
         <div className="grid gap-4">

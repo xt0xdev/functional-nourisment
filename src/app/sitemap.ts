@@ -1,11 +1,11 @@
 import type { MetadataRoute } from "next";
-import { getPosts, getPublishedPages } from "@/lib/content";
+import { getEvents, getPosts, getPublishedPages } from "@/lib/content";
 import { locations } from "@/lib/locations";
 import { RESERVED_SLUGS } from "@/lib/menu";
 import { siteUrl } from "@/lib/content";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [posts, pages] = await Promise.all([getPosts(), getPublishedPages()]);
+  const [posts, pages, events] = await Promise.all([getPosts(), getPublishedPages(), getEvents()]);
   const staticPaths = [
     "/",
     "/about",
@@ -46,6 +46,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: post.updatedAt,
       changeFrequency: "monthly" as const,
       priority: 0.7,
+    })),
+    ...events.map((event) => ({
+      url: siteUrl(`/events/${event.slug || event.id}`),
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
     })),
   ];
 }

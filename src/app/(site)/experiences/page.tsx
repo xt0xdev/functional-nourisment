@@ -26,8 +26,11 @@ export default async function ExperiencesPage() {
         eyebrow="Community · NYC, Queens & Astoria"
         heading={page?.heroHeading || ""}
         subheading={page?.heroSubheading}
-        image="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=1400&q=80"
-        imageAlt="Hands preparing whole foods for a wellness workshop in New York City"
+        image={
+          page?.heroImage ||
+          "https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=1400&q=80"
+        }
+        imageAlt={page?.heroImageAlt || "Hands preparing whole foods for a wellness workshop in New York City"}
       />
       <section className="mx-auto max-w-5xl px-4 py-16 md:px-6">
         <p className="max-w-3xl text-lg leading-relaxed text-muted">{content.intro}</p>

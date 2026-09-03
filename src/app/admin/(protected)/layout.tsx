@@ -7,6 +7,7 @@ const nav = [
   { href: "/admin", label: "Overview" },
   { href: "/admin/settings", label: "Site settings" },
   { href: "/admin/pages", label: "Pages" },
+  { href: "/admin/media", label: "Media" },
   { href: "/admin/menu", label: "Navigation" },
   { href: "/admin/services", label: "Services" },
   { href: "/admin/experiences", label: "Experiences" },

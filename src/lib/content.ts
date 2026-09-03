@@ -1,5 +1,6 @@
 import { prisma } from "./prisma";
 import { cache } from "react";
+import { eventMediaInclude } from "./media";
 
 export const getSettings = cache(async () => {
   const rows = await prisma.setting.findMany();
@@ -23,7 +24,18 @@ export const getExperiences = cache(async () => {
 });
 
 export const getEvents = cache(async () => {
-  return prisma.event.findMany({ where: { published: true }, orderBy: { sortOrder: "asc" } });
+  return prisma.event.findMany({
+    where: { published: true },
+    orderBy: [{ sortOrder: "asc" }, { startsAt: "asc" }],
+    include: eventMediaInclude,
+  });
+});
+
+export const getEvent = cache(async (slug: string) => {
+  return prisma.event.findFirst({
+    where: { published: true, OR: [{ slug }, { id: slug }] },
+    include: eventMediaInclude,
+  });
 });
 
 export const getPosts = cache(async () => {

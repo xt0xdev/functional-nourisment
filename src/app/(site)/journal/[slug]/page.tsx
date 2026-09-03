@@ -3,6 +3,7 @@ import { getPost, getPosts } from "@/lib/content";
 import { buildMetadata, JsonLd } from "@/lib/seo";
 import { PageHero } from "@/components/site/PageHero";
 import { siteUrl } from "@/lib/content";
+import { renderRichText } from "@/lib/rich-text";
 
 export async function generateStaticParams() {
   const posts = await getPosts();
@@ -17,30 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: post.metaTitle,
     description: post.metaDescription,
     path: `/journal/${post.slug}`,
-  });
-}
-
-function renderMarkdown(body: string) {
-  return body.split(/\n\n+/).map((block, index) => {
-    if (block.startsWith("## ")) {
-      return (
-        <h2 key={index} className="font-serif text-3xl text-forest">
-          {block.replace(/^## /, "")}
-        </h2>
-      );
-    }
-    if (/^\d+\.\s/.test(block)) {
-      return (
-        <p key={index} className="text-muted">
-          {block}
-        </p>
-      );
-    }
-    return (
-      <p key={index} className="leading-relaxed text-muted">
-        {block}
-      </p>
-    );
+    image: post.featuredImage || undefined,
   });
 }
 
@@ -63,8 +41,13 @@ export default async function JournalPostPage({ params }: { params: Promise<{ sl
           mainEntityOfPage: siteUrl(`/journal/${post.slug}`),
         }}
       />
-      <PageHero heading={post.title} subheading={post.excerpt} />
-      <article className="prose-fn mx-auto px-4 py-16 md:px-6">{renderMarkdown(post.body)}</article>
+      <PageHero
+        heading={post.title}
+        subheading={post.excerpt}
+        image={post.featuredImage || undefined}
+        imageAlt={post.featuredImageAlt || post.title}
+      />
+      <article className="prose-fn mx-auto px-4 py-16 md:px-6">{renderRichText(post.body)}</article>
     </>
   );
 }

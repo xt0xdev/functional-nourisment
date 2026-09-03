@@ -22,8 +22,11 @@ export default async function MeditationPage() {
         eyebrow="Spirit · Astoria, Queens & NYC"
         heading={page?.heroHeading || ""}
         subheading={page?.heroSubheading}
-        image="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=80"
-        imageAlt="Calm ocean view for meditation and breathwork clients in Queens and NYC"
+        image={
+          page?.heroImage ||
+          "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=80"
+        }
+        imageAlt={page?.heroImageAlt || "Calm ocean view for meditation and breathwork clients in Queens and NYC"}
       />
       <section className="mx-auto max-w-3xl px-4 py-16 md:px-6">
         <div className="prose-fn">

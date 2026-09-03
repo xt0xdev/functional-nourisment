@@ -58,6 +58,7 @@ export async function savePage(formData: FormData) {
     heroHeading: String(formData.get("heroHeading") || ""),
     heroSubheading: String(formData.get("heroSubheading") || ""),
     heroImage: String(formData.get("heroImage") || ""),
+    heroImageAlt: String(formData.get("heroImageAlt") || ""),
     content: String(formData.get("content") || ""),
     published: formData.get("published") === "on",
   };
@@ -89,6 +90,7 @@ export async function createPage(formData: FormData) {
       heroHeading: title,
       heroSubheading: "",
       heroImage: "",
+      heroImageAlt: "",
       content: String(formData.get("content") || "Write your page content here.\n\nUse a blank line between paragraphs, or ## for headings."),
       system: false,
       published: false,
@@ -185,28 +187,88 @@ export async function deleteExperience(formData: FormData) {
 
 export async function saveEvent(formData: FormData) {
   await guard();
+  const { uniqueEventSlug } = await import("@/lib/slugs");
   const id = String(formData.get("id") || "");
   const starts = String(formData.get("startsAt") || "");
   const ends = String(formData.get("endsAt") || "");
+  const title = String(formData.get("title") || "");
+  const requestedSlug = String(formData.get("slug") || "").trim();
+  const coverImageId = String(formData.get("coverImageId") || "").trim() || null;
+  const galleryIds = formData.getAll("galleryIds").map(String).filter(Boolean);
+  const slug = await uniqueEventSlug(requestedSlug || title || "event", id || undefined);
+
   const data = {
-    title: String(formData.get("title") || ""),
+    title,
+    slug,
     description: String(formData.get("description") || ""),
     location: String(formData.get("location") || ""),
     startsAt: starts ? new Date(starts) : null,
     endsAt: ends ? new Date(ends) : null,
     published: formData.get("published") === "on",
     sortOrder: Number(formData.get("sortOrder") || 0),
+    coverImageId,
   };
-  if (id) await prisma.event.update({ where: { id }, data });
-  else await prisma.event.create({ data });
+
+  const event = id
+    ? await prisma.event.update({
+        where: { id },
+        data: {
+          ...data,
+          images: {
+            deleteMany: {},
+            create: galleryIds.map((mediaId, index) => ({ mediaId, sortOrder: index })),
+          },
+        },
+      })
+    : await prisma.event.create({
+        data: {
+          ...data,
+          images: {
+            create: galleryIds.map((mediaId, index) => ({ mediaId, sortOrder: index })),
+          },
+        },
+      });
+
   revalidatePath("/admin/events");
   revalidatePath("/events");
+  revalidatePath(`/events/${event.slug}`);
+  revalidatePath(`/admin/events/${event.id}`);
+}
+
+export async function createEvent() {
+  await guard();
+  const { uniqueEventSlug } = await import("@/lib/slugs");
+  const slug = await uniqueEventSlug("untitled-event");
+  const event = await prisma.event.create({
+    data: {
+      title: "Untitled event",
+      slug,
+      description: "",
+      published: false,
+      sortOrder: 99,
+    },
+  });
+  revalidatePath("/admin/events");
+  redirect(`/admin/events/${event.id}`);
+}
+
+export async function toggleEventPublished(formData: FormData) {
+  await guard();
+  const id = String(formData.get("id") || "");
+  const published = formData.get("published") === "on";
+  const event = await prisma.event.update({ where: { id }, data: { published } });
+  revalidatePath("/admin/events");
+  revalidatePath("/events");
+  if (event.slug) revalidatePath(`/events/${event.slug}`);
 }
 
 export async function deleteEvent(formData: FormData) {
   await guard();
-  await prisma.event.delete({ where: { id: String(formData.get("id")) } });
+  const event = await prisma.event.delete({ where: { id: String(formData.get("id")) } });
   revalidatePath("/admin/events");
+  revalidatePath("/events");
+  if (event.slug) revalidatePath(`/events/${event.slug}`);
+  redirect("/admin/events");
 }
 
 export async function savePost(formData: FormData) {
@@ -219,6 +281,8 @@ export async function savePost(formData: FormData) {
     body: String(formData.get("body") || ""),
     metaTitle: String(formData.get("metaTitle") || ""),
     metaDescription: String(formData.get("metaDescription") || ""),
+    featuredImage: String(formData.get("featuredImage") || ""),
+    featuredImageAlt: String(formData.get("featuredImageAlt") || ""),
     published: formData.get("published") === "on",
   };
   if (id) await prisma.post.update({ where: { id }, data });

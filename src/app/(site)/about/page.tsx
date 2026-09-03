@@ -23,8 +23,11 @@ export default async function AboutPage() {
         eyebrow="About · Astoria, Queens & NYC"
         heading={page?.heroHeading || settings.practitionerName}
         subheading={page?.heroSubheading}
-        image="https://images.unsplash.com/photo-1467453678174-768ec283a940?auto=format&fit=crop&w=1400&q=80"
-        imageAlt="Tea and greens at Functional Nourishment, a nutrition practice in Astoria, Queens"
+        image={
+          page?.heroImage ||
+          "https://images.unsplash.com/photo-1467453678174-768ec283a940?auto=format&fit=crop&w=1400&q=80"
+        }
+        imageAlt={page?.heroImageAlt || "Tea and greens at Functional Nourishment, a nutrition practice in Astoria, Queens"}
       />
       <section className="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-[1fr_1.2fr] md:px-6">
         <div className="relative aspect-[3/4] overflow-hidden rounded-3xl">

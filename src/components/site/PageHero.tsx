@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { SmartImage } from "./SmartImage";
 
 export function PageHero({
   eyebrow,
@@ -23,7 +23,7 @@ export function PageHero({
         </div>
         {image ? (
           <div className="relative aspect-[4/3] overflow-hidden rounded-3xl">
-            <Image src={image} alt={imageAlt || heading} fill className="object-cover" priority />
+            <SmartImage src={image} alt={imageAlt || heading} fill className="object-cover" priority sizes="(min-width: 768px) 50vw, 100vw" />
           </div>
         ) : null}
       </div>

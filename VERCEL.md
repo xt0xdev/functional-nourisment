@@ -17,8 +17,17 @@ Also set in Vercel → Settings → Environment Variables (Production + Preview)
 - `ADMIN_EMAIL` — admin login email
 - `ADMIN_PASSWORD` — strong password
 - `NEXT_PUBLIC_SITE_URL` — `https://functional-nourishment.vercel.app` (or your custom domain)
+- `BLOB_READ_WRITE_TOKEN` — from a Vercel Blob store (required for persistent event/page photos)
 
 Redeploy after env vars are saved. Build runs `prisma db push` via `vercel-build`.
+
+## Images vs Neon free limits
+
+The CMS stores **image URLs only** in Postgres (plus alt/caption). Files go to Vercel Blob or `public/uploads`.
+
+Typical Neon free-tier limits (as of 2026): about **0.5 GB storage**, a modest compute/time allowance, and project caps. A few hundred pages/events/posts are kilobytes. A single event photo stored as BYTEA or base64 can be several megabytes — a handful of those would blow the storage quota.
+
+Without `BLOB_READ_WRITE_TOKEN`, uploads write to the serverless disk and disappear on the next deploy. Add Blob before posting real event photos in production.
 
 Default admin after seed:
 

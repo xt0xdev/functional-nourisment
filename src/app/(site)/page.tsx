@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Brain, HeartPulse, Sparkles } from "lucide-react";
+import { SmartImage } from "@/components/site/SmartImage";
 import { getPage, getSettings, parseContent } from "@/lib/content";
 import { bookingLinkProps, resolveBookingUrl } from "@/lib/booking";
 import { buildMetadata, JsonLd, faqPageSchema, practiceFaqs } from "@/lib/seo";
@@ -65,12 +66,16 @@ export default async function HomePage() {
             </div>
           </div>
           <div className="relative aspect-[4/3] overflow-hidden rounded-3xl">
-            <Image
-              src="https://images.unsplash.com/photo-1467453678174-768ec283a940?auto=format&fit=crop&w=1400&q=80"
-              alt="Fresh greens and tea prepared for functional nutrition counseling in Astoria, Queens"
+            <SmartImage
+              src={
+                page?.heroImage ||
+                "https://images.unsplash.com/photo-1467453678174-768ec283a940?auto=format&fit=crop&w=1400&q=80"
+              }
+              alt={page?.heroImageAlt || "Fresh greens and tea prepared for functional nutrition counseling in Astoria, Queens"}
               fill
               priority
               className="object-cover"
+              sizes="(min-width: 768px) 50vw, 100vw"
             />
           </div>
         </div>
