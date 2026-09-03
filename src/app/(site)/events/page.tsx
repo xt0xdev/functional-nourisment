@@ -16,7 +16,13 @@ export default async function EventsPage() {
 
   return (
     <>
-      <PageHero eyebrow="Calendar" heading={page?.heroHeading || ""} subheading={page?.heroSubheading} />
+      <PageHero
+        eyebrow="What's coming up"
+        heading={page?.heroHeading || ""}
+        subheading={page?.heroSubheading}
+        image="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=80"
+        imageAlt="Ocean horizon from a meditation deck"
+      />
       <section className="mx-auto max-w-3xl px-4 py-16 md:px-6">
         <div className="space-y-5">
           {events.map((event) => (

@@ -31,9 +31,26 @@ model Page {
   metaDescription  String
   heroHeading      String
   heroSubheading   String   @default("")
+  heroImage        String   @default("")
   content          String
+  system           Boolean  @default(false)
   published        Boolean  @default(true)
   updatedAt        DateTime @updatedAt
+}
+
+model MenuItem {
+  id        String     @id @default(cuid())
+  label     String
+  href      String     @default("")
+  location  String     @default("header")
+  groupName String     @default("")
+  style     String     @default("link")
+  sortOrder Int        @default(0)
+  visible   Boolean    @default(true)
+  openInNew Boolean    @default(false)
+  parentId  String?
+  parent    MenuItem?  @relation("MenuTree", fields: [parentId], references: [id], onDelete: Cascade)
+  children  MenuItem[] @relation("MenuTree")
 }
 
 model Service {

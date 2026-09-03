@@ -21,6 +21,8 @@ const fields = [
   ["npi", "NPI"],
   ["languages", "Languages"],
   ["footerText", "Footer text"],
+  ["footerBlurb", "Footer description"],
+  ["clientPortalUrl", "Client portal URL"],
 ];
 
 export default async function SettingsPage() {
@@ -34,7 +36,7 @@ export default async function SettingsPage() {
         {fields.map(([key, label]) => (
           <label key={key} className="grid gap-1 text-sm">
             {label}
-            {key === "insurance" || key === "tagline" || key === "bookingNote" || key === "serviceArea" ? (
+            {key === "insurance" || key === "tagline" || key === "bookingNote" || key === "serviceArea" || key === "footerBlurb" ? (
               <textarea
                 name={key}
                 defaultValue={settings[key] || ""}

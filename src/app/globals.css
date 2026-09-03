@@ -1,16 +1,20 @@
 @import "tailwindcss";
 
 @theme {
-  --color-forest: #16332a;
-  --color-moss: #2f5d45;
-  --color-sage: #6b8f71;
-  --color-leaf: #8aa888;
-  --color-cream: #f6f1e7;
-  --color-sand: #ebe3d4;
-  --color-clay: #c4785a;
-  --color-gold: #c4a574;
-  --color-ink: #1c211e;
-  --color-muted: #5b625c;
+  --color-navy: #1a2942;
+  --color-teal: #3ecfc0;
+  --color-teal-dark: #2bb3a6;
+  --color-sky: #e8f2f4;
+  --color-forest: #1a2942;
+  --color-moss: #2aa89c;
+  --color-sage: #4db8ad;
+  --color-leaf: #3ecfc0;
+  --color-cream: #ffffff;
+  --color-sand: #e8f2f4;
+  --color-clay: #2aa89c;
+  --color-gold: #3ecfc0;
+  --color-ink: #1a1f2b;
+  --color-muted: #5a6573;
   --font-serif: "Cormorant Garamond", ui-serif, Georgia, serif;
   --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
 }
@@ -20,14 +24,14 @@ html {
 }
 
 body {
-  background: var(--color-cream);
+  background: #ffffff;
   color: var(--color-ink);
   font-family: var(--font-sans);
 }
 
 ::selection {
-  background: #cfe0c8;
-  color: var(--color-forest);
+  background: #c8f3ee;
+  color: var(--color-navy);
 }
 
 .prose-fn {
@@ -37,14 +41,14 @@ body {
 .prose-fn h2 {
   font-family: var(--font-serif);
   font-size: 2rem;
-  color: var(--color-forest);
+  color: var(--color-navy);
   margin: 2rem 0 0.75rem;
 }
 
 .prose-fn h3 {
   font-family: var(--font-serif);
   font-size: 1.5rem;
-  color: var(--color-moss);
+  color: var(--color-navy);
   margin: 1.5rem 0 0.5rem;
 }
 
@@ -60,6 +64,40 @@ body {
   padding-left: 1.25rem;
 }
 
-.grain {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+.eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-teal-dark);
+  font-weight: 500;
+}
+
+.btn-teal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--color-teal);
+  color: var(--color-navy);
+  padding: 0.75rem 1.4rem;
+  font-weight: 500;
+}
+
+.btn-teal:hover {
+  background: var(--color-teal-dark);
+  color: white;
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid var(--color-navy);
+  color: var(--color-navy);
+  padding: 0.75rem 1.4rem;
+}
+
+.btn-outline:hover {
+  background: var(--color-sky);
 }

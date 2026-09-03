@@ -18,7 +18,13 @@ export default async function BookPage() {
 
   return (
     <>
-      <PageHero eyebrow="Appointments" heading={page?.heroHeading || ""} subheading={page?.heroSubheading} />
+      <PageHero
+        eyebrow="Appointments"
+        heading={page?.heroHeading || ""}
+        subheading={page?.heroSubheading}
+        image="https://images.unsplash.com/photo-1467453678174-768ec283a940?auto=format&fit=crop&w=1400&q=80"
+        imageAlt="A quiet table set for a wellness conversation"
+      />
       <section className="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-2 md:px-6">
         <div className="prose-fn">
           {content.paragraphs.map((paragraph) => (

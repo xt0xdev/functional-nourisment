@@ -16,9 +16,11 @@ export default async function JournalPage() {
   return (
     <>
       <PageHero
-        eyebrow="Journal"
+        eyebrow="News"
         heading="Notes on food, mood, and metro-area care"
         subheading="Practical writing for New Yorkers looking for a nutritionist who takes the whole person seriously."
+        image="https://images.unsplash.com/photo-1456327102063-fb5054efe647?auto=format&fit=crop&w=1400&q=80"
+        imageAlt="Notebook and pen for nutrition writing"
       />
       <section className="mx-auto max-w-4xl px-4 py-16 md:px-6">
         <div className="space-y-6">

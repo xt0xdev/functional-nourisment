@@ -26,6 +26,9 @@ const settings: Record<string, string> = {
   npi: "1326877432",
   languages: "English, Greek",
   footerText: "Functional Nourishment, LLC · Astoria, NY",
+  footerBlurb:
+    "A whole-person approach to health that combines personalized functional nutrition with integrative mind-body practices to address root causes, restore balance, and support lasting well-being.",
+  clientPortalUrl: "https://www.berrystreet.co/provider-details/anna-almiroudis",
 };
 
 const pages = [
@@ -35,16 +38,21 @@ const pages = [
     metaTitle: "Functional Nutritionist in NYC | Anna Almiroudis, MS, CNS | Astoria",
     metaDescription:
       "Anna Almiroudis, MS, CNS, LN, CDN is a functional nutritionist in Astoria serving the NYC metro area. Insurance-covered medical nutrition therapy for gut health, cardiometabolic health, weight, and mental health.",
-    heroHeading: "Guide your journey back to inner balance and wholeness.",
+    heroHeading: "Nourishing your whole self from the inside out.",
     heroSubheading:
-      "Functional Nourishment is a clinical nutrition and integrative wellness practice in Astoria, serving clients across New York City and the metro area through remote Medical Nutrition Therapy and in-person mind-body care.",
+      "Holistic functional nutrition and mind-body modalities designed to help you find balance, healing, and sustainable vitality.",
     content: JSON.stringify({
       intro:
-        "Optimal health and wellness is not just about the absence of disease, it’s an intricate balance of your mental, emotional, spiritual and physical health. Functional Nourishment is here to guide you on your journey back to inner balance and wholeness.",
-      mind: "Your mind is the compass of your holistic well-being. The thoughts and emotions you foster, your perception and belief-system, and your ability to cope with stress all have an impact on your physical, emotional and spiritual health.",
-      body: "Your body is the foundation of your holistic well-being. It is the sacred vessel that carries you through life. When your body is healthy, nourished, energized and balanced, it creates the foundational strength and stability for other parts of you to flourish.",
+        "Holistic functional nutrition and mind-body modalities designed to help you find balance, healing, and sustainable vitality.",
+      mind: "Sound healing, meditation and breathwork to quiet the nervous system, deepen self-awareness, and restore mental clarity.",
+      body: "Functional nutrition counseling and medical nutrition therapy tailored to your biochemistry, lifestyle, and root-cause goals.",
       spirit:
-        "Your spirit is the essence of your holistic well-being. It is the thread that weaves purpose, meaning and connection into your life. When your spirit feels nourished, you experience a deeper sense of peace, belonging and alignment with your true being.",
+        "Meditation, breathwork and sound bath experiences that reconnect you with purpose, peace, and a sense of inner alignment.",
+      quote: "True nourishment begins with listening to the body.",
+      practitioner:
+        "As a board certified nutrition specialist, licensed nutritionist, certified dietitian-nutritionist and certified holistic health coach based in Astoria, NY, I bridge the gap between clinical science and intuitive wellness.",
+      practitionerMore:
+        "My practice is rooted in functional nutrition and medical nutrition therapy, with a whole-person view of health. I consider your bio-individuality, your environment and your emotional well-being together, because lasting change rarely comes from a meal plan alone.",
       support: [
         "Educating, guiding and supporting you with healthy lifestyle and diet practices specific to your health condition so that you feel empowered and in charge of your health.",
         "Using a client-centered, food-first, functional nutrition approach that is tailored to your unique lifestyle and bio-individuality.",
@@ -434,9 +442,16 @@ async function main() {
     await prisma.page.upsert({
       where: { slug: page.slug },
       update: page,
-      create: page,
+      create: { ...page, system: true },
     });
   }
+
+  await prisma.page.updateMany({
+    where: { slug: { in: pages.map((page) => page.slug) } },
+    data: { system: true },
+  });
+
+  await seedMenu();
 
   for (const service of services) {
     await prisma.service.upsert({
@@ -476,6 +491,61 @@ async function main() {
 
   console.log("Seed complete.");
   console.log(`Admin login: ${email}`);
+}
+
+async function seedMenu() {
+  const existing = await prisma.menuItem.count();
+  if (existing > 0) return;
+
+  const services = await prisma.menuItem.create({
+    data: {
+      label: "Services",
+      href: "",
+      location: "header",
+      sortOrder: 10,
+      style: "link",
+    },
+  });
+  const community = await prisma.menuItem.create({
+    data: {
+      label: "Community",
+      href: "",
+      location: "header",
+      sortOrder: 20,
+      style: "link",
+    },
+  });
+
+  const headerChildren = [
+    { parentId: services.id, label: "Nourish Mind", href: "/sound-healing", sortOrder: 11 },
+    { parentId: services.id, label: "Nourish Body", href: "/nutrition", sortOrder: 12 },
+    { parentId: services.id, label: "Nourish Spirit", href: "/meditation", sortOrder: 13 },
+    { parentId: community.id, label: "Events", href: "/events", sortOrder: 21 },
+    { parentId: community.id, label: "Wellness Experiences", href: "/experiences", sortOrder: 22 },
+    { parentId: community.id, label: "News", href: "/journal", sortOrder: 23 },
+  ];
+  for (const item of headerChildren) {
+    await prisma.menuItem.create({ data: { ...item, location: "header" } });
+  }
+
+  await prisma.menuItem.createMany({
+    data: [
+      { label: "About", href: "/about", location: "header", sortOrder: 30, style: "link" },
+      { label: "Contact", href: "/contact", location: "header", sortOrder: 40, style: "link" },
+      { label: "Client Portal", href: "/book", location: "header", sortOrder: 50, style: "ghost" },
+      { label: "Book a Discovery Call", href: "/book", location: "header", sortOrder: 60, style: "cta" },
+      { label: "Nourish Mind", href: "/sound-healing", location: "footer", groupName: "Services", sortOrder: 10 },
+      { label: "Nourish Body", href: "/nutrition", location: "footer", groupName: "Services", sortOrder: 20 },
+      { label: "Nourish Spirit", href: "/meditation", location: "footer", groupName: "Services", sortOrder: 30 },
+      { label: "Events", href: "/events", location: "footer", groupName: "Community", sortOrder: 10 },
+      { label: "Wellness Experiences", href: "/experiences", location: "footer", groupName: "Community", sortOrder: 20 },
+      { label: "News", href: "/journal", location: "footer", groupName: "Community", sortOrder: 30 },
+      { label: "About", href: "/about", location: "footer", groupName: "Connect", sortOrder: 10 },
+      { label: "Contact", href: "/contact", location: "footer", groupName: "Connect", sortOrder: 20 },
+      { label: "Book a Discovery Call", href: "/book", location: "footer", groupName: "Connect", sortOrder: 30 },
+      { label: "Client Portal", href: "/book", location: "footer", groupName: "Connect", sortOrder: 40 },
+    ],
+  });
 }
 
 main()

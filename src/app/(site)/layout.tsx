@@ -3,17 +3,22 @@ export const dynamic = "force-dynamic";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { getSettings } from "@/lib/content";
+import { getFooterMenu, getHeaderMenu } from "@/lib/menu";
 import { JsonLd, practiceSchema } from "@/lib/seo";
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
-  const settings = await getSettings();
+  const [settings, menu, footerGroups] = await Promise.all([
+    getSettings(),
+    getHeaderMenu(),
+    getFooterMenu(),
+  ]);
 
   return (
     <>
       <JsonLd data={practiceSchema(settings)} />
-      <Header />
+      <Header menu={menu} />
       <main>{children}</main>
-      <Footer settings={settings} />
+      <Footer settings={settings} groups={footerGroups} />
     </>
   );
 }

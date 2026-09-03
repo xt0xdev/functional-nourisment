@@ -1,21 +1,31 @@
+import Image from "next/image";
+
 export function PageHero({
   eyebrow,
   heading,
   subheading,
+  image,
+  imageAlt,
 }: {
   eyebrow?: string;
   heading: string;
   subheading?: string;
+  image?: string;
+  imageAlt?: string;
 }) {
   return (
-    <section className="relative overflow-hidden bg-forest text-cream">
-      <div className="grain absolute inset-0 opacity-40" />
-      <div className="relative mx-auto max-w-4xl px-4 py-16 md:px-6 md:py-24">
-        {eyebrow ? (
-          <p className="text-xs uppercase tracking-[0.28em] text-gold">{eyebrow}</p>
+    <section className="bg-white">
+      <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-14 md:grid-cols-2 md:px-6 md:py-20">
+        <div>
+          {eyebrow ? <p className="eyebrow">{eyebrow}</p> : null}
+          <h1 className="mt-3 font-serif text-4xl leading-tight text-navy md:text-6xl">{heading}</h1>
+          {subheading ? <p className="mt-5 max-w-xl text-lg text-muted">{subheading}</p> : null}
+        </div>
+        {image ? (
+          <div className="relative aspect-[4/3] overflow-hidden rounded-3xl">
+            <Image src={image} alt={imageAlt || heading} fill className="object-cover" priority />
+          </div>
         ) : null}
-        <h1 className="mt-3 font-serif text-4xl leading-tight md:text-6xl">{heading}</h1>
-        {subheading ? <p className="mt-5 max-w-2xl text-lg text-cream/80">{subheading}</p> : null}
       </div>
     </section>
   );

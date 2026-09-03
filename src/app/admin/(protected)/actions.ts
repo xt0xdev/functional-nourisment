@@ -29,20 +29,90 @@ export async function saveSettings(formData: FormData) {
 
 export async function savePage(formData: FormData) {
   await guard();
-  const id = String(formData.get("id"));
-  await prisma.page.update({
-    where: { id },
+  const id = String(formData.get("id") || "");
+  const data = {
+    title: String(formData.get("title") || ""),
+    slug: String(formData.get("slug") || ""),
+    metaTitle: String(formData.get("metaTitle") || ""),
+    metaDescription: String(formData.get("metaDescription") || ""),
+    heroHeading: String(formData.get("heroHeading") || ""),
+    heroSubheading: String(formData.get("heroSubheading") || ""),
+    heroImage: String(formData.get("heroImage") || ""),
+    content: String(formData.get("content") || ""),
+    published: formData.get("published") === "on",
+  };
+  if (id) {
+    await prisma.page.update({ where: { id }, data });
+  } else {
+    await prisma.page.create({ data: { ...data, system: false } });
+  }
+  revalidatePath("/", "layout");
+}
+
+export async function createPage(formData: FormData) {
+  await guard();
+  const { RESERVED_SLUGS, slugify } = await import("@/lib/menu");
+  const title = String(formData.get("title") || "New page");
+  let slug = slugify(String(formData.get("slug") || title));
+  if (!slug || RESERVED_SLUGS.has(slug)) {
+    slug = `${slug || "page"}-${Date.now().toString().slice(-4)}`;
+  }
+  const existing = await prisma.page.findUnique({ where: { slug } });
+  if (existing) slug = `${slug}-${Date.now().toString().slice(-4)}`;
+
+  const page = await prisma.page.create({
     data: {
-      title: String(formData.get("title") || ""),
-      metaTitle: String(formData.get("metaTitle") || ""),
+      title,
+      slug,
+      metaTitle: title,
       metaDescription: String(formData.get("metaDescription") || ""),
-      heroHeading: String(formData.get("heroHeading") || ""),
-      heroSubheading: String(formData.get("heroSubheading") || ""),
-      content: String(formData.get("content") || ""),
-      published: formData.get("published") === "on",
+      heroHeading: title,
+      heroSubheading: "",
+      heroImage: "",
+      content: String(formData.get("content") || "Write your page content here.\n\nUse a blank line between paragraphs, or ## for headings."),
+      system: false,
+      published: false,
     },
   });
   revalidatePath("/", "layout");
+  redirect(`/admin/pages/${page.id}`);
+}
+
+export async function deletePage(formData: FormData) {
+  await guard();
+  const page = await prisma.page.findUnique({ where: { id: String(formData.get("id")) } });
+  if (!page || page.system) return;
+  await prisma.page.delete({ where: { id: page.id } });
+  revalidatePath("/", "layout");
+  revalidatePath("/admin/pages");
+}
+
+export async function saveMenuItem(formData: FormData) {
+  await guard();
+  const id = String(formData.get("id") || "");
+  const parentId = String(formData.get("parentId") || "");
+  const data = {
+    label: String(formData.get("label") || ""),
+    href: String(formData.get("href") || ""),
+    location: String(formData.get("location") || "header"),
+    groupName: String(formData.get("groupName") || ""),
+    style: String(formData.get("style") || "link"),
+    sortOrder: Number(formData.get("sortOrder") || 0),
+    visible: formData.get("visible") === "on",
+    openInNew: formData.get("openInNew") === "on",
+    parentId: parentId || null,
+  };
+  if (id) await prisma.menuItem.update({ where: { id }, data });
+  else await prisma.menuItem.create({ data });
+  revalidatePath("/", "layout");
+  revalidatePath("/admin/menu");
+}
+
+export async function deleteMenuItem(formData: FormData) {
+  await guard();
+  await prisma.menuItem.delete({ where: { id: String(formData.get("id")) } });
+  revalidatePath("/", "layout");
+  revalidatePath("/admin/menu");
 }
 
 export async function saveService(formData: FormData) {

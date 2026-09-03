@@ -1,10 +1,11 @@
 import type { MetadataRoute } from "next";
-import { getPosts } from "@/lib/content";
+import { getPosts, getPublishedPages } from "@/lib/content";
 import { locations } from "@/lib/locations";
+import { RESERVED_SLUGS } from "@/lib/menu";
 import { siteUrl } from "@/lib/content";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const posts = await getPosts();
+  const [posts, pages] = await Promise.all([getPosts(), getPublishedPages()]);
   const staticPaths = [
     "/",
     "/about",
@@ -32,6 +33,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly" as const,
       priority: 0.9,
     })),
+    ...pages
+      .filter((page) => page.slug !== "home" && !RESERVED_SLUGS.has(page.slug))
+      .map((page) => ({
+        url: siteUrl(`/${page.slug}`),
+        lastModified: page.updatedAt,
+        changeFrequency: "weekly" as const,
+        priority: 0.7,
+      })),
     ...posts.map((post) => ({
       url: siteUrl(`/journal/${post.slug}`),
       lastModified: post.updatedAt,

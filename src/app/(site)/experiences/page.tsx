@@ -22,7 +22,13 @@ export default async function ExperiencesPage() {
 
   return (
     <>
-      <PageHero eyebrow="Workshops" heading={page?.heroHeading || ""} subheading={page?.heroSubheading} />
+      <PageHero
+        eyebrow="Community"
+        heading={page?.heroHeading || ""}
+        subheading={page?.heroSubheading}
+        image="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=1400&q=80"
+        imageAlt="Hands preparing fresh herbs and whole foods"
+      />
       <section className="mx-auto max-w-5xl px-4 py-16 md:px-6">
         <p className="max-w-3xl text-lg leading-relaxed text-muted">{content.intro}</p>
         <div className="mt-10 grid gap-6">

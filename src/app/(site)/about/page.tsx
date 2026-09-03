@@ -23,6 +23,8 @@ export default async function AboutPage() {
         eyebrow="About"
         heading={page?.heroHeading || settings.practitionerName}
         subheading={page?.heroSubheading}
+        image="https://images.unsplash.com/photo-1467453678174-768ec283a940?auto=format&fit=crop&w=1400&q=80"
+        imageAlt="Tea, greens, and a journal on a table"
       />
       <section className="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-[1fr_1.2fr] md:px-6">
         <div className="relative aspect-[3/4] overflow-hidden rounded-3xl">
