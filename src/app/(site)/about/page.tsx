@@ -29,10 +29,10 @@ export default async function AboutPage() {
       <section className="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-[1fr_1.2fr] md:px-6">
         <div className="relative aspect-[3/4] overflow-hidden rounded-3xl">
           <Image
-            src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1200&q=80"
-            alt="Fresh herbs and botanicals representing herbal medicine and functional nutrition"
+            src="/images/anna-almiroudis.png"
+            alt="Anna Almiroudis, MS, CNS, LN, CDN, CHHC"
             fill
-            className="object-cover"
+            className="object-cover object-top"
           />
         </div>
         <div className="prose-fn">
