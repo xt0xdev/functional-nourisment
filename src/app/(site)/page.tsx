@@ -3,13 +3,13 @@ import Link from "next/link";
 import { Brain, HeartPulse, Sparkles } from "lucide-react";
 import { getPage, getSettings, parseContent } from "@/lib/content";
 import { bookingLinkProps, resolveBookingUrl } from "@/lib/booking";
-import { buildMetadata, JsonLd } from "@/lib/seo";
+import { buildMetadata, JsonLd, faqPageSchema, practiceFaqs } from "@/lib/seo";
 import { CtaBand } from "@/components/site/CtaBand";
 
 export async function generateMetadata() {
   const page = await getPage("home");
   return buildMetadata({
-    title: page?.metaTitle || "Functional Nutritionist in NYC | Anna Almiroudis",
+    title: page?.metaTitle || "Nutritionist in Astoria, Queens & NYC | Anna Almiroudis",
     description: page?.metaDescription || "",
     path: "/",
   });
@@ -34,21 +34,6 @@ export default async function HomePage() {
     spirit: "",
   });
 
-  const faq = [
-    {
-      q: "Do you take insurance for nutrition counseling in NYC?",
-      a: "Yes. UnitedHealthcare, Aetna, and Blue Cross Blue Shield can be booked through Berry Street.",
-    },
-    {
-      q: "Where is Functional Nourishment located?",
-      a: "The practice is based in Astoria, NY. Nutrition visits are remote across the NYC metro area. Reiki and sound baths are offered in person in Astoria.",
-    },
-    {
-      q: "What conditions do you treat?",
-      a: "Cardiometabolic health, weight management, gastrointestinal disorders, and mental health nutrition — including IBS, celiac disease, prediabetes, diabetes, cholesterol, and stress-related outcomes.",
-    },
-  ];
-
   const pillars = [
     { href: "/sound-healing", title: "Nourish Mind", text: content.mind, icon: Brain },
     { href: "/nutrition", title: "Nourish Body", text: content.body, icon: HeartPulse },
@@ -57,25 +42,19 @@ export default async function HomePage() {
 
   return (
     <>
-      <JsonLd
-        data={{
-          "@context": "https://schema.org",
-          "@type": "FAQPage",
-          mainEntity: faq.map((item) => ({
-            "@type": "Question",
-            name: item.q,
-            acceptedAnswer: { "@type": "Answer", text: item.a },
-          })),
-        }}
-      />
+      <JsonLd data={faqPageSchema(practiceFaqs)} />
 
       <section className="bg-background">
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 md:grid-cols-2 md:px-6 md:py-24">
           <div>
-            <h1 className="font-serif text-4xl leading-tight text-primary md:text-6xl">
+            <p className="eyebrow">Functional nutritionist in Astoria, Queens &amp; NYC</p>
+            <h1 className="mt-3 font-serif text-4xl leading-tight text-primary md:text-6xl">
               Nourishing your <em className="italic">whole self</em> from the inside out.
             </h1>
-            <p className="mt-5 max-w-xl text-lg text-muted">{content.intro}</p>
+            <p className="mt-5 max-w-xl text-lg text-muted">
+              {content.intro ||
+                "Holistic functional nutrition and mind-body care from Astoria, Queens — serving New York City by telehealth, with in-person Reiki and sound baths locally."}
+            </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <a className="btn-primary" {...bookingLinkProps(resolveBookingUrl(settings))}>
                 Book a Discovery Call
@@ -88,7 +67,7 @@ export default async function HomePage() {
           <div className="relative aspect-[4/3] overflow-hidden rounded-3xl">
             <Image
               src="https://images.unsplash.com/photo-1467453678174-768ec283a940?auto=format&fit=crop&w=1400&q=80"
-              alt="Fresh greens, tea, and a journal on a table"
+              alt="Fresh greens and tea prepared for functional nutrition counseling in Astoria, Queens"
               fill
               priority
               className="object-cover"
@@ -122,7 +101,7 @@ export default async function HomePage() {
           <div className="relative aspect-[4/5] overflow-hidden rounded-3xl">
             <Image
               src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1200&q=80"
-              alt="Colorful bowl of vegetables representing nourishing food"
+              alt="Nourishing bowl of vegetables for Medical Nutrition Therapy clients in NYC and Queens"
               fill
               className="object-cover"
             />
@@ -135,7 +114,7 @@ export default async function HomePage() {
             <h2 className="mt-3 font-serif text-4xl text-primary md:text-5xl">Anna Almiroudis</h2>
             <p className="mt-5 leading-relaxed text-muted">
               {content.practitioner ||
-                "As a board certified nutrition specialist, licensed nutritionist, certified dietitian-nutritionist and certified holistic health coach based in Astoria, NY, I bridge the gap between clinical science and intuitive wellness."}
+                "As a board certified nutrition specialist, licensed nutritionist, certified dietitian-nutritionist and certified holistic health coach based in Astoria, Queens, I bridge the gap between clinical science and intuitive wellness for clients across New York City."}
             </p>
             <p className="mt-4 leading-relaxed text-muted">
               {content.practitionerMore ||
@@ -144,6 +123,23 @@ export default async function HomePage() {
             <Link href="/about" className="mt-6 inline-flex text-teal hover:underline">
               Read more about Anna →
             </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-background">
+        <div className="mx-auto max-w-6xl px-4 py-16 md:px-6">
+          <p className="eyebrow">Common questions</p>
+          <h2 className="mt-3 font-serif text-4xl text-primary md:text-5xl">
+            Nutrition care in Astoria, Queens, and New York City
+          </h2>
+          <div className="mt-10 grid gap-5 md:grid-cols-2">
+            {practiceFaqs.map((item) => (
+              <article key={item.q} className="rounded-3xl bg-mist p-6">
+                <h3 className="font-serif text-2xl text-primary">{item.q}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted">{item.a}</p>
+              </article>
+            ))}
           </div>
         </div>
       </section>

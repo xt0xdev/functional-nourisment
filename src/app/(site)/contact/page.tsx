@@ -2,11 +2,12 @@ import { getPage, getSettings } from "@/lib/content";
 import { buildMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/site/PageHero";
 import { ContactForm } from "@/components/site/ContactForm";
+import { ServiceArea } from "@/components/site/ServiceArea";
 
 export async function generateMetadata() {
   const page = await getPage("contact");
   return buildMetadata({
-    title: page?.metaTitle || "Contact",
+    title: page?.metaTitle || "Contact a Nutritionist in Astoria, Queens & NYC",
     description: page?.metaDescription || "",
     path: "/contact",
   });
@@ -22,12 +23,12 @@ export default async function ContactPage() {
         heading={page?.heroHeading || ""}
         subheading={page?.heroSubheading}
         image="https://images.unsplash.com/photo-1467453678174-768ec283a940?auto=format&fit=crop&w=1400&q=80"
-        imageAlt="Tea and a notebook for getting in touch"
+        imageAlt="Tea and a notebook for contacting a nutritionist in Astoria, Queens"
       />
       <section className="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-2 md:px-6">
         <div>
           <p className="text-lg text-muted">
-            In-person and remote appointments offered in Astoria, NY and across the NYC metro area.
+            In-person mind-body sessions in Astoria, Queens, and remote nutrition counseling across New York City.
           </p>
           <p className="mt-6 text-forest">
             Email:{" "}
@@ -49,6 +50,7 @@ export default async function ContactPage() {
           <ContactForm defaultTopic="General" />
         </div>
       </section>
+      <ServiceArea intro="Whether you live in Astoria, elsewhere in Queens, or across New York City, you can reach Anna for remote nutrition care or in-person mind-body sessions." />
     </>
   );
 }

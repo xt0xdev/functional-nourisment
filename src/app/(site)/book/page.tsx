@@ -7,7 +7,7 @@ import { ContactForm } from "@/components/site/ContactForm";
 export async function generateMetadata() {
   const page = await getPage("book");
   return buildMetadata({
-    title: page?.metaTitle || "Book",
+    title: page?.metaTitle || "Book a Nutritionist in Astoria, Queens & NYC",
     description: page?.metaDescription || "",
     path: "/book",
   });
@@ -20,11 +20,11 @@ export default async function BookPage() {
   return (
     <>
       <PageHero
-        eyebrow="Appointments"
+        eyebrow="Appointments · Astoria, Queens & NYC"
         heading={page?.heroHeading || ""}
         subheading={page?.heroSubheading}
         image="https://images.unsplash.com/photo-1467453678174-768ec283a940?auto=format&fit=crop&w=1400&q=80"
-        imageAlt="A quiet table set for a wellness conversation"
+        imageAlt="A quiet table for booking nutrition counseling in Astoria, Queens, and NYC"
       />
       <section className="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-2 md:px-6">
         <div className="prose-fn">

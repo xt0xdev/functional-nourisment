@@ -6,7 +6,7 @@ import { CtaBand } from "@/components/site/CtaBand";
 export async function generateMetadata() {
   const page = await getPage("nutrition");
   return buildMetadata({
-    title: page?.metaTitle || "Nutrition",
+    title: page?.metaTitle || "Nutritionist in Queens & NYC | Functional Nutrition Counseling",
     description: page?.metaDescription || "",
     path: "/nutrition",
   });
@@ -29,11 +29,11 @@ export default async function NutritionPage() {
   return (
     <>
       <PageHero
-        eyebrow="Body"
+        eyebrow="Body · Astoria, Queens & NYC"
         heading={page?.heroHeading || ""}
         subheading={page?.heroSubheading}
         image="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1400&q=80"
-        imageAlt="Colorful bowl of vegetables and healthy fats"
+        imageAlt="Nourishing bowl for functional nutrition clients in Astoria, Queens, and NYC"
       />
       <section className="mx-auto max-w-4xl px-4 py-16 md:px-6">
         <div className="grid gap-4">

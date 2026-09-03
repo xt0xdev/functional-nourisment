@@ -7,7 +7,7 @@ import { CtaBand } from "@/components/site/CtaBand";
 export async function generateMetadata() {
   const page = await getPage("about");
   return buildMetadata({
-    title: page?.metaTitle || "About",
+    title: page?.metaTitle || "About Anna Almiroudis | Functional Nutritionist in Astoria, NYC",
     description: page?.metaDescription || "",
     path: "/about",
   });
@@ -20,17 +20,17 @@ export default async function AboutPage() {
   return (
     <>
       <PageHero
-        eyebrow="About"
+        eyebrow="About · Astoria, Queens & NYC"
         heading={page?.heroHeading || settings.practitionerName}
         subheading={page?.heroSubheading}
         image="https://images.unsplash.com/photo-1467453678174-768ec283a940?auto=format&fit=crop&w=1400&q=80"
-        imageAlt="Tea, greens, and a journal on a table"
+        imageAlt="Tea and greens at Functional Nourishment, a nutrition practice in Astoria, Queens"
       />
       <section className="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-[1fr_1.2fr] md:px-6">
         <div className="relative aspect-[3/4] overflow-hidden rounded-3xl">
           <Image
             src="/images/anna-almiroudis.webp"
-            alt="Anna Almiroudis, MS, CNS, LN, CDN, CHHC"
+            alt="Anna Almiroudis, functional nutritionist in Astoria, Queens, serving New York City"
             fill
             className="object-cover object-top"
           />
