@@ -3,6 +3,7 @@ import { getPage, getSettings, parseContent } from "@/lib/content";
 import { buildMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/site/PageHero";
 import { CtaBand } from "@/components/site/CtaBand";
+import { CHILDRENS_BOOK_NOTE, PRACTITIONER_CREDIT } from "@/lib/site-defaults";
 
 export async function generateMetadata() {
   const page = await getPage("about");
@@ -52,6 +53,8 @@ export default async function AboutPage() {
             <li>Karuna® and Usui Reiki Master</li>
             <li>Sound Bath & Meditation Facilitator</li>
           </ul>
+          <p className="mt-8 text-sm text-muted">{PRACTITIONER_CREDIT}</p>
+          <p className="mt-4 text-sm leading-relaxed text-muted">{CHILDRENS_BOOK_NOTE}</p>
         </div>
       </section>
       <CtaBand berryStreetUrl={settings.berryStreetUrl} bookingUrl={settings.bookingUrl} />

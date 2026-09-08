@@ -47,8 +47,8 @@ export function Header({ menu, bookingUrl }: { menu: MenuNode[]; bookingUrl?: st
   return (
     <header className="sticky top-0 z-50 border-b border-primary/10 bg-background/95 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 md:px-6">
-        <Link href="/" className="flex items-center gap-2 text-primary" onClick={() => setOpen(false)}>
-          <Logo className="h-8 w-8" />
+        <Link href="/" className="flex items-center gap-3 text-primary" onClick={() => setOpen(false)}>
+          <Logo className="h-12 w-12 md:h-14 md:w-14" priority />
           <span className="font-serif text-xl tracking-wide md:text-2xl">
             Functional <em className="italic">Nourishment</em>
           </span>

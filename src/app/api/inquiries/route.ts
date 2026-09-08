@@ -1,12 +1,15 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { INQUIRY_SOURCES } from "@/lib/site-defaults";
 
 const schema = z.object({
   name: z.string().min(1).max(120),
   email: z.string().email().max(160),
   phone: z.string().max(40).optional().default(""),
   topic: z.string().max(80).optional().default("General"),
+  source: z.enum(INQUIRY_SOURCES),
+  referredBy: z.string().max(160).optional().default(""),
   message: z.string().min(1).max(4000),
 });
 

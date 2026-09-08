@@ -57,6 +57,29 @@ export default async function EditEventPage({ params }: { params: Promise<{ id: 
             <input type="datetime-local" name="endsAt" defaultValue={dtLocal(event.endsAt)} className="rounded-xl border border-forest/15 bg-white px-3 py-2" />
           </label>
         </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <label className="grid gap-1 text-sm">
+            Stripe payment link
+            <input
+              name="stripeUrl"
+              defaultValue={event.stripeUrl}
+              placeholder="https://book.stripe.com/..."
+              className="rounded-xl border border-forest/15 bg-white px-3 py-2"
+            />
+          </label>
+          <label className="grid gap-1 text-sm">
+            PayPal payment link
+            <input
+              name="paypalUrl"
+              defaultValue={event.paypalUrl}
+              placeholder="https://www.paypal.com/..."
+              className="rounded-xl border border-forest/15 bg-white px-3 py-2"
+            />
+          </label>
+        </div>
+        <p className="text-xs text-muted">
+          Leave blank to use the default Sound Bath payment links from Site settings.
+        </p>
         <MediaPicker
           label="Cover image"
           name="coverImageUrl"

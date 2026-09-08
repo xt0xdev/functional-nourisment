@@ -14,6 +14,8 @@ export type LocationPage = {
   paragraphs: string[];
   neighborhoods: string[];
   faqs: LocationFaq[];
+  footerLabel?: string;
+  chipLabel?: string;
 };
 
 export const primaryServiceAreas = [
@@ -214,11 +216,51 @@ export const locations: LocationPage[] = [
       },
     ],
   },
+  {
+    slug: "new-york-state",
+    name: "New York State",
+    region: "Telehealth",
+    title: "New York State Telehealth Nutrition | Functional Nourishment",
+    description:
+      "Personalized, evidence-based functional nutrition by telehealth throughout New York State, with a home practice in Astoria, Queens.",
+    heading: "Functional nutrition by telehealth across New York State",
+    intro:
+      "If you live in New York State and want nutrition care that looks at the whole picture of your health, telehealth visits make it possible to work together without traveling into the city.",
+    paragraphs: [
+      "Functional Nourishment is based in Astoria, Queens. Nutrition appointments are offered by telehealth throughout New York State, so you can meet from home whether you are upstate, in the Hudson Valley, on Long Island, or elsewhere in New York.",
+      "Care is personalized and evidence-based. Together we look beyond individual symptoms to understand what may be contributing to how you feel, then build a nutrition plan that supports you as a whole person.",
+      "Meditation and sound bath experiences are offered locally in the NYC area. Nutrition counseling stays virtual so it can travel with you across the state.",
+      "If you are using insurance, you can book a nutrition appointment directly through Berry Street. If you would like to talk first, a complimentary 20-minute discovery call is available.",
+    ],
+    neighborhoods: [
+      "Hudson Valley",
+      "Long Island",
+      "Westchester",
+      "Capital Region",
+      "Western New York",
+      "Central New York",
+      "Finger Lakes",
+    ],
+    faqs: [
+      {
+        q: "Can I work with you if I live outside New York City?",
+        a: "Yes. Telehealth nutrition services are available throughout New York State. Meditation and sound bath experiences are offered locally in the NYC area.",
+      },
+      {
+        q: "Do I need to come to Astoria for nutrition appointments?",
+        a: "No. Nutrition visits are remote. The Astoria, Queens practice is the home base; telehealth is how we meet across New York State.",
+      },
+    ],
+    footerLabel: "New York State telehealth",
+    chipLabel: "New York State telehealth",
+  },
 ];
 
 export const locationLinks = locations.map((location) => ({
   href: `/locations/${location.slug}`,
   label: location.name,
+  footerLabel: location.footerLabel || `Nutritionist in ${location.name}`,
+  chipLabel: location.chipLabel || `Nutritionist in ${location.name}`,
 }));
 
 export function getLocation(slug: string) {

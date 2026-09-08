@@ -14,6 +14,7 @@ const nav = [
   { href: "/admin/events", label: "Events" },
   { href: "/admin/posts", label: "Journal" },
   { href: "/admin/inquiries", label: "Inquiries" },
+  { href: "/admin/subscribers", label: "Mailing list" },
 ];
 
 export default async function ProtectedAdminLayout({ children }: { children: React.ReactNode }) {

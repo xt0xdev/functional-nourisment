@@ -16,20 +16,23 @@ const settings: Record<string, string> = {
   city: "Astoria",
   region: "NY",
   postalCode: "11105",
-  serviceArea: "Astoria, Queens, and New York City — plus remote care across NY, NJ, and CT",
-  instagram: "https://www.instagram.com/functionalnourishment/",
+  serviceArea:
+    "Astoria, Queens, New York City, and New York State telehealth — plus remote care for eligible clients in NJ and CA",
+  instagram: "https://www.instagram.com/functional_nourishment/",
   berryStreetUrl: "https://www.berrystreet.co/provider-details/anna-almiroudis",
+  stripeUrl: "https://book.stripe.com/dRm7sLewW98h3uTaCo6Zy00",
+  paypalUrl: "https://www.paypal.com/ncp/payment/KZSXHPJZ4HCMU",
   insurance:
-    "UnitedHealthcare, Aetna, and Blue Cross Blue Shield (booked through Berry Street). Additional plans may be available through Berry Street, including Cigna, EmblemHealth, and Highmark New York.",
+    "UnitedHealthcare, Aetna, Cigna, Emblem Health, GHI, and Blue Cross Blue Shield. Insurance visits book through Berry Street.",
   bookingNote:
-    "All nutrition appointments are conducted remotely. In-person Reiki and sound bath meditation sessions are offered in Astoria, NY.",
+    "Nutrition appointments are conducted by telehealth throughout New York City and New York State. Meditation and sound bath experiences are offered locally.",
   npi: "1326877432",
   languages: "English, Greek",
-  footerText: "Functional Nourishment, LLC · Astoria, Queens, NY",
+  footerText: "Anna Almiroudis, MS, CNS, LN, CDN — Functional Nourishment, LLC — Functional-Nourishment.com",
   footerBlurb:
-    "A whole-person functional nutrition practice in Astoria, Queens, serving New York City. Personalized Medical Nutrition Therapy and mind-body care to address root causes and support lasting well-being.",
+    "Personalized, evidence-based functional nutrition rooted in a whole-person approach to health and well-being. Based in Astoria, Queens, serving New York City and New York State through telehealth.",
   clientPortalUrl: "https://client.practicebetter.io/#/signin",
-  bookingUrl: "https://www.berrystreet.co/provider-details/anna-almiroudis",
+  bookingUrl: "https://calendly.com/functionalnourishment-krbc/new-meeting",
 };
 
 const pages = [
@@ -41,10 +44,10 @@ const pages = [
       "Anna Almiroudis, MS, CNS is a functional nutritionist in Astoria, Queens offering insurance-covered Medical Nutrition Therapy across New York City for gut health, heart health, weight, and mental health.",
     heroHeading: "Nourishing your whole self from the inside out.",
     heroSubheading:
-      "Holistic functional nutrition and mind-body care from Astoria, Queens — serving New York City by telehealth, with in-person Reiki and sound baths locally.",
+      "Personalized, evidence-based functional nutrition and integrative mind-body practices to support your health and well-being. Based in Astoria, Queens, serving New York City and beyond through telehealth, with meditation and sound bath experiences offered locally.",
     content: JSON.stringify({
       intro:
-        "Holistic functional nutrition and mind-body care from Astoria, Queens — serving New York City by telehealth, with in-person Reiki and sound baths locally.",
+        "Personalized, evidence-based functional nutrition and integrative mind-body practices to support your health and well-being. Based in Astoria, Queens, serving New York City and beyond through telehealth, with meditation and sound bath experiences offered locally.",
       mind: "Sound healing, meditation and breathwork to quiet the nervous system, deepen self-awareness, and restore mental clarity.",
       body: "Functional nutrition counseling and medical nutrition therapy tailored to your biochemistry, lifestyle, and root-cause goals.",
       spirit:
@@ -168,6 +171,20 @@ const pages = [
     content: JSON.stringify({
       intro:
         "Check back for upcoming cooking classes, sound baths, and community workshops in Astoria and across New York City. Private and corporate bookings are available year-round.",
+    }),
+  },
+  {
+    slug: "calendar",
+    title: "Calendar",
+    metaTitle: "Workshop & Sound Bath Calendar | Functional Nourishment",
+    metaDescription:
+      "Upcoming workshops and sound bath meditations with Anna Almiroudis. Book and pay online with Stripe or PayPal.",
+    heroHeading: "Calendar",
+    heroSubheading:
+      "Upcoming workshops and sound bath meditations. Reserve your spot with Stripe or PayPal.",
+    content: JSON.stringify({
+      intro:
+        "Join Anna for workshops and sound bath meditations. Browse upcoming dates and pay securely through Stripe or PayPal. Sound Bath Meditations also remain listed on the events page.",
     }),
   },
   {
@@ -433,7 +450,7 @@ async function main() {
     create: { email, passwordHash, name: "Anna Almiroudis" },
   });
 
-  const preserveKeys = new Set(["bookingUrl", "clientPortalUrl"]);
+  const preserveKeys = new Set(["clientPortalUrl"]);
   for (const [key, value] of Object.entries(settings)) {
     if (preserveKeys.has(key)) {
       const existing = await prisma.setting.findUnique({ where: { key } });
@@ -461,6 +478,8 @@ async function main() {
 
   await seedMenu();
   await syncCanonicalMenu();
+  await renameCommunityToWellness();
+  await ensureCalendarMenuItems();
   await ensureServingFooterLinks();
 
   for (const service of services) {
@@ -509,10 +528,64 @@ async function syncCanonicalMenu() {
   await prisma.menuItem.updateMany({
     where: { label: { in: ["Book a Discovery Call", "Book Now"] } },
     data: {
-      href: "https://www.berrystreet.co/provider-details/anna-almiroudis",
+      href: "https://calendly.com/functionalnourishment-krbc/new-meeting",
       openInNew: true,
     },
   });
+}
+
+async function renameCommunityToWellness() {
+  await prisma.menuItem.updateMany({
+    where: { label: "Community" },
+    data: { label: "Wellness" },
+  });
+  await prisma.menuItem.updateMany({
+    where: { groupName: "Community" },
+    data: { groupName: "Wellness" },
+  });
+}
+
+async function ensureCalendarMenuItems() {
+  const existing = await prisma.menuItem.findFirst({
+    where: { href: "/calendar" },
+  });
+  if (existing) {
+    await prisma.menuItem.updateMany({
+      where: { href: "/calendar", label: { not: "Calendar" } },
+      data: { label: "Calendar" },
+    });
+    return;
+  }
+
+  const wellnessParent = await prisma.menuItem.findFirst({
+    where: { location: "header", parentId: null, label: "Wellness" },
+  });
+  if (wellnessParent) {
+    await prisma.menuItem.create({
+      data: {
+        parentId: wellnessParent.id,
+        label: "Calendar",
+        href: "/calendar",
+        location: "header",
+        sortOrder: 24,
+      },
+    });
+  }
+
+  const footerCalendar = await prisma.menuItem.findFirst({
+    where: { location: "footer", href: "/calendar" },
+  });
+  if (!footerCalendar) {
+    await prisma.menuItem.create({
+      data: {
+        label: "Calendar",
+        href: "/calendar",
+        location: "footer",
+        groupName: "Wellness",
+        sortOrder: 15,
+      },
+    });
+  }
 }
 
 async function seedMenu() {
@@ -528,9 +601,9 @@ async function seedMenu() {
       style: "link",
     },
   });
-  const community = await prisma.menuItem.create({
+  const wellness = await prisma.menuItem.create({
     data: {
-      label: "Community",
+      label: "Wellness",
       href: "",
       location: "header",
       sortOrder: 20,
@@ -542,9 +615,10 @@ async function seedMenu() {
     { parentId: services.id, label: "Nourish Mind", href: "/sound-healing", sortOrder: 11 },
     { parentId: services.id, label: "Nourish Body", href: "/nutrition", sortOrder: 12 },
     { parentId: services.id, label: "Nourish Spirit", href: "/meditation", sortOrder: 13 },
-    { parentId: community.id, label: "Sound Bath Meditations", href: "/events", sortOrder: 21 },
-    { parentId: community.id, label: "Wellness Experiences", href: "/experiences", sortOrder: 22 },
-    { parentId: community.id, label: "News", href: "/journal", sortOrder: 23 },
+    { parentId: wellness.id, label: "Sound Bath Meditations", href: "/events", sortOrder: 21 },
+    { parentId: wellness.id, label: "Wellness Experiences", href: "/experiences", sortOrder: 22 },
+    { parentId: wellness.id, label: "News", href: "/journal", sortOrder: 23 },
+    { parentId: wellness.id, label: "Calendar", href: "/calendar", sortOrder: 24 },
   ];
   for (const item of headerChildren) {
     await prisma.menuItem.create({ data: { ...item, location: "header" } });
@@ -555,16 +629,17 @@ async function seedMenu() {
       { label: "About", href: "/about", location: "header", sortOrder: 30, style: "link" },
       { label: "Contact", href: "/contact", location: "header", sortOrder: 40, style: "link" },
       { label: "Client Portal", href: "https://client.practicebetter.io/#/signin", location: "header", sortOrder: 50, style: "ghost", openInNew: true },
-      { label: "Book a Discovery Call", href: "https://www.berrystreet.co/provider-details/anna-almiroudis", location: "header", sortOrder: 60, style: "cta", openInNew: true },
+      { label: "Book a Discovery Call", href: "https://calendly.com/functionalnourishment-krbc/new-meeting", location: "header", sortOrder: 60, style: "cta", openInNew: true },
       { label: "Nourish Mind", href: "/sound-healing", location: "footer", groupName: "Services", sortOrder: 10 },
       { label: "Nourish Body", href: "/nutrition", location: "footer", groupName: "Services", sortOrder: 20 },
       { label: "Nourish Spirit", href: "/meditation", location: "footer", groupName: "Services", sortOrder: 30 },
-      { label: "Sound Bath Meditations", href: "/events", location: "footer", groupName: "Community", sortOrder: 10 },
-      { label: "Wellness Experiences", href: "/experiences", location: "footer", groupName: "Community", sortOrder: 20 },
-      { label: "News", href: "/journal", location: "footer", groupName: "Community", sortOrder: 30 },
+      { label: "Sound Bath Meditations", href: "/events", location: "footer", groupName: "Wellness", sortOrder: 10 },
+      { label: "Calendar", href: "/calendar", location: "footer", groupName: "Wellness", sortOrder: 15 },
+      { label: "Wellness Experiences", href: "/experiences", location: "footer", groupName: "Wellness", sortOrder: 20 },
+      { label: "News", href: "/journal", location: "footer", groupName: "Wellness", sortOrder: 30 },
       { label: "About", href: "/about", location: "footer", groupName: "Connect", sortOrder: 10 },
       { label: "Contact", href: "/contact", location: "footer", groupName: "Connect", sortOrder: 20 },
-      { label: "Book a Discovery Call", href: "https://www.berrystreet.co/provider-details/anna-almiroudis", location: "footer", groupName: "Connect", sortOrder: 30, openInNew: true },
+      { label: "Book a Discovery Call", href: "https://calendly.com/functionalnourishment-krbc/new-meeting", location: "footer", groupName: "Connect", sortOrder: 30, openInNew: true },
       { label: "Client Portal", href: "https://client.practicebetter.io/#/signin", location: "footer", groupName: "Connect", sortOrder: 40, openInNew: true },
       { label: "Nutritionist in Astoria", href: "/locations/astoria", location: "footer", groupName: "Serving", sortOrder: 10 },
       { label: "Nutritionist in Queens", href: "/locations/queens", location: "footer", groupName: "Serving", sortOrder: 20 },
@@ -572,6 +647,7 @@ async function seedMenu() {
       { label: "Nutritionist in Manhattan", href: "/locations/manhattan", location: "footer", groupName: "Serving", sortOrder: 40 },
       { label: "Nutritionist in Brooklyn", href: "/locations/brooklyn", location: "footer", groupName: "Serving", sortOrder: 50 },
       { label: "NYC Metro Area", href: "/locations/metro", location: "footer", groupName: "Serving", sortOrder: 60 },
+      { label: "New York State telehealth", href: "/locations/new-york-state", location: "footer", groupName: "Serving", sortOrder: 70 },
     ],
   });
 }
@@ -596,6 +672,8 @@ async function seedEvents() {
         description:
           "No public calendar events are scheduled right now. Email to arrange a private sound bath, cooking class, or corporate wellness workshop in Astoria, Queens, or anywhere in the NYC metro area.",
         location: "Astoria, Queens and remote across NYC",
+        stripeUrl: "https://book.stripe.com/dRm7sLewW98h3uTaCo6Zy00",
+        paypalUrl: "https://www.paypal.com/ncp/payment/KZSXHPJZ4HCMU",
         published: true,
         sortOrder: 1,
       },
@@ -639,6 +717,7 @@ async function ensureServingFooterLinks() {
     { label: "Nutritionist in Manhattan", href: "/locations/manhattan", sortOrder: 40 },
     { label: "Nutritionist in Brooklyn", href: "/locations/brooklyn", sortOrder: 50 },
     { label: "NYC Metro Area", href: "/locations/metro", sortOrder: 60 },
+    { label: "New York State telehealth", href: "/locations/new-york-state", sortOrder: 70 },
   ];
 
   for (const item of serving) {

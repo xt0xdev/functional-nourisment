@@ -5,12 +5,13 @@
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
-    "vercel-build": "prisma generate && prisma db push --skip-generate && next build",
+    "vercel-build": "prisma generate && prisma db push --skip-generate && tsx prisma/sync-site-updates.ts && next build",
     "start": "next start",
     "lint": "eslint",
     "postinstall": "prisma generate",
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
+    "db:sync": "tsx prisma/sync-site-updates.ts",
     "db:reset": "prisma db push --force-reset && tsx prisma/seed.ts"
   },
   "prisma": {

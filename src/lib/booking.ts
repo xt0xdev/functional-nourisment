@@ -1,13 +1,25 @@
-export const DEFAULT_BOOKING_URL =
-  "https://www.berrystreet.co/provider-details/anna-almiroudis";
+import { BERRY_STREET_URL, CALENDLY_URL } from "./site-defaults";
+
+export const DEFAULT_BOOKING_URL = CALENDLY_URL;
 
 const BOOKING_LABELS = new Set(["book a discovery call", "book now"]);
 
+function isLegacyDiscoveryUrl(url: string) {
+  const normalized = url.trim().toLowerCase();
+  if (!normalized) return true;
+  if (normalized.includes("berrystreet.co/provider-details")) return true;
+  if (normalized === BERRY_STREET_URL.toLowerCase()) return true;
+  if (normalized.includes("practicebetter.io") && normalized.includes("booking")) return true;
+  return false;
+}
+
 export function resolveBookingUrl(settings?: Record<string, string> | string | null): string {
-  if (typeof settings === "string" && settings.trim()) return settings.trim();
+  if (typeof settings === "string" && settings.trim()) {
+    return isLegacyDiscoveryUrl(settings) ? DEFAULT_BOOKING_URL : settings.trim();
+  }
   if (settings && typeof settings === "object") {
     const value = settings.bookingUrl?.trim();
-    if (value) return value;
+    if (value && !isLegacyDiscoveryUrl(value)) return value;
   }
   return DEFAULT_BOOKING_URL;
 }
@@ -18,6 +30,7 @@ export function isBookingCta(label: string, href = ""): boolean {
   const normalized = href.trim().toLowerCase();
   if (!normalized) return false;
   if (normalized === "/book" || normalized.endsWith("/book")) return true;
+  if (normalized.includes("calendly.com/functionalnourishment")) return true;
   if (normalized.includes("practicebetter.io") && normalized.includes("booking")) return true;
   return false;
 }

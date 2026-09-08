@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { INQUIRY_SOURCES } from "@/lib/site-defaults";
 
 export function ContactForm({ defaultTopic = "Discovery call" }: { defaultTopic?: string }) {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [source, setSource] = useState("");
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -18,6 +20,7 @@ export function ContactForm({ defaultTopic = "Discovery call" }: { defaultTopic?
     if (response.ok) {
       setStatus("sent");
       form.reset();
+      setSource("");
     } else {
       setStatus("error");
     }
@@ -63,6 +66,37 @@ export function ContactForm({ defaultTopic = "Discovery call" }: { defaultTopic?
           <option>Corporate workshop</option>
           <option>General</option>
         </select>
+      </label>
+      <label className="grid gap-1 text-sm">
+        How did you find us?
+        <select
+          required
+          name="source"
+          value={source}
+          onChange={(event) => setSource(event.target.value)}
+          className="rounded-xl border border-forest/15 bg-white px-3 py-2"
+        >
+          <option value="" disabled>
+            Select one
+          </option>
+          {INQUIRY_SOURCES.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+      </label>
+      <label className="grid gap-1 text-sm">
+        Who referred you?
+        <input
+          name="referredBy"
+          className="rounded-xl border border-forest/15 bg-white px-3 py-2"
+          placeholder={
+            source === "Referred by Physician's office"
+              ? "Physician or office name (e.g. Kokkolis office)"
+              : "Name of the person or office, if anyone referred you"
+          }
+        />
       </label>
       <label className="grid gap-1 text-sm">
         Message

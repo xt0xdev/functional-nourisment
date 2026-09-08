@@ -207,6 +207,8 @@ export async function saveEvent(formData: FormData) {
     published: formData.get("published") === "on",
     sortOrder: Number(formData.get("sortOrder") || 0),
     coverImageId,
+    stripeUrl: String(formData.get("stripeUrl") || "").trim(),
+    paypalUrl: String(formData.get("paypalUrl") || "").trim(),
   };
 
   const event = id
@@ -231,6 +233,7 @@ export async function saveEvent(formData: FormData) {
 
   revalidatePath("/admin/events");
   revalidatePath("/events");
+  revalidatePath("/calendar");
   revalidatePath(`/events/${event.slug}`);
   revalidatePath(`/admin/events/${event.id}`);
 }
@@ -259,6 +262,7 @@ export async function toggleEventPublished(formData: FormData) {
   const event = await prisma.event.update({ where: { id }, data: { published } });
   revalidatePath("/admin/events");
   revalidatePath("/events");
+  revalidatePath("/calendar");
   if (event.slug) revalidatePath(`/events/${event.slug}`);
 }
 
@@ -267,6 +271,7 @@ export async function deleteEvent(formData: FormData) {
   const event = await prisma.event.delete({ where: { id: String(formData.get("id")) } });
   revalidatePath("/admin/events");
   revalidatePath("/events");
+  revalidatePath("/calendar");
   if (event.slug) revalidatePath(`/events/${event.slug}`);
   redirect("/admin/events");
 }
@@ -310,4 +315,10 @@ export async function deleteInquiry(formData: FormData) {
   await guard();
   await prisma.inquiry.delete({ where: { id: String(formData.get("id")) } });
   revalidatePath("/admin/inquiries");
+}
+
+export async function deleteSubscriber(formData: FormData) {
+  await guard();
+  await prisma.subscriber.delete({ where: { id: String(formData.get("id")) } });
+  revalidatePath("/admin/subscribers");
 }

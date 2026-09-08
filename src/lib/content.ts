@@ -31,6 +31,19 @@ export const getEvents = cache(async () => {
   });
 });
 
+export const getUpcomingEvents = cache(async () => {
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  return prisma.event.findMany({
+    where: {
+      published: true,
+      OR: [{ startsAt: null }, { startsAt: { gte: startOfToday } }, { endsAt: { gte: startOfToday } }],
+    },
+    orderBy: [{ startsAt: "asc" }, { sortOrder: "asc" }],
+    include: eventMediaInclude,
+  });
+});
+
 export const getEvent = cache(async (slug: string) => {
   return prisma.event.findFirst({
     where: { published: true, OR: [{ slug }, { id: slug }] },

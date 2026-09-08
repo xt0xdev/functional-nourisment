@@ -86,6 +86,8 @@ model Event {
   location     String       @default("")
   published    Boolean      @default(true)
   sortOrder    Int          @default(0)
+  stripeUrl    String       @default("")
+  paypalUrl    String       @default("")
   coverImageId String?
   coverImage   Media?       @relation("EventCover", fields: [coverImageId], references: [id], onDelete: SetNull)
   images       EventImage[]
@@ -134,12 +136,21 @@ model Post {
 }
 
 model Inquiry {
+  id         String   @id @default(cuid())
+  name       String
+  email      String
+  phone      String   @default("")
+  topic      String   @default("General")
+  source     String   @default("")
+  referredBy String   @default("")
+  message    String
+  read       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+model Subscriber {
   id        String   @id @default(cuid())
   name      String
-  email     String
-  phone     String   @default("")
-  topic     String   @default("General")
-  message   String
-  read      Boolean  @default(false)
+  email     String   @unique
   createdAt DateTime @default(now())
 }

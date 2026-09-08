@@ -7,6 +7,7 @@ import { CtaBand } from "@/components/site/CtaBand";
 import { SmartImage } from "@/components/site/SmartImage";
 import { renderRichText } from "@/lib/rich-text";
 import { siteUrl } from "@/lib/content";
+import { EventPayButtons } from "@/components/site/EventPayButtons";
 
 export async function generateStaticParams() {
   const events = await getEvents();
@@ -70,6 +71,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
           </p>
         ) : null}
         {renderRichText(event.description)}
+        <EventPayButtons event={event} settings={settings} />
         {gallery.length > 0 ? (
           <div className="mt-10 grid gap-4 sm:grid-cols-2">
             {gallery.map((item) => (

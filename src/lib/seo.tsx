@@ -28,6 +28,8 @@ const defaultKeywords = [
   "Reiki Astoria NY",
   "Anna Almiroudis",
   "Functional Nourishment",
+  "New York State telehealth nutrition",
+  "functional nutrition telehealth New York State",
 ];
 
 export function buildMetadata({ title, description, path = "/", image, keywords }: SeoInput): Metadata {
@@ -100,20 +102,20 @@ export function breadcrumbSchema(items: { name: string; path: string }[]) {
 
 export const practiceFaqs = [
   {
-    q: "Do you take insurance for nutrition counseling in NYC?",
-    a: "Yes. UnitedHealthcare, Aetna, and Blue Cross Blue Shield can be booked through Berry Street for clients in Astoria, Queens, and across New York City.",
+    q: "Do you accept insurance for nutrition counseling?",
+    a: "Yes. I accept select insurance plans for nutrition services, including UnitedHealthcare, Aetna, Cigna, Emblem Health, GHI and Blue Cross Blue Shield. If you’re using insurance, you can book your appointment directly online.",
   },
   {
     q: "Where is Functional Nourishment located?",
-    a: "The practice is based in Astoria, Queens. Nutrition visits are remote across the NYC metro area. Reiki and sound baths are offered in person in Astoria.",
+    a: "Functional Nourishment is based in Astoria, Queens, with functional nutrition services available by telehealth throughout New York City and New York State. Meditation and sound bath experiences are also offered locally in the NYC area.",
   },
   {
-    q: "What conditions do you treat?",
-    a: "Cardiometabolic health, weight management, gastrointestinal disorders, and mental health nutrition — including IBS, celiac disease, prediabetes, diabetes, cholesterol, and stress-related outcomes.",
+    q: "What can functional nutrition help with?",
+    a: "Functional nutrition takes a whole-person approach to health, looking beyond individual symptoms to better understand the bigger picture of your health and what may be contributing to how you feel. I support clients with digestive and gut health; metabolic and cardiovascular concerns such as high cholesterol and hypertension; insulin resistance, prediabetes, and diabetes; weight management and GLP-1 nutrition support; nutritional deficiencies; and nutrition for mental well-being, stress, and overall health.",
   },
   {
-    q: "Do you see clients in Queens and the rest of New York City?",
-    a: "Yes. Medical Nutrition Therapy is available by telehealth throughout Queens and the five boroughs. Clients in Long Island, Westchester, Northern New Jersey, and nearby Connecticut can also book remotely.",
+    q: "Do you work with clients outside of NYC?",
+    a: "Yes. While Functional Nourishment is based in Astoria, Queens, I work with clients virtually throughout New York and New Jersey, as well as California for eligible clients. Insurance participation varies by state and plan, so I encourage you to check your coverage when booking.",
   },
 ];
 
@@ -123,7 +125,7 @@ export function practiceSchema(settings: Record<string, string>) {
     "@type": ["MedicalBusiness", "LocalBusiness", "HealthAndBeautyBusiness"],
     name: settings.siteName || "Functional Nourishment",
     description:
-      "Functional nutrition and integrative wellness practice in Astoria, Queens, serving New York City with Medical Nutrition Therapy, Reiki, and sound healing.",
+      "Personalized, evidence-based functional nutrition rooted in a whole-person approach to health and well-being. Based in Astoria, Queens, serving New York City and New York State through telehealth.",
     url: siteUrl(),
     email: settings.email,
     telephone: settings.phone || undefined,
@@ -138,6 +140,8 @@ export function practiceSchema(settings: Record<string, string>) {
       { "@type": "AdministrativeArea", name: "Staten Island" },
       { "@type": "AdministrativeArea", name: "Long Island, NY" },
       { "@type": "AdministrativeArea", name: "Westchester County, NY" },
+      { "@type": "State", name: "New York" },
+      { "@type": "AdministrativeArea", name: "New York State telehealth" },
       { "@type": "AdministrativeArea", name: "Northern New Jersey" },
     ],
     address: {
@@ -171,12 +175,12 @@ export function practiceSchema(settings: Record<string, string>) {
       {
         "@type": "MedicalTherapy",
         name: "Medical Nutrition Therapy",
-        areaServed: ["Astoria, NY", "Queens, NY", "New York, NY"],
+        areaServed: ["Astoria, NY", "Queens, NY", "New York, NY", "New York State"],
       },
       {
         "@type": "Service",
         name: "Functional nutrition counseling",
-        areaServed: "New York City metro area",
+        areaServed: "New York City and New York State telehealth",
       },
       {
         "@type": "Service",

@@ -4,6 +4,7 @@ import { buildMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/site/PageHero";
 import { CtaBand } from "@/components/site/CtaBand";
 import { SmartImage } from "@/components/site/SmartImage";
+import { EventPayButtons } from "@/components/site/EventPayButtons";
 
 export async function generateMetadata() {
   const page = await getPage("events");
@@ -59,9 +60,12 @@ export default async function EventsPage() {
                   ) : null}
                   <p className="mt-3 text-muted">{event.description.replace(/!\[[^\]]*\]\([^)]+\)/g, "").trim()}</p>
                   {event.location ? <p className="mt-2 text-sm text-muted">{event.location}</p> : null}
-                  <Link href={href} className="mt-4 inline-block text-sm text-moss">
-                    View event
-                  </Link>
+                  <div className="mt-4 flex flex-wrap items-center gap-4">
+                    <Link href={href} className="text-sm text-moss">
+                      View event
+                    </Link>
+                    <EventPayButtons event={event} settings={settings} compact />
+                  </div>
                 </div>
               </article>
             );

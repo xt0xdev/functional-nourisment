@@ -17,6 +17,12 @@ export default async function AdminInquiriesPage() {
                 <p className="text-sm text-muted">
                   {inquiry.email} {inquiry.phone ? `· ${inquiry.phone}` : ""} · {inquiry.topic}
                 </p>
+                {inquiry.source ? (
+                  <p className="mt-1 text-sm text-muted">
+                    How they found us: {inquiry.source}
+                    {inquiry.referredBy ? ` · Who referred you: ${inquiry.referredBy}` : ""}
+                  </p>
+                ) : null}
                 <p className="mt-1 text-xs text-muted">{inquiry.createdAt.toLocaleString()}</p>
               </div>
               <span className="text-xs uppercase tracking-wide text-clay">{inquiry.read ? "Read" : "New"}</span>

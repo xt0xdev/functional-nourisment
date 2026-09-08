@@ -6,6 +6,7 @@ import { getPage, getSettings, parseContent } from "@/lib/content";
 import { bookingLinkProps, resolveBookingUrl } from "@/lib/booking";
 import { buildMetadata, JsonLd, faqPageSchema, practiceFaqs } from "@/lib/seo";
 import { CtaBand } from "@/components/site/CtaBand";
+import { FAQ_HEADING, HERO_EYEBROW, HERO_INTRO, isLegacyHeroIntro } from "@/lib/site-defaults";
 
 export async function generateMetadata() {
   const page = await getPage("home");
@@ -48,13 +49,12 @@ export default async function HomePage() {
       <section className="bg-background">
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 md:grid-cols-2 md:px-6 md:py-24">
           <div>
-            <p className="eyebrow">Functional nutritionist in Astoria, Queens &amp; NYC</p>
+            <p className="eyebrow">{HERO_EYEBROW}</p>
             <h1 className="mt-3 font-serif text-4xl leading-tight text-primary md:text-6xl">
               Nourishing your <em className="italic">whole self</em> from the inside out.
             </h1>
             <p className="mt-5 max-w-xl text-lg text-muted">
-              {content.intro ||
-                "Holistic functional nutrition and mind-body care from Astoria, Queens — serving New York City by telehealth, with in-person Reiki and sound baths locally."}
+              {isLegacyHeroIntro(content.intro) ? HERO_INTRO : content.intro}
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <a className="btn-primary" {...bookingLinkProps(resolveBookingUrl(settings))}>
@@ -135,9 +135,7 @@ export default async function HomePage() {
       <section className="bg-background">
         <div className="mx-auto max-w-6xl px-4 py-16 md:px-6">
           <p className="eyebrow">Common questions</p>
-          <h2 className="mt-3 font-serif text-4xl text-primary md:text-5xl">
-            Nutrition care in Astoria, Queens, and New York City
-          </h2>
+          <h2 className="mt-3 font-serif text-4xl text-primary md:text-5xl">{FAQ_HEADING}</h2>
           <div className="mt-10 grid gap-5 md:grid-cols-2">
             {practiceFaqs.map((item) => (
               <article key={item.q} className="rounded-3xl bg-mist p-6">

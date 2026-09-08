@@ -16,6 +16,8 @@ const fields = [
   ["serviceArea", "Service area"],
   ["instagram", "Instagram URL"],
   ["berryStreetUrl", "Berry Street URL"],
+  ["stripeUrl", "Default Stripe payment URL"],
+  ["paypalUrl", "Default PayPal payment URL"],
   ["insurance", "Insurance copy"],
   ["bookingNote", "Booking note"],
   ["npi", "NPI"],
@@ -54,7 +56,12 @@ export default async function SettingsPage() {
             {key === "bookingUrl" ? (
               <p className="text-xs text-muted">
                 Used by the header Book a Discovery Call button, footer link, homepage, and other
-                booking CTAs.
+                booking CTAs. Discovery calls use Calendly.
+              </p>
+            ) : null}
+            {key === "stripeUrl" || key === "paypalUrl" ? (
+              <p className="text-xs text-muted">
+                Default checkout link for workshops and sound baths. Individual events can override this.
               </p>
             ) : null}
           </label>
