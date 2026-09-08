@@ -15,6 +15,8 @@ export function Logo({
       height={256}
       className={`rounded-full bg-transparent ${className}`}
       priority={priority}
+      quality={100}
+      unoptimized
     />
   );
 }
