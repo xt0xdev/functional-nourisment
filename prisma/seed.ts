@@ -1,5 +1,35 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import {
+  ABOUT_CREDENTIAL_SOUND,
+  ABOUT_HERO_SUBHEADING,
+  ABOUT_NAME,
+  EXPERIENCES_INTRO,
+  EXPERIENCES_INTRO_MORE,
+  MIND_HOW,
+  MIND_HERO,
+  MIND_MEDITATIVE,
+  MIND_SESSIONS,
+  MIND_WHAT,
+  NUTRITION_APPROACH,
+  NUTRITION_CLOSING,
+  NUTRITION_FOOD_FIRST,
+  NUTRITION_GOAL,
+  NUTRITION_HERO,
+  NUTRITION_INTRO,
+  NUTRITION_NOT_ALONE,
+  PILLAR_BODY,
+  PILLAR_MIND,
+  PILLAR_SPIRIT,
+  SPIRIT_GATHER_INTRO,
+  SPIRIT_GATHER_MORE,
+  SPIRIT_HERO,
+  SPIRIT_RETREATS_BODY,
+  SPIRIT_RETREATS_GREECE,
+  SPIRIT_RETREATS_LEAD,
+  SQUARESPACE_EXPERIENCES,
+} from "../src/lib/page-copy";
+import { FOOTER_BLURB } from "../src/lib/site-defaults";
 
 const prisma = new PrismaClient();
 
@@ -29,8 +59,7 @@ const settings: Record<string, string> = {
   npi: "1326877432",
   languages: "English, Greek",
   footerText: "Anna Almiroudis, MS, CNS, LN, CDN — Functional Nourishment, LLC — Functional-Nourishment.com",
-  footerBlurb:
-    "Personalized, evidence-based functional nutrition rooted in a whole-person approach to health and well-being. Based in Astoria, Queens, serving New York City and New York State through telehealth.",
+  footerBlurb: FOOTER_BLURB,
   clientPortalUrl: "https://client.practicebetter.io/#/signin",
   bookingUrl: "https://calendly.com/functionalnourishment-krbc/new-meeting",
 };
@@ -48,10 +77,9 @@ const pages = [
     content: JSON.stringify({
       intro:
         "Personalized, evidence-based functional nutrition and integrative mind-body practices to support your health and well-being. Based in Astoria, Queens, serving New York City and beyond through telehealth, with meditation and sound bath experiences offered locally.",
-      mind: "Sound healing, meditation and breathwork to quiet the nervous system, deepen self-awareness, and restore mental clarity.",
-      body: "Functional nutrition counseling and medical nutrition therapy tailored to your biochemistry, lifestyle, and root-cause goals.",
-      spirit:
-        "Meditation, breathwork and sound bath experiences that reconnect you with purpose, peace, and a sense of inner alignment.",
+      mind: PILLAR_MIND,
+      body: PILLAR_BODY,
+      spirit: PILLAR_SPIRIT,
       quote: "True nourishment begins with listening to the body.",
       practitioner:
         "As a board certified nutrition specialist, licensed nutritionist, certified dietitian-nutritionist and certified holistic health coach based in Astoria, Queens, I bridge the gap between clinical science and intuitive wellness for clients across New York City.",
@@ -71,12 +99,11 @@ const pages = [
     metaTitle: "About Anna Almiroudis | Functional Nutritionist in Astoria, NYC",
     metaDescription:
       "Meet Anna Almiroudis, MS, CNS, LN, CDN — a Certified Nutrition Specialist and licensed nutritionist in Astoria, Queens, offering Medical Nutrition Therapy across New York City.",
-    heroHeading: "Anna Almiroudis, MS, CNS, LN, CDN, CHHC",
-    heroSubheading:
-      "Certified Nutrition Specialist, licensed nutritionist, and integrative practitioner based in Astoria, serving Queens and the New York City metro area.",
+    heroHeading: ABOUT_NAME,
+    heroSubheading: ABOUT_HERO_SUBHEADING,
     content: JSON.stringify({
       paragraphs: [
-        "As a Certified Nutritionist Specialist (CNS), Certified Health Coach, Nutrition Educator, Writer, Karuna® and Usui Reiki Master, and Sound Bath & Meditation Facilitator, I bring a uniquely integrative approach to wellness—grounded in science, rooted in nature, and powered by compassion. With advanced training in functional nutrition and a specialization in herbal medicine, I blend evidence-based nutrition with holistic healing practices to support mind-body transformation.",
+        `As a Certified Nutritionist Specialist (CNS), Certified Health Coach, Nutrition Educator, Writer, Karuna® and Usui Reiki Master, and ${ABOUT_CREDENTIAL_SOUND}, I bring a uniquely integrative approach to wellness—grounded in science, rooted in nature, and powered by compassion. With advanced training in functional nutrition and a specialization in herbal medicine, I blend evidence-based nutrition with holistic healing practices to support mind-body transformation.`,
         "I specialize in cardiometabolic health, weight management, gastrointestinal disorders, and mental health nutrition. I provide evidence-based Medical Nutrition Therapy (MNT) for individuals with dyslipidemia, hypertension, insulin resistance, prediabetes and diabetes, gut dysbiosis, metabolic syndrome, irritable bowel syndrome (IBS), celiac disease, weight management, and stress induced health outcomes.",
         "My clinical approach integrates functional nutrition and mind-body medicine to identify and address the root causes of health imbalances. By integrating nutrition interventions, lifestyle modifications, and mind-body stress reduction interventions such as Reiki, Sound Healing and Meditation, I help clients restore metabolic balance, improve gut-health, mitigate stress and barriers to their health and wellness goals.",
         "My ultimate goal is to educate, support and empower individuals to improve their health and mental well-being through sustainable, whole-person, personalized care. Whether I am guiding a private client, leading a corporate wellness workshop, teaching a class, or writing, my goal is to create sustainable pathways to health that nourish all aspects of one’s being, mind, body and spirit.",
@@ -92,25 +119,14 @@ const pages = [
     metaDescription:
       "Personalized functional nutrition in Astoria, Queens, and across NYC. Three-month Medical Nutrition Therapy for gut health, diabetes, heart health, and weight management.",
     heroHeading: "Nourish Body",
-    heroSubheading:
-      "Evidence-based functional nutrition and Medical Nutrition Therapy for clients in Astoria, Queens, and New York City.",
+    heroSubheading: NUTRITION_HERO,
     content: JSON.stringify({
-      questions: [
-        "Are you ready to blossom into the best version of yourself but don’t know where to start?",
-        "Are you confused by the plethora of dietary theories and health fads out there and seeking sound guidance on what’s best for you and/or your family?",
-        "Do you feel like you need endless cups of coffee to get through the day because you are chronically fatigued, drained and unmotivated?",
-        "Is a chronic health condition preventing you from enjoying life to the fullest?",
-      ],
-      paragraphs: [
-        "If you answered yes to any of these questions then health and nutritional counseling may be the right fit for you. I strive to support you in your health and wellness goals by inspiring sustainable lifestyle changes to help you achieve your optimal health and wellness. I take a holistic, plant-based, and root-cause approach, recognizing the interplay between your bio-individuality (biology), your environment, and emotional well-being when helping you identify and transform your health and wellness goals into action. I consider each client as a “whole” and recognize that health and wellness is an integrative balance of the physical, mental, social and spiritual aspects of your being.",
-        "My goal is to empower you to use self-awareness, mindful eating habits and conscious lifestyle choices to create the changes you want to see in your life. No emphasis on crash diets, quick-fixes or obsessive health fads here. I aim to help you create sustainable, healthy and positive lifestyle changes based on evidence-based, scientific nutritional guidance. I draw from the immense healing power of functional nutrition by promoting the incorporation of nutrient dense, whole foods and herbs to help you look and feel your best from the inside out.",
-      ],
-      howItWorks: [
-        "Wellness isn’t a final destination or something you do once and check off your list. It’s an evolving practice of daily self-care. True power comes from within by connecting with your authentic, higher self. By being in tune with your body through self-awareness, self-love and mindfulness, you can identify what lifestyle habits and dietary behaviors are working and which ones are holding you back.",
-        "My functional nutrition programs are a minimum of 3 months long because they are designed for sustainable change. We conduct a thorough assessment of your current diet and lifestyle and identify your goals at our 90–120 minute initial nutrition-intake consultation. We meet again shortly after to go over your nutrition assessment and kick off your individualized plan. We then establish a set schedule of meeting via a telehealth platform for 30 to 60 minute nutrition counseling sessions — convenient if you live in Astoria, elsewhere in Queens, or anywhere in New York City.",
-        "Programs are all-encompassing and cater to both individuals who want to strive for optimal health and clients who need support with chronic health conditions. I work with pediatric and adult clients. In addition to nutritional counseling, clients are educated on healthy lifestyle practices which include guidance on following a nutrient dense diet of whole-foods and antioxidant-rich herbs, stress mitigation and healthy cooking recipes and practices.",
-        "We address spiritual and mental health by including Reiki energy balancing, meditation, breathwork and/or sound healing in most packages. Most clients report that their Reiki/Sound healing sessions help them relax and increase self-awareness around identifying subconscious blocks that are preventing them from achieving their health and wellness goals.",
-      ],
+      intro: NUTRITION_INTRO,
+      notAlone: NUTRITION_NOT_ALONE,
+      approach: NUTRITION_APPROACH,
+      foodFirst: NUTRITION_FOOD_FIRST,
+      goal: NUTRITION_GOAL,
+      closing: NUTRITION_CLOSING,
     }),
   },
   {
@@ -120,12 +136,12 @@ const pages = [
     metaDescription:
       "Sound bath meditations and Reiki in Astoria, Queens. Crystal and Tibetan singing bowls to calm the nervous system, reduce stress, and support mind-body healing.",
     heroHeading: "Nourish Mind",
-    heroSubheading: "Sound healing, Reiki, and nervous-system restoration in Astoria — a local mind-body offering for Queens and New York City.",
+    heroSubheading: MIND_HERO,
     content: JSON.stringify({
-      what: "Music, and moving to music, are outlets of human expression that have existed cross-culturally since antiquity. The art of sound healing has also existed across cultures, with various forms used for both religious and spiritual ceremonies (i.e. Tibetan monks use Himalayan/Tibetan singing bowls for spiritual ceremonies) for many centuries. Modern-day sound healing uses various instruments (including but not limited to crystal singing bowls, Tibetan singing bowls, gongs and drums) that create vibrational frequencies that initiate a relaxing, meditative state in the sound bath participants.",
-      how: "Similarly to the way breath is used to induce the parasympathetic nervous system during meditation, sound healing uses vibrational frequencies to help activate the parasympathetic nervous system and slow down your breathing and heart rate as you go into a relaxed state. The various frequencies emitted by the singing bowls can also influence brain wave patterns, helping you go into alpha, theta or even delta brainwaves, supporting a restful and relaxed state. Since everything in the universe is in motion and has a vibrational frequency, it is hypothesized that the frequency of the instruments is interacting with both the Biofield (energy field) and physical body, creating effects all the way down to the cellular level. Different singing bowls are tuned to different musical notes or frequencies which are associated with different chakras (energy centers), therefore helping balance your energy field.",
-      close:
-        "Sound healing therefore offers a mind, body, spirit experience and can be a great stress reducing and relaxing tool both on its own and as part of a Reiki session. I offer in-person Sound Healing and Reiki in Astoria, Queens — a local option for clients from across New York City.",
+      what: MIND_WHAT,
+      how: MIND_HOW,
+      meditative: MIND_MEDITATIVE,
+      close: MIND_SESSIONS,
     }),
   },
   {
@@ -135,14 +151,13 @@ const pages = [
     metaDescription:
       "Meditation and breathwork with Anna Almiroudis in Astoria, Queens. Evidence-informed practices to lower stress, improve sleep, and support sustainable lifestyle change.",
     heroHeading: "Nourish Spirit",
-    heroSubheading:
-      "Meditation and breathwork in Astoria as gentle, evidence-informed tools for inner balance — offered to clients across Queens and New York City.",
+    heroSubheading: SPIRIT_HERO,
     content: JSON.stringify({
-      paragraphs: [
-        "Meditation is a simple yet powerful mind–body practice that trains your attention and awareness. Through techniques such as focused breathing, guided imagery, or sound-based practices, meditation helps shift the nervous system out of chronic “fight-or-flight” mode and into a more restorative, parasympathetic state.",
-        "Regular meditation has been shown to support stress resilience by lowering cortisol levels, improving emotional regulation, enhancing sleep quality, and increasing mental clarity. Over time, this practice helps your body respond to stress more efficiently rather than remaining stuck in a state of overload.",
-        "At Functional Nourishment in Astoria, Queens, meditation and breathwork are used as gentle, evidence-informed tools to support nervous system balance, emotional well-being, and sustainable lifestyle change for clients across New York City.",
-      ],
+      gatherIntro: SPIRIT_GATHER_INTRO,
+      gatherMore: SPIRIT_GATHER_MORE,
+      retreatsLead: SPIRIT_RETREATS_LEAD,
+      retreatsBody: SPIRIT_RETREATS_BODY,
+      retreatsGreece: SPIRIT_RETREATS_GREECE,
     }),
   },
   {
@@ -155,8 +170,8 @@ const pages = [
     heroSubheading:
       "Bespoke corporate wellness workshops and intimate local experiences across New York City, Queens, and Astoria.",
     content: JSON.stringify({
-      intro:
-        "I offer bespoke corporate wellness workshops, as well as intimate small group and local experiences, that blend functional nutrition and culinary experiences, stress resilience, and immersive mind-body practices, including breathwork, meditation, and sound baths. Each session is thoughtfully designed to restore balance, elevate energy, and provide practical tools for sustained well-being. If you don’t see exactly what you’re looking for, you’re welcome to share your preferences — each experience can be thoughtfully customized to meet your needs.",
+      intro: EXPERIENCES_INTRO,
+      introMore: EXPERIENCES_INTRO_MORE,
     }),
   },
   {
@@ -271,35 +286,7 @@ const services = [
   },
 ];
 
-const experiences = [
-  {
-    slug: "balanced-food-mood",
-    title: "Balanced Food & Mood",
-    subtitle: "A Holistic Approach to Stress Resilience",
-    excerpt:
-      "Discover how food, breath, and mindful awareness work together to support a balanced mood and resilient energy. Includes a hands-on cooking demo of a nourishing meal that supports mood.",
-    body: "This interactive workshop supports stress resilience through a whole-person approach, integrating breathwork, nutrition, and mindful awareness. Participants will learn simple techniques to regulate the nervous system, explore how balanced nutrition supports energy and mood, and apply these concepts by creating a simple, nourishing mini-meal that supports a balanced mood.",
-    sortOrder: 1,
-  },
-  {
-    slug: "reset-restore-reconnect",
-    title: "Reset, Restore, Reconnect",
-    subtitle: "A Guided Sound & Breath Experience",
-    excerpt:
-      "Step away from the demands of the day and into a restorative pause. Breathwork, guided meditation, and a soothing sound bath help release tension and reset the nervous system.",
-    body: "This immersive group experience invites busy professionals to step out of the constant demands of the day and into a deeply restorative pause. In today’s fast-paced environments, the nervous system often remains in a heightened state of alert. This session offers a calming, intentional space to unwind, release accumulated tension, and reconnect with inner stillness. Participants are gently guided through a sequence of breathwork practices, a calming visualization meditation, and an immersive sound bath using crystal singing bowls and other instruments.",
-    sortOrder: 2,
-  },
-  {
-    slug: "nourish-your-skin",
-    title: "Nourish Your Skin: Inside and Out",
-    subtitle: "An edible beauty cooking class",
-    excerpt:
-      "An interactive edible beauty cooking class using simple, wholesome ingredients to nourish the body and skin from the inside out.",
-    body: "This interactive group experience explores how nutrition and food-derived ingredients can support healthy, radiant skin. The hands-on workshop blends skin nutrition education with a guided DIY skincare activity, giving participants both practical knowledge and a take-home product. Participants learn the fundamentals of skin-supportive nutrients such as antioxidants, healthy fats, hydration, and protein, then create a gentle antioxidant-rich face mask using simple kitchen ingredients.",
-    sortOrder: 3,
-  },
-];
+const experiences = SQUARESPACE_EXPERIENCES.map((experience) => ({ ...experience }));
 
 const posts = [
   {

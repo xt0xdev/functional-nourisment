@@ -18,7 +18,7 @@ export const HERO_INTRO =
 export const SERVICE_AREA_EYEBROW = "Serving New York";
 export const SERVICE_AREA_HEADING = "Functional Nutrition in Astoria, Queens & NYC";
 export const SERVICE_AREA_BODY =
-  "Based in Astoria, Queens, Functional Nourishment offers personalized, evidence-based functional nutrition through telehealth across New York City and New York State, with meditation and sound bath experiences offered locally.";
+  "Based in Astoria, Queens, Functional Nourishment offers personalized, evidence-based functional nutrition through telehealth across New York City and New York State, with meditation, breathwork, sound bath and holistic wellness experiences offered locally.";
 
 export const CTA_HEADING = "Ready to feel more supported in your health?";
 export const CTA_BODY =
@@ -31,7 +31,7 @@ export const CTA_RIGHT_TEXT =
   "Ready to begin? If you’re using insurance, there’s no need to schedule a discovery call. You can book your nutrition appointment directly through Berry Street and choose a time that works best for you.";
 
 export const FOOTER_BLURB =
-  "Personalized, evidence-based functional nutrition rooted in a whole-person approach to health and well-being. Based in Astoria, Queens, serving New York City and New York State through telehealth.";
+  "Based in Astoria, Queens, Functional Nourishment offers personalized, evidence-based functional nutrition through telehealth across New York City and New York State, with meditation, breathwork, sound bath and holistic wellness experiences offered locally.";
 
 export const PRACTITIONER_CREDIT =
   "Anna Almiroudis, MS, CNS, LN, CDN — Functional Nourishment, LLC — Functional-Nourishment.com";
@@ -52,6 +52,7 @@ export type InquirySource = (typeof INQUIRY_SOURCES)[number];
 
 const LEGACY_FOOTER_BLURBS = [
   "A whole-person functional nutrition practice in Astoria, Queens, serving New York City",
+  "Personalized, evidence-based functional nutrition rooted in a whole-person approach to health and well-being. Based in Astoria, Queens, serving New York City and New York State through telehealth.",
 ];
 
 const LEGACY_HERO_INTROS = [

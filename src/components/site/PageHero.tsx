@@ -3,12 +3,14 @@ import { SmartImage } from "./SmartImage";
 export function PageHero({
   eyebrow,
   heading,
+  headingSubtitle,
   subheading,
   image,
   imageAlt,
 }: {
   eyebrow?: string;
   heading: string;
+  headingSubtitle?: string;
   subheading?: string;
   image?: string;
   imageAlt?: string;
@@ -19,6 +21,9 @@ export function PageHero({
         <div>
           {eyebrow ? <p className="eyebrow">{eyebrow}</p> : null}
           <h1 className="mt-3 font-serif text-4xl leading-tight text-primary md:text-6xl">{heading}</h1>
+          {headingSubtitle ? (
+            <p className="mt-2 font-serif text-xl tracking-wide text-primary/75 md:text-2xl">{headingSubtitle}</p>
+          ) : null}
           {subheading ? <p className="mt-5 max-w-xl text-lg text-muted">{subheading}</p> : null}
         </div>
         {image ? (

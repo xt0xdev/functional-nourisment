@@ -46,8 +46,8 @@ export function Footer({
     <footer className="bg-deep text-white">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:grid-cols-2 lg:grid-cols-5 lg:px-6">
         <div>
-          <div className="flex items-center gap-3">
-            <Logo className="h-16 w-16" />
+          <div className="flex flex-col items-start gap-4">
+            <Logo className="h-20 w-20 md:h-[88px] md:w-[88px]" />
             <p className="font-serif text-2xl">
               Functional <em className="italic">Nourishment</em>
             </p>

@@ -109,6 +109,15 @@ body {
   background: var(--color-mist);
 }
 
+.btn-outline-on-dark {
+  border-color: #7ec8d4;
+  color: #ffffff;
+}
+
+.btn-outline-on-dark:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
 :focus-visible {
   outline: 2px solid var(--color-teal);
   outline-offset: 3px;

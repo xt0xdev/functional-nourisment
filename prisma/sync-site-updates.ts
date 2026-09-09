@@ -1,11 +1,39 @@
 import { PrismaClient } from "@prisma/client";
+import {
+  ABOUT_HERO_SUBHEADING,
+  ABOUT_NAME,
+  EXPERIENCES_INTRO,
+  EXPERIENCES_INTRO_MORE,
+  MIND_HOW,
+  MIND_HERO,
+  MIND_MEDITATIVE,
+  MIND_SESSIONS,
+  MIND_WHAT,
+  NUTRITION_APPROACH,
+  NUTRITION_CLOSING,
+  NUTRITION_FOOD_FIRST,
+  NUTRITION_GOAL,
+  NUTRITION_HERO,
+  NUTRITION_INTRO,
+  NUTRITION_NOT_ALONE,
+  PILLAR_BODY,
+  PILLAR_MIND,
+  PILLAR_SPIRIT,
+  SPIRIT_GATHER_INTRO,
+  SPIRIT_GATHER_MORE,
+  SPIRIT_HERO,
+  SPIRIT_RETREATS_BODY,
+  SPIRIT_RETREATS_GREECE,
+  SPIRIT_RETREATS_LEAD,
+  SQUARESPACE_EXPERIENCES,
+  withUpdatedSoundCredential,
+} from "../src/lib/page-copy";
+import { FOOTER_BLURB } from "../src/lib/site-defaults";
 
 const prisma = new PrismaClient();
 
 const CALENDLY = "https://calendly.com/functionalnourishment-krbc/new-meeting";
 const INSTAGRAM = "https://www.instagram.com/functional_nourishment/";
-const FOOTER_BLURB =
-  "Personalized, evidence-based functional nutrition rooted in a whole-person approach to health and well-being. Based in Astoria, Queens, serving New York City and New York State through telehealth.";
 const STRIPE = "https://book.stripe.com/dRm7sLewW98h3uTaCo6Zy00";
 const PAYPAL = "https://www.paypal.com/ncp/payment/KZSXHPJZ4HCMU";
 const HOME_INTRO =
@@ -28,7 +56,12 @@ function isLegacyInstagram(value?: string | null) {
 function isLegacyFooter(value?: string | null) {
   const text = value?.trim() || "";
   if (!text) return true;
-  return text.includes("A whole-person functional nutrition practice in Astoria, Queens, serving New York City");
+  return (
+    text.includes("A whole-person functional nutrition practice in Astoria, Queens, serving New York City") ||
+    text.includes(
+      "Personalized, evidence-based functional nutrition rooted in a whole-person approach to health and well-being. Based in Astoria, Queens, serving New York City and New York State through telehealth.",
+    )
+  );
 }
 
 function isLegacyIntro(value?: string | null) {
@@ -37,12 +70,41 @@ function isLegacyIntro(value?: string | null) {
   return text.includes("Holistic functional nutrition and mind-body care from Astoria, Queens");
 }
 
+function parseJson(raw?: string | null): Record<string, unknown> {
+  try {
+    return JSON.parse(raw || "{}") as Record<string, unknown>;
+  } catch {
+    return {};
+  }
+}
+
 async function upsertSetting(key: string, value: string, shouldWrite: boolean) {
   if (!shouldWrite) return;
   await prisma.setting.upsert({
     where: { key },
     update: { value },
     create: { key, value },
+  });
+}
+
+async function mergePage(
+  slug: string,
+  data: {
+    heroHeading?: string;
+    heroSubheading?: string;
+    content?: Record<string, unknown>;
+  },
+) {
+  const page = await prisma.page.findUnique({ where: { slug } });
+  if (!page) return;
+  const content = { ...parseJson(page.content), ...data.content };
+  await prisma.page.update({
+    where: { slug },
+    data: {
+      ...(data.heroHeading ? { heroHeading: data.heroHeading } : {}),
+      ...(data.heroSubheading ? { heroSubheading: data.heroSubheading } : {}),
+      content: JSON.stringify(content),
+    },
   });
 }
 
@@ -60,22 +122,93 @@ async function main() {
 
   const home = await prisma.page.findUnique({ where: { slug: "home" } });
   if (home) {
-    let content: Record<string, unknown> = {};
-    try {
-      content = JSON.parse(home.content || "{}") as Record<string, unknown>;
-    } catch {
-      content = {};
-    }
+    const content = parseJson(home.content);
     const intro = typeof content.intro === "string" ? content.intro : "";
-    if (isLegacyIntro(home.heroSubheading) || isLegacyIntro(intro)) {
-      await prisma.page.update({
-        where: { slug: "home" },
-        data: {
-          heroSubheading: HOME_INTRO,
-          content: JSON.stringify({ ...content, intro: HOME_INTRO }),
-        },
-      });
-    }
+    await prisma.page.update({
+      where: { slug: "home" },
+      data: {
+        heroSubheading: isLegacyIntro(home.heroSubheading) ? HOME_INTRO : home.heroSubheading,
+        content: JSON.stringify({
+          ...content,
+          intro: isLegacyIntro(intro) ? HOME_INTRO : intro,
+          mind: PILLAR_MIND,
+          body: PILLAR_BODY,
+          spirit: PILLAR_SPIRIT,
+        }),
+      },
+    });
+  }
+
+  const about = await prisma.page.findUnique({ where: { slug: "about" } });
+  if (about) {
+    const content = parseJson(about.content);
+    const paragraphs = Array.isArray(content.paragraphs)
+      ? (content.paragraphs as string[]).map(withUpdatedSoundCredential)
+      : content.paragraphs;
+    await prisma.page.update({
+      where: { slug: "about" },
+      data: {
+        heroHeading: ABOUT_NAME,
+        heroSubheading: ABOUT_HERO_SUBHEADING,
+        content: JSON.stringify({ ...content, paragraphs }),
+      },
+    });
+  }
+
+  await mergePage("nutrition", {
+    heroSubheading: NUTRITION_HERO,
+    content: {
+      intro: NUTRITION_INTRO,
+      notAlone: NUTRITION_NOT_ALONE,
+      approach: NUTRITION_APPROACH,
+      foodFirst: NUTRITION_FOOD_FIRST,
+      goal: NUTRITION_GOAL,
+      closing: NUTRITION_CLOSING,
+    },
+  });
+
+  await mergePage("sound-healing", {
+    heroSubheading: MIND_HERO,
+    content: {
+      what: MIND_WHAT,
+      how: MIND_HOW,
+      meditative: MIND_MEDITATIVE,
+      close: MIND_SESSIONS,
+    },
+  });
+
+  await mergePage("meditation", {
+    heroHeading: "Nourish Spirit",
+    heroSubheading: SPIRIT_HERO,
+    content: {
+      gatherIntro: SPIRIT_GATHER_INTRO,
+      gatherMore: SPIRIT_GATHER_MORE,
+      retreatsLead: SPIRIT_RETREATS_LEAD,
+      retreatsBody: SPIRIT_RETREATS_BODY,
+      retreatsGreece: SPIRIT_RETREATS_GREECE,
+    },
+  });
+
+  await mergePage("experiences", {
+    content: {
+      intro: EXPERIENCES_INTRO,
+      introMore: EXPERIENCES_INTRO_MORE,
+    },
+  });
+
+  for (const experience of SQUARESPACE_EXPERIENCES) {
+    await prisma.experience.upsert({
+      where: { slug: experience.slug },
+      update: {
+        title: experience.title,
+        subtitle: experience.subtitle,
+        excerpt: experience.excerpt,
+        body: experience.body,
+        sortOrder: experience.sortOrder,
+        published: true,
+      },
+      create: { ...experience, published: true },
+    });
   }
 
   await prisma.menuItem.updateMany({

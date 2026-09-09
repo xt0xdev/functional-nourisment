@@ -44,9 +44,9 @@ export function CtaBand({
                 href={berryStreetUrl || BERRY_STREET_URL}
                 target="_blank"
                 rel="noreferrer"
-                className="mt-5 inline-flex text-accent hover:underline"
+                className="btn-outline btn-outline-on-dark mt-5"
               >
-                Book via Berry Street →
+                Book via Berry Street
               </a>
             </article>
           </div>

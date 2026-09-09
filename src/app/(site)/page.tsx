@@ -7,6 +7,7 @@ import { bookingLinkProps, resolveBookingUrl } from "@/lib/booking";
 import { buildMetadata, JsonLd, faqPageSchema, practiceFaqs } from "@/lib/seo";
 import { CtaBand } from "@/components/site/CtaBand";
 import { FAQ_HEADING, HERO_EYEBROW, HERO_INTRO, isLegacyHeroIntro } from "@/lib/site-defaults";
+import { PILLAR_BODY, PILLAR_MIND, PILLAR_SPIRIT, resolvePillarCopy } from "@/lib/page-copy";
 
 export async function generateMetadata() {
   const page = await getPage("home");
@@ -37,9 +38,9 @@ export default async function HomePage() {
   });
 
   const pillars = [
-    { href: "/sound-healing", title: "Nourish Mind", text: content.mind, icon: Brain },
-    { href: "/nutrition", title: "Nourish Body", text: content.body, icon: HeartPulse },
-    { href: "/meditation", title: "Nourish Spirit", text: content.spirit, icon: Sparkles },
+    { href: "/sound-healing", title: "Nourish Mind", text: resolvePillarCopy(content.mind, PILLAR_MIND), icon: Brain },
+    { href: "/nutrition", title: "Nourish Body", text: resolvePillarCopy(content.body, PILLAR_BODY), icon: HeartPulse },
+    { href: "/meditation", title: "Nourish Spirit", text: resolvePillarCopy(content.spirit, PILLAR_SPIRIT), icon: Sparkles },
   ];
 
   return (
@@ -51,7 +52,8 @@ export default async function HomePage() {
           <div>
             <p className="eyebrow">{HERO_EYEBROW}</p>
             <h1 className="mt-3 font-serif text-4xl leading-tight text-primary md:text-6xl">
-              Nourishing your <em className="italic">whole self</em> from the inside out.
+              Nourishing your <em className="italic pr-[0.22em]">whole self</em>
+              {" "}from the inside out.
             </h1>
             <p className="mt-5 max-w-xl text-lg text-muted">
               {isLegacyHeroIntro(content.intro) ? HERO_INTRO : content.intro}
