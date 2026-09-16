@@ -53,11 +53,14 @@ export const NUTRITION_HERO =
 
 export const NUTRITION_HEADING = "Nourishment from the inside out";
 
-export const NUTRITION_IMAGE =
-  "https://images.unsplash.com/photo-1466637574441-749b8f19452f?auto=format&fit=crop&w=1400&q=80";
+export const NUTRITION_IMAGE = "/images/nourish-body-bowl.png";
 
 export const NUTRITION_IMAGE_ALT =
-  "Placeholder: fresh herbs and produce on a kitchen table — replace in admin";
+  "Mediterranean bowl with chicken, lentils, roasted vegetables, and greens";
+
+export const NUTRITION_COOKING_IMAGE = "/images/nourish-body-cooking.jpg";
+
+export const NUTRITION_COOKING_ALT = "Anna preparing a nourishing salad in a bright kitchen";
 
 export const NUTRITION_INTRO =
   "Maybe you’re overwhelmed by conflicting nutrition advice and wondering what is actually right for you. Maybe you’re feeling tired, stressed, or simply not quite like yourself, or perhaps you’re navigating a health concern and looking for an approach that considers the bigger picture.";
@@ -101,27 +104,27 @@ export const NUTRITION_AREAS = [
   {
     title: "Blood Sugar & Metabolic Health",
     detail: "Prediabetes · Diabetes · Insulin resistance",
-    icon: "activity",
+    icon: "droplet",
   },
   {
     title: "Weight Management & GLP-1 Support",
     detail: "Sustainable weight management · GLP-1 nutrition support",
-    icon: "scale",
+    icon: "weight",
   },
   {
     title: "Gut & Digestive Health",
     detail: "IBS · Celiac disease · Digestive concerns",
-    icon: "leaf",
+    icon: "gut",
   },
   {
     title: "Nutritional Deficiencies",
     detail: "Iron · Vitamin & mineral deficiencies",
-    icon: "sparkle",
+    icon: "pill",
   },
   {
     title: "General Well-Being & Stress Support",
     detail: "Energy · Stress · Nourishment · Overall well-being",
-    icon: "sun",
+    icon: "lotus",
   },
 ] as const;
 
@@ -168,11 +171,94 @@ export const SPIRIT_RETREATS_BODY =
 export const SPIRIT_RETREATS_GREECE =
   "From intimate local gatherings to immersive experiences inspired by the natural beauty and traditions of Greece, each retreat is thoughtfully created to nourish mind, body, and spirit.";
 
+export const EXPERIENCES_TITLE = "Workshops & Experiences";
+export const EXPERIENCES_SUB = "Experiences designed to nourish, connect, and inspire.";
+
 export const EXPERIENCES_INTRO =
-  "I offer bespoke corporate wellness workshops, as well as intimate small group and local experiences, that blend functional nutrition and culinary experiences, stress resilience, and immersive mind-body practices, including breathwork, meditation, sound baths. Each session is thoughtfully designed to restore balance, elevate energy, and provide practical tools for sustained well-being.";
+  "Workshops and experiences are an invitation to pause, gather, and reconnect—with yourself, with others, and with the practices that support a more nourished way of living.";
 
 export const EXPERIENCES_INTRO_MORE =
-  "If you don’t see exactly what you’re looking for, you’re welcome to share your preferences, each experience can be thoughtfully customized to meet your needs.";
+  "Each offering is thoughtfully designed to bring together nutrition, mindfulness, sound, and nature in a way that feels grounding, educational, and restorative. Whether you are joining a sound bath, a wellness workshop, or a seasonal gathering, you are welcome exactly as you are.";
+
+export const EXPERIENCE_SECTIONS = [
+  {
+    title: "Sound Bath Meditation",
+    body: "Sound bath meditation uses the tones, vibrations, and harmonics of crystal and Tibetan singing bowls to create an immersive environment that encourages the mind and body to slow down. These experiences invite you into a deeply restful state, supporting stress reduction, presence, and a sense of inner quiet—without requiring you to actively silence the mind.",
+  },
+  {
+    title: "Nutrition & Wellness Workshops",
+    body: "Interactive workshops explore how food, herbs, and daily rhythms support energy, mood, and long-term well-being. From food-and-mood cooking classes to practical nutrition education, each session offers tools you can bring home and use in everyday life.",
+  },
+  {
+    title: "Mindfulness & Meditation Experiences",
+    body: "Mindfulness and meditation experiences create space to step out of the pace of daily life and return to the body. Through breathwork, guided meditation, and restorative pauses, these gatherings support nervous-system balance, emotional clarity, and a deeper sense of presence.",
+  },
+  {
+    title: "Seasonal & Nature-Based Experiences",
+    body: "Seasonal and nature-based experiences reconnect you with the rhythms of the natural world. Herbal exploration, outdoor gatherings, and practices rooted in the seasons offer a chance to slow down, notice, and nourish yourself in relationship with the living world around you.",
+  },
+] as const;
+
+export const EXPERIENCES_GROUP_HEADING = "Bring an Experience to Your Group";
+export const EXPERIENCES_GROUP_BODY =
+  "Looking to bring an experience to your team, community, or private gathering? Workshops and wellness experiences can be customized for corporate settings, celebrations, and small groups.";
+
+export const RETREATS_TITLE = "Retreats";
+export const RETREATS_SUB =
+  "Immersive space to step away, slow down, and return to yourself.";
+
+export const RETREATS_INTRO = [
+  "Sometimes we need more than a moment—we need space to truly step away.",
+  "Retreats bring together nature, nourishment, movement, mindfulness, and meaningful connection in restorative settings designed to help you slow down and return to yourself.",
+] as const;
+
+export const RETREATS_WHAT_HEADING = "What You May Experience";
+export const RETREATS_WHAT = [
+  "Meditation, breathwork, and sound healing",
+  "Nourishing meals and mindful eating",
+  "Gentle movement and time outdoors",
+  "Herbal exploration and seasonal practices",
+  "Community, rest, and meaningful connection",
+] as const;
+
+export const RETREATS_NATURE_HEADING = "Rooted in Nature";
+export const RETREATS_NATURE =
+  "From intimate local gatherings to immersive experiences inspired by the natural beauty and traditions of Greece, each retreat is thoughtfully created to nourish mind, body, and spirit. Rooted in nature, these offerings invite you to reconnect with the land, with others, and with your own inner rhythm.";
+
+export const NOURISH_TITLE = "Nourish";
+export const NOURISH_HERO_LINE = "Nutrition, wellness, and inspiration for more intentional living.";
+export const NOURISH_DESCRIPTION =
+  "A space to learn, explore, and feel inspired. Discover evidence-based nutrition and wellness education, thoughtful perspectives, nourishing recipes, and simple ways to bring greater intention and well-being into everyday life.";
+
+export const NOURISH_JOURNAL_LEAD = "Guidance and inspiration for a more nourished life.";
+export const NOURISH_JOURNAL_BODY =
+  "Explore evidence-based nutrition, mind-body wellness, mindful living, and thoughtful perspectives you can carry into everyday life.";
+export const NOURISH_JOURNAL_TAGS = [
+  "Nutrition & Health",
+  "Mind-Body Wellness",
+  "Food & Herbs",
+  "Mindful Living",
+  "Seasonal Wellness",
+] as const;
+
+export const NOURISH_RECIPES_LEAD = "Simple, nourishing recipes";
+export const NOURISH_RECIPES_BODY =
+  "Explore wholesome recipes inspired by whole foods, Mediterranean flavors, and a food-first approach to feeling well.";
+export const NOURISH_RECIPE_TAGS = [
+  "Breakfast",
+  "Main Dishes",
+  "Snacks",
+  "Smoothies",
+  "Plant-Forward",
+  "Mediterranean",
+  "Seasonal",
+] as const;
+
+export const CONTACT_HERO =
+  "Have a question or interested in working together? Get in touch to learn more about nutrition counseling, sound baths, workshops, retreats and other wellness offerings.";
+
+export const CONTACT_SECOND =
+  "In-person wellness services are offered in Astoria, Queens, with virtual nutrition counseling available in New York city metro area and NY State.";
 
 export const EXPERIENCES_WORKSHOP_NOTE =
   "Stay tuned for future dates by checking the workshop page.";

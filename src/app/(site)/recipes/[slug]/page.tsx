@@ -2,29 +2,28 @@ import { notFound } from "next/navigation";
 import { getPost, getPosts } from "@/lib/content";
 import { buildMetadata, JsonLd } from "@/lib/seo";
 import { PageHero } from "@/components/site/PageHero";
-import { siteUrl } from "@/lib/content";
 import { renderRichText } from "@/lib/rich-text";
 
 export async function generateStaticParams() {
-  const posts = await getPosts("journal");
+  const posts = await getPosts("recipe");
   return posts.map((post) => ({ slug: post.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = await getPost(slug, "journal");
+  const post = await getPost(slug, "recipe");
   if (!post) return {};
   return buildMetadata({
-    title: post.metaTitle,
-    description: post.metaDescription,
-    path: `/journal/${post.slug}`,
+    title: post.metaTitle || post.title,
+    description: post.metaDescription || post.excerpt,
+    path: `/recipes/${post.slug}`,
     image: post.featuredImage || undefined,
   });
 }
 
-export default async function JournalPostPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function RecipePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = await getPost(slug, "journal");
+  const post = await getPost(slug, "recipe");
   if (!post) notFound();
 
   return (
@@ -32,16 +31,15 @@ export default async function JournalPostPage({ params }: { params: Promise<{ sl
       <JsonLd
         data={{
           "@context": "https://schema.org",
-          "@type": "Article",
-          headline: post.title,
+          "@type": "Recipe",
+          name: post.title,
           description: post.excerpt,
           datePublished: post.publishedAt,
           author: { "@type": "Person", name: "Anna Almiroudis" },
-          publisher: { "@type": "Organization", name: "Functional Nourishment" },
-          mainEntityOfPage: siteUrl(`/journal/${post.slug}`),
         }}
       />
       <PageHero
+        eyebrow="Recipe"
         heading={post.title}
         subheading={post.excerpt}
         image={post.featuredImage || undefined}

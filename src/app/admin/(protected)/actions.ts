@@ -24,23 +24,18 @@ export async function saveSettings(formData: FormData) {
     });
   }
 
-  const bookingUrl = String(formData.get("bookingUrl") || "").trim();
-  if (bookingUrl) {
-    await prisma.menuItem.updateMany({
-      where: {
-        OR: [
-          { label: { equals: "Book a Discovery Call", mode: "insensitive" } },
-          { label: { equals: "Book Now", mode: "insensitive" } },
-          { href: "/book" },
-          { href: { contains: "bookings" } },
-        ],
-      },
-      data: {
-        href: bookingUrl,
-        openInNew: bookingUrl.startsWith("http"),
-      },
-    });
-  }
+  await prisma.menuItem.updateMany({
+    where: {
+      OR: [
+        { label: { equals: "Book a Discovery Call", mode: "insensitive" } },
+        { label: { equals: "Book Now", mode: "insensitive" } },
+      ],
+    },
+    data: {
+      href: "/book",
+      openInNew: false,
+    },
+  });
 
   revalidatePath("/", "layout");
   revalidatePath("/admin/settings");
@@ -288,12 +283,43 @@ export async function savePost(formData: FormData) {
     metaDescription: String(formData.get("metaDescription") || ""),
     featuredImage: String(formData.get("featuredImage") || ""),
     featuredImageAlt: String(formData.get("featuredImageAlt") || ""),
+    kind: String(formData.get("kind") || "journal") === "recipe" ? "recipe" : "journal",
+    tags: String(formData.get("tags") || ""),
     published: formData.get("published") === "on",
   };
   if (id) await prisma.post.update({ where: { id }, data });
   else await prisma.post.create({ data });
   revalidatePath("/admin/posts");
   revalidatePath("/journal");
+  revalidatePath("/nourish");
+  revalidatePath("/recipes");
+}
+
+export async function generateContentDraft(formData: FormData) {
+  await guard();
+  const { generateDraftContent } = await import("@/lib/ai-drafts");
+  const kind = String(formData.get("kind") || "journal") === "recipe" ? "recipe" : "journal";
+  const draft = await generateDraftContent(kind);
+  let slug = draft.slug;
+  const existing = await prisma.post.findUnique({ where: { slug } });
+  if (existing) slug = `${slug}-${Date.now().toString().slice(-4)}`;
+  const post = await prisma.post.create({
+    data: {
+      slug,
+      title: draft.title,
+      excerpt: draft.excerpt,
+      body: draft.body,
+      metaTitle: draft.metaTitle,
+      metaDescription: draft.metaDescription,
+      featuredImage: draft.featuredImage,
+      featuredImageAlt: draft.featuredImageAlt,
+      kind,
+      tags: draft.tags,
+      published: false,
+    },
+  });
+  revalidatePath("/admin/posts");
+  redirect(`/admin/posts/${post.id}`);
 }
 
 export async function deletePost(formData: FormData) {

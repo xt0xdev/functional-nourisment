@@ -4,8 +4,17 @@ import {
   ABOUT_CREDENTIAL_SOUND,
   ABOUT_HERO_SUBHEADING,
   ABOUT_NAME,
+  CONTACT_HERO,
+  CONTACT_SECOND,
   EXPERIENCES_INTRO,
   EXPERIENCES_INTRO_MORE,
+  EXPERIENCES_SUB,
+  EXPERIENCES_TITLE,
+  NOURISH_DESCRIPTION,
+  NOURISH_HERO_LINE,
+  NOURISH_TITLE,
+  RETREATS_SUB,
+  RETREATS_TITLE,
   MIND_HOW,
   MIND_HERO,
   MIND_MEDITATIVE,
@@ -30,6 +39,7 @@ import {
   SQUARESPACE_EXPERIENCES,
 } from "../src/lib/page-copy";
 import { FOOTER_BLURB } from "../src/lib/site-defaults";
+import { STARTER_JOURNAL, STARTER_RECIPES } from "../src/lib/starter-content";
 
 const prisma = new PrismaClient();
 
@@ -162,13 +172,11 @@ const pages = [
   },
   {
     slug: "experiences",
-    title: "Wellness Experiences",
-    metaTitle: "Corporate Wellness Workshops in NYC | Nutrition & Sound Baths",
-    metaDescription:
-      "Bespoke corporate wellness workshops and small-group experiences in New York City and Queens: food-and-mood cooking classes, sound baths, breathwork, and skin nutrition.",
-    heroHeading: "Wellness Experiences",
-    heroSubheading:
-      "Bespoke corporate wellness workshops and intimate local experiences across New York City, Queens, and Astoria.",
+    title: EXPERIENCES_TITLE,
+    metaTitle: "Workshops & Experiences | Functional Nourishment",
+    metaDescription: EXPERIENCES_SUB,
+    heroHeading: EXPERIENCES_TITLE,
+    heroSubheading: EXPERIENCES_SUB,
     content: JSON.stringify({
       intro: EXPERIENCES_INTRO,
       introMore: EXPERIENCES_INTRO_MORE,
@@ -227,10 +235,28 @@ const pages = [
     metaDescription:
       "Contact Anna Almiroudis at Functional Nourishment in Astoria, NY. Remote nutrition care across Queens and New York City. Email functionalnurture@gmail.com.",
     heroHeading: "Contact",
-    heroSubheading: "In-person and remote appointments offered in Astoria, Queens, and across the New York City metro area.",
+    heroSubheading: CONTACT_HERO,
     content: JSON.stringify({
-      intro: "In person and remote appointments offered in Astoria, NY. Email: functionalnurture@gmail.com",
+      intro: CONTACT_SECOND,
     }),
+  },
+  {
+    slug: "retreats",
+    title: RETREATS_TITLE,
+    metaTitle: "Retreats | Functional Nourishment",
+    metaDescription: RETREATS_SUB,
+    heroHeading: RETREATS_TITLE,
+    heroSubheading: RETREATS_SUB,
+    content: JSON.stringify({ intro: RETREATS_SUB }),
+  },
+  {
+    slug: "nourish",
+    title: NOURISH_TITLE,
+    metaTitle: "Nourish | Journal, Recipes & Resources",
+    metaDescription: NOURISH_DESCRIPTION,
+    heroHeading: NOURISH_TITLE,
+    heroSubheading: NOURISH_HERO_LINE,
+    content: JSON.stringify({ description: NOURISH_DESCRIPTION }),
   },
 ];
 
@@ -467,7 +493,10 @@ async function main() {
   await syncCanonicalMenu();
   await renameCommunityToWellness();
   await ensureCalendarMenuItems();
+  const { syncLatestNavigation } = await import("./sync-nav");
+  await syncLatestNavigation(prisma);
   await ensureServingFooterLinks();
+  await seedNourishStarters();
 
   for (const service of services) {
     await prisma.service.upsert({
@@ -491,8 +520,8 @@ async function main() {
   for (const post of posts) {
     await prisma.post.upsert({
       where: { slug: post.slug },
-      update: post,
-      create: post,
+      update: { ...post, kind: "journal" },
+      create: { ...post, kind: "journal" },
     });
   }
 
@@ -515,8 +544,8 @@ async function syncCanonicalMenu() {
   await prisma.menuItem.updateMany({
     where: { label: { in: ["Book a Discovery Call", "Book Now"] } },
     data: {
-      href: "https://calendly.com/functionalnourishment-krbc/new-meeting",
-      openInNew: true,
+      href: "/book",
+      openInNew: false,
     },
   });
 }
@@ -584,7 +613,7 @@ async function seedMenu() {
       label: "Services",
       href: "",
       location: "header",
-      sortOrder: 10,
+      sortOrder: 20,
       style: "link",
     },
   });
@@ -593,7 +622,16 @@ async function seedMenu() {
       label: "Wellness",
       href: "",
       location: "header",
-      sortOrder: 20,
+      sortOrder: 30,
+      style: "link",
+    },
+  });
+  const nourish = await prisma.menuItem.create({
+    data: {
+      label: "Nourish",
+      href: "/nourish",
+      location: "header",
+      sortOrder: 40,
       style: "link",
     },
   });
@@ -602,10 +640,12 @@ async function seedMenu() {
     { parentId: services.id, label: "Nourish Mind", href: "/sound-healing", sortOrder: 11 },
     { parentId: services.id, label: "Nourish Body", href: "/nutrition", sortOrder: 12 },
     { parentId: services.id, label: "Nourish Spirit", href: "/meditation", sortOrder: 13 },
-    { parentId: wellness.id, label: "Sound Bath Meditations", href: "/events", sortOrder: 21 },
-    { parentId: wellness.id, label: "Wellness Experiences", href: "/experiences", sortOrder: 22 },
-    { parentId: wellness.id, label: "News", href: "/journal", sortOrder: 23 },
-    { parentId: wellness.id, label: "Calendar", href: "/calendar", sortOrder: 24 },
+    { parentId: wellness.id, label: "Workshops & Experiences", href: "/experiences", sortOrder: 10 },
+    { parentId: wellness.id, label: "Retreats", href: "/retreats", sortOrder: 20 },
+    { parentId: wellness.id, label: "Calendar", href: "/calendar", sortOrder: 30 },
+    { parentId: nourish.id, label: "Journal", href: "/journal", sortOrder: 10 },
+    { parentId: nourish.id, label: "Recipes", href: "/recipes", sortOrder: 20 },
+    { parentId: nourish.id, label: "Resources", href: "/nourish#resources", sortOrder: 30 },
   ];
   for (const item of headerChildren) {
     await prisma.menuItem.create({ data: { ...item, location: "header" } });
@@ -613,20 +653,19 @@ async function seedMenu() {
 
   await prisma.menuItem.createMany({
     data: [
-      { label: "About", href: "/about", location: "header", sortOrder: 30, style: "link" },
-      { label: "Contact", href: "/contact", location: "header", sortOrder: 40, style: "link" },
-      { label: "Client Portal", href: "https://client.practicebetter.io/#/signin", location: "header", sortOrder: 50, style: "ghost", openInNew: true },
-      { label: "Book a Discovery Call", href: "https://calendly.com/functionalnourishment-krbc/new-meeting", location: "header", sortOrder: 60, style: "cta", openInNew: true },
+      { label: "About", href: "/about", location: "header", sortOrder: 10, style: "link" },
+      { label: "Contact", href: "/contact", location: "header", sortOrder: 50, style: "link" },
+      { label: "Book a Discovery Call", href: "/book", location: "header", sortOrder: 70, style: "cta", openInNew: false },
       { label: "Nourish Mind", href: "/sound-healing", location: "footer", groupName: "Services", sortOrder: 10 },
       { label: "Nourish Body", href: "/nutrition", location: "footer", groupName: "Services", sortOrder: 20 },
       { label: "Nourish Spirit", href: "/meditation", location: "footer", groupName: "Services", sortOrder: 30 },
-      { label: "Sound Bath Meditations", href: "/events", location: "footer", groupName: "Wellness", sortOrder: 10 },
       { label: "Calendar", href: "/calendar", location: "footer", groupName: "Wellness", sortOrder: 15 },
-      { label: "Wellness Experiences", href: "/experiences", location: "footer", groupName: "Wellness", sortOrder: 20 },
-      { label: "News", href: "/journal", location: "footer", groupName: "Wellness", sortOrder: 30 },
+      { label: "Workshops & Experiences", href: "/experiences", location: "footer", groupName: "Wellness", sortOrder: 20 },
+      { label: "Retreats", href: "/retreats", location: "footer", groupName: "Wellness", sortOrder: 18 },
+      { label: "Nourish", href: "/nourish", location: "footer", groupName: "Wellness", sortOrder: 25 },
       { label: "About", href: "/about", location: "footer", groupName: "Connect", sortOrder: 10 },
       { label: "Contact", href: "/contact", location: "footer", groupName: "Connect", sortOrder: 20 },
-      { label: "Book a Discovery Call", href: "https://calendly.com/functionalnourishment-krbc/new-meeting", location: "footer", groupName: "Connect", sortOrder: 30, openInNew: true },
+      { label: "Book a Discovery Call", href: "/book", location: "footer", groupName: "Connect", sortOrder: 30, openInNew: false },
       { label: "Client Portal", href: "https://client.practicebetter.io/#/signin", location: "footer", groupName: "Connect", sortOrder: 40, openInNew: true },
       { label: "Nutritionist in Astoria", href: "/locations/astoria", location: "footer", groupName: "Serving", sortOrder: 10 },
       { label: "Nutritionist in Queens", href: "/locations/queens", location: "footer", groupName: "Serving", sortOrder: 20 },
@@ -694,6 +733,49 @@ async function seedSampleMedia() {
       caption: "Practitioner portrait",
     },
   });
+}
+
+async function seedNourishStarters() {
+  for (const post of STARTER_JOURNAL) {
+    await prisma.post.upsert({
+      where: { slug: post.slug },
+      update: {
+        title: post.title,
+        excerpt: post.excerpt,
+        body: post.body,
+        metaTitle: post.metaTitle,
+        metaDescription: post.metaDescription,
+        tags: post.tags,
+        kind: "journal",
+      },
+      create: {
+        ...post,
+        kind: "journal",
+        published: true,
+      },
+    });
+  }
+  for (const post of STARTER_RECIPES) {
+    await prisma.post.upsert({
+      where: { slug: post.slug },
+      update: {
+        title: post.title,
+        excerpt: post.excerpt,
+        body: post.body,
+        metaTitle: post.metaTitle,
+        metaDescription: post.metaDescription,
+        tags: post.tags,
+        featuredImage: post.featuredImage,
+        featuredImageAlt: post.featuredImageAlt,
+        kind: "recipe",
+      },
+      create: {
+        ...post,
+        kind: "recipe",
+        published: true,
+      },
+    });
+  }
 }
 
 async function ensureServingFooterLinks() {

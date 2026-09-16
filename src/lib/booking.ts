@@ -1,6 +1,7 @@
 import { BERRY_STREET_URL, CALENDLY_URL } from "./site-defaults";
 
 export const DEFAULT_BOOKING_URL = CALENDLY_URL;
+export const DISCOVERY_INQUIRY_PATH = "/book";
 
 const BOOKING_LABELS = new Set(["book a discovery call", "book now"]);
 
@@ -37,13 +38,13 @@ export function isBookingCta(label: string, href = ""): boolean {
 
 export function applyBookingUrl<T extends { label: string; href: string; openInNew?: boolean }>(
   item: T,
-  bookingUrl: string,
+  _bookingUrl?: string,
 ): T {
-  if (!bookingUrl || !isBookingCta(item.label, item.href)) return item;
+  if (!isBookingCta(item.label, item.href)) return item;
   return {
     ...item,
-    href: bookingUrl,
-    openInNew: bookingUrl.startsWith("http") ? true : item.openInNew,
+    href: DISCOVERY_INQUIRY_PATH,
+    openInNew: false,
   };
 }
 

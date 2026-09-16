@@ -5,9 +5,11 @@ import { SubscribeForm } from "@/components/site/SubscribeForm";
 import { applyBookingUrl, resolveBookingUrl } from "@/lib/booking";
 import { locationLinks } from "@/lib/locations";
 import type { getFooterMenu } from "@/lib/menu";
+import { AMAZON_BOOK_URL } from "@/lib/page-copy";
 import {
   CHILDRENS_BOOK_NOTE,
   INSTAGRAM_HANDLE,
+  MAILING_LIST_BLURB,
   PRACTITIONER_CREDIT,
   resolveFooterBlurb,
   resolveInstagramUrl,
@@ -51,6 +53,9 @@ export function Footer({
             <p className="font-serif text-2xl">
               Functional <em className="italic">Nourishment</em>
             </p>
+            <p className="text-sm leading-relaxed text-white/70">
+              Nourishing your whole self from the inside out.
+            </p>
           </div>
           <p className="mt-4 text-sm leading-relaxed text-white/75">
             {resolveFooterBlurb(settings.footerBlurb)}
@@ -65,7 +70,14 @@ export function Footer({
             <Instagram className="h-4 w-4" aria-hidden="true" />
             <span>@{INSTAGRAM_HANDLE}</span>
           </a>
-          <p className="mt-4 text-xs leading-relaxed text-white/55">{CHILDRENS_BOOK_NOTE}</p>
+          <a
+            href={AMAZON_BOOK_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-4 block text-xs leading-relaxed text-white/70 underline decoration-white/30 underline-offset-4 hover:text-white"
+          >
+            {CHILDRENS_BOOK_NOTE}
+          </a>
         </div>
         {menuGroups.map((group) => (
           <div key={group.name}>
@@ -100,7 +112,7 @@ export function Footer({
           </ul>
           <div className="mt-8">
             <p className="text-xs uppercase tracking-[0.2em] text-accent">Mailing list</p>
-            <p className="mt-3 text-sm text-white/70">Occasional notes on workshops, sound baths, and practice updates.</p>
+            <p className="mt-3 text-sm text-white/70">{MAILING_LIST_BLURB}</p>
             <div className="mt-4">
               <SubscribeForm variant="footer" />
             </div>

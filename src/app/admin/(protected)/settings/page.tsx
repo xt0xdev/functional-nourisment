@@ -55,8 +55,8 @@ export default async function SettingsPage() {
             )}
             {key === "bookingUrl" ? (
               <p className="text-xs text-muted">
-                Used by the header Book a Discovery Call button, footer link, homepage, and other
-                booking CTAs. Discovery calls use Calendly.
+                Calendly URL shown after someone submits the discovery inquiry form. Header, footer,
+                and CTA buttons go to /book first — they no longer open Calendly directly.
               </p>
             ) : null}
             {key === "stripeUrl" || key === "paypalUrl" ? (

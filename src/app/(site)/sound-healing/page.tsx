@@ -5,6 +5,7 @@ import { buildMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/site/PageHero";
 import { CtaBand } from "@/components/site/CtaBand";
 import { MIND_HERO, MIND_HOW, MIND_MEDITATIVE, MIND_SESSIONS, MIND_WHAT } from "@/lib/page-copy";
+import { SITE_IMAGES, isStockOrEmptyImage } from "@/lib/site-images";
 
 export async function generateMetadata() {
   const page = await getPage("sound-healing");
@@ -32,17 +33,14 @@ export default async function SoundHealingPage() {
         eyebrow="Mind · In person in Astoria"
         heading={page?.heroHeading || "Nourish Mind"}
         subheading={page?.heroSubheading?.includes("mental and emotional well-being") ? page.heroSubheading : MIND_HERO}
-        image={
-          page?.heroImage ||
-          "https://images.unsplash.com/photo-1600618528240-fb9fc964b853?auto=format&fit=crop&w=1400&q=80"
-        }
-        imageAlt={page?.heroImageAlt || "Sound healing bowls for Reiki and sound baths in Astoria, Queens"}
+        image={isStockOrEmptyImage(page?.heroImage) ? SITE_IMAGES.mindMeditation : page!.heroImage}
+        imageAlt={page?.heroImageAlt || SITE_IMAGES.mindMeditationAlt}
       />
       <section className="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-2 md:px-6">
         <div className="relative min-h-80 overflow-hidden rounded-3xl">
           <Image
-            src="https://images.unsplash.com/photo-1600618528240-fb9fc964b853?auto=format&fit=crop&w=1400&q=80"
-            alt="Crystal singing bowls used for sound healing sessions in Astoria, NY"
+            src={SITE_IMAGES.mindBowls}
+            alt={SITE_IMAGES.mindBowlsAlt}
             fill
             className="object-cover"
           />

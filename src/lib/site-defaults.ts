@@ -41,14 +41,16 @@ export const CHILDRENS_BOOK_NOTE =
 
 export const FAQ_HEADING = "Functional Nutrition in Astoria, Queens & New York City";
 
-export const INQUIRY_SOURCES = [
-  "Referred by Physician's office",
-  "Google search",
-  "Friend or family",
-  "Other",
-] as const;
+export const MAILING_LIST_BLURB =
+  "Sign up for updates on nutrition, wellness, workshops, sound baths, retreats, and upcoming offerings.";
 
-export type InquirySource = (typeof INQUIRY_SOURCES)[number];
+export {
+  INQUIRY_INTERESTS,
+  INQUIRY_SOURCES,
+  REFERRAL_SOURCES,
+  showsReferredBy,
+} from "./inquiry";
+export type { InquiryInterest, InquirySource } from "./inquiry";
 
 const LEGACY_FOOTER_BLURBS = [
   "A whole-person functional nutrition practice in Astoria, Queens, serving New York City",

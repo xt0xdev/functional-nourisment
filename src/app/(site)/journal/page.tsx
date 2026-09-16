@@ -12,7 +12,7 @@ export const metadata = buildMetadata({
 });
 
 export default async function JournalPage() {
-  const posts = await getPosts();
+  const posts = await getPosts("journal");
 
   return (
     <>

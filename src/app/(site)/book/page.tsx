@@ -1,8 +1,10 @@
+import Link from "next/link";
 import { getPage, getSettings, parseContent } from "@/lib/content";
-import { bookingLinkProps, resolveBookingUrl } from "@/lib/booking";
+import { resolveBookingUrl } from "@/lib/booking";
 import { buildMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/site/PageHero";
 import { ContactForm } from "@/components/site/ContactForm";
+import { SITE_IMAGES, isStockOrEmptyImage } from "@/lib/site-images";
 
 export async function generateMetadata() {
   const page = await getPage("book");
@@ -16,28 +18,30 @@ export async function generateMetadata() {
 export default async function BookPage() {
   const [page, settings] = await Promise.all([getPage("book"), getSettings()]);
   const content = parseContent<{ paragraphs: string[] }>(page?.content || "{}", { paragraphs: [] });
+  const calendlyUrl = resolveBookingUrl(settings);
 
   return (
     <>
       <PageHero
         eyebrow="Appointments · Astoria, Queens & NYC"
-        heading={page?.heroHeading || ""}
-        subheading={page?.heroSubheading}
-        image={
-          page?.heroImage ||
-          "https://images.unsplash.com/photo-1467453678174-768ec283a940?auto=format&fit=crop&w=1400&q=80"
+        heading={page?.heroHeading || "Book a Discovery Call"}
+        subheading={
+          page?.heroSubheading ||
+          "Share a few details first. After your inquiry is received, you can choose a time for a complimentary 20-minute call."
         }
-        imageAlt={page?.heroImageAlt || "A quiet table for booking nutrition counseling in Astoria, Queens, and NYC"}
+        image={isStockOrEmptyImage(page?.heroImage) ? SITE_IMAGES.landingMeet : page!.heroImage}
+        imageAlt={page?.heroImageAlt || SITE_IMAGES.landingMeetAlt}
       />
       <section className="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-2 md:px-6">
         <div className="prose-fn">
           {content.paragraphs.map((paragraph) => (
             <p key={paragraph.slice(0, 28)}>{paragraph}</p>
           ))}
+          <p>
+            Insurance and Berry Street bookings stay direct — no discovery call is required if you are
+            ready to schedule nutrition counseling through insurance.
+          </p>
           <div className="flex flex-wrap gap-3">
-            <a className="btn-primary no-underline" {...bookingLinkProps(resolveBookingUrl(settings))}>
-              Book a Discovery Call
-            </a>
             <a
               href={settings.berryStreetUrl}
               target="_blank"
@@ -46,14 +50,22 @@ export default async function BookPage() {
             >
               Book through Berry Street
             </a>
+            <Link href="/calendar" className="btn-outline no-underline">
+              View the calendar
+            </Link>
           </div>
         </div>
         <div className="rounded-3xl bg-white p-6 shadow-sm">
           <h2 className="font-serif text-3xl text-forest">Free 20-minute discovery call</h2>
           <p className="mt-2 mb-6 text-sm text-muted">
-            For out-of-network nutritional counseling and questions about fit.
+            Please complete this inquiry first. After you send it, you can choose a time on Calendly.
+            Anna reviews messages before the call.
           </p>
-          <ContactForm defaultTopic="Discovery call" />
+          <ContactForm
+            defaultTopic="Nutrition Counseling"
+            showCalendlyOnSuccess
+            calendlyUrl={calendlyUrl}
+          />
         </div>
       </section>
     </>

@@ -1,4 +1,4 @@
-import { bookingLinkProps, resolveBookingUrl } from "@/lib/booking";
+import { DISCOVERY_INQUIRY_PATH, bookingLinkProps } from "@/lib/booking";
 import { ServiceArea } from "@/components/site/ServiceArea";
 import {
   BERRY_STREET_URL,
@@ -12,15 +12,14 @@ import {
 
 export function CtaBand({
   berryStreetUrl,
-  bookingUrl,
+  bookingUrl: _bookingUrl,
   showServiceArea = true,
 }: {
   berryStreetUrl: string;
   bookingUrl?: string;
   showServiceArea?: boolean;
 }) {
-  const bookHref = resolveBookingUrl(bookingUrl);
-  const bookProps = bookingLinkProps(bookHref);
+  const bookProps = bookingLinkProps(DISCOVERY_INQUIRY_PATH);
 
   return (
     <>

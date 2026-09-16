@@ -22,6 +22,19 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
         <input type="hidden" name="id" value={post.id} />
         <input name="title" defaultValue={post.title} className="rounded-xl border border-forest/15 bg-white px-3 py-2" />
         <input name="slug" defaultValue={post.slug} className="rounded-xl border border-forest/15 bg-white px-3 py-2" />
+        <label className="grid gap-1 text-sm">
+          Type
+          <select name="kind" defaultValue={post.kind} className="rounded-xl border border-forest/15 bg-white px-3 py-2">
+            <option value="journal">Journal</option>
+            <option value="recipe">Recipe</option>
+          </select>
+        </label>
+        <input
+          name="tags"
+          defaultValue={post.tags}
+          placeholder="Tags (comma separated)"
+          className="rounded-xl border border-forest/15 bg-white px-3 py-2"
+        />
         <input name="metaTitle" defaultValue={post.metaTitle} className="rounded-xl border border-forest/15 bg-white px-3 py-2" />
         <textarea name="metaDescription" defaultValue={post.metaDescription} className="rounded-xl border border-forest/15 bg-white px-3 py-2" />
         <textarea name="excerpt" defaultValue={post.excerpt} rows={3} className="rounded-xl border border-forest/15 bg-white px-3 py-2" />

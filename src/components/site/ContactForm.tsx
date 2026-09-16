@@ -1,11 +1,27 @@
 "use client";
 
-import { useState } from "react";
-import { INQUIRY_SOURCES } from "@/lib/site-defaults";
+import { useMemo, useState } from "react";
+import { CalendlyEmbed } from "@/components/site/CalendlyEmbed";
+import { INQUIRY_INTERESTS, INQUIRY_SOURCES, showsReferredBy } from "@/lib/inquiry";
 
-export function ContactForm({ defaultTopic = "Discovery call" }: { defaultTopic?: string }) {
+export function ContactForm({
+  defaultTopic = "General Inquiry",
+  showCalendlyOnSuccess = false,
+  calendlyUrl = "",
+}: {
+  defaultTopic?: string;
+  showCalendlyOnSuccess?: boolean;
+  calendlyUrl?: string;
+}) {
+  const initialInterest = INQUIRY_INTERESTS.includes(defaultTopic as (typeof INQUIRY_INTERESTS)[number])
+    ? defaultTopic
+    : defaultTopic.toLowerCase().includes("discover")
+      ? "Nutrition Counseling"
+      : "General Inquiry";
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [source, setSource] = useState("");
+  const [interest, setInterest] = useState(initialInterest);
+  const needsReferral = useMemo(() => showsReferredBy(source), [source]);
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -21,6 +37,7 @@ export function ContactForm({ defaultTopic = "Discovery call" }: { defaultTopic?
       setStatus("sent");
       form.reset();
       setSource("");
+      setInterest(initialInterest);
     } else {
       setStatus("error");
     }
@@ -29,7 +46,8 @@ export function ContactForm({ defaultTopic = "Discovery call" }: { defaultTopic?
   if (status === "sent") {
     return (
       <div className="rounded-2xl bg-sand p-6 text-forest">
-        Thank you. Anna will be in touch shortly about your inquiry.
+        <p>Thank you. Your inquiry has been received, and Anna will be in touch shortly.</p>
+        {showCalendlyOnSuccess ? <CalendlyEmbed url={calendlyUrl} /> : null}
       </div>
     );
   }
@@ -37,38 +55,52 @@ export function ContactForm({ defaultTopic = "Discovery call" }: { defaultTopic?
   return (
     <form onSubmit={onSubmit} className="grid gap-4">
       <label className="grid gap-1 text-sm">
-        Name
-        <input required name="name" className="rounded-xl border border-forest/15 bg-white px-3 py-2" />
-      </label>
-      <label className="grid gap-1 text-sm">
-        Email
+        Name*
         <input
           required
-          type="email"
-          name="email"
+          name="name"
+          placeholder="Your name"
           className="rounded-xl border border-forest/15 bg-white px-3 py-2"
         />
       </label>
       <label className="grid gap-1 text-sm">
-        Phone
-        <input name="phone" className="rounded-xl border border-forest/15 bg-white px-3 py-2" />
+        Email*
+        <input
+          required
+          type="email"
+          name="email"
+          placeholder="Your email address"
+          className="rounded-xl border border-forest/15 bg-white px-3 py-2"
+        />
       </label>
       <label className="grid gap-1 text-sm">
-        Topic
+        Phone*
+        <input
+          required
+          name="phone"
+          type="tel"
+          placeholder="Your phone number"
+          className="rounded-xl border border-forest/15 bg-white px-3 py-2"
+        />
+      </label>
+      <label className="grid gap-1 text-sm">
+        What are you interested in?*
         <select
+          required
           name="topic"
-          defaultValue={defaultTopic}
+          value={interest}
+          onChange={(event) => setInterest(event.target.value)}
           className="rounded-xl border border-forest/15 bg-white px-3 py-2"
         >
-          <option>Discovery call</option>
-          <option>Insurance / Berry Street</option>
-          <option>Reiki or sound healing</option>
-          <option>Corporate workshop</option>
-          <option>General</option>
+          {INQUIRY_INTERESTS.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
         </select>
       </label>
       <label className="grid gap-1 text-sm">
-        How did you find us?
+        How did you hear about Functional Nourishment?*
         <select
           required
           name="source"
@@ -86,34 +118,38 @@ export function ContactForm({ defaultTopic = "Discovery call" }: { defaultTopic?
           ))}
         </select>
       </label>
+      {needsReferral ? (
+        <label className="grid gap-1 text-sm">
+          Who referred you?*
+          <input
+            required
+            name="referredBy"
+            className="rounded-xl border border-forest/15 bg-white px-3 py-2"
+            placeholder="Name of person or organization"
+          />
+        </label>
+      ) : (
+        <input type="hidden" name="referredBy" value="" />
+      )}
       <label className="grid gap-1 text-sm">
-        Who referred you?
-        <input
-          name="referredBy"
-          className="rounded-xl border border-forest/15 bg-white px-3 py-2"
-          placeholder={
-            source === "Referred by Physician's office"
-              ? "Physician or office name (e.g. Kokkolis office)"
-              : "Name of the person or office, if anyone referred you"
-          }
-        />
-      </label>
-      <label className="grid gap-1 text-sm">
-        Message
+        Message*
         <textarea
           required
           name="message"
           rows={5}
           className="rounded-xl border border-forest/15 bg-white px-3 py-2"
-          placeholder="Share what you would like support with."
+          placeholder="How can I support you? Please share a few details about why you are seeking my services."
         />
+        <span className="text-xs text-muted">
+          Please do not include sensitive medical or health information in this form.
+        </span>
       </label>
       <button
         type="submit"
         disabled={status === "sending"}
         className="rounded-full bg-forest px-6 py-3 text-cream disabled:opacity-60"
       >
-        {status === "sending" ? "Sending…" : "Send message"}
+        {status === "sending" ? "Sending…" : "Send Inquiry"}
       </button>
       {status === "error" ? (
         <p className="text-sm text-clay">Something went wrong. Please email directly instead.</p>

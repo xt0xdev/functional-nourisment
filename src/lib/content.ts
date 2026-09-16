@@ -51,15 +51,17 @@ export const getEvent = cache(async (slug: string) => {
   });
 });
 
-export const getPosts = cache(async () => {
+export const getPosts = cache(async (kind?: "journal" | "recipe") => {
   return prisma.post.findMany({
-    where: { published: true },
+    where: { published: true, ...(kind ? { kind } : {}) },
     orderBy: { publishedAt: "desc" },
   });
 });
 
-export const getPost = cache(async (slug: string) => {
-  return prisma.post.findFirst({ where: { slug, published: true } });
+export const getPost = cache(async (slug: string, kind?: "journal" | "recipe") => {
+  return prisma.post.findFirst({
+    where: { slug, published: true, ...(kind ? { kind } : {}) },
+  });
 });
 
 export function parseContent<T>(raw: string, fallback: T): T {

@@ -15,12 +15,12 @@ export default async function AdminInquiriesPage() {
               <div>
                 <p className="font-medium text-forest">{inquiry.name}</p>
                 <p className="text-sm text-muted">
-                  {inquiry.email} {inquiry.phone ? `· ${inquiry.phone}` : ""} · {inquiry.topic}
+                  {inquiry.email} · {inquiry.phone || "No phone"} · Interested in: {inquiry.topic}
                 </p>
                 {inquiry.source ? (
                   <p className="mt-1 text-sm text-muted">
-                    How they found us: {inquiry.source}
-                    {inquiry.referredBy ? ` · Who referred you: ${inquiry.referredBy}` : ""}
+                    How they heard about FN: {inquiry.source}
+                    {inquiry.referredBy ? ` · Referred by: ${inquiry.referredBy}` : ""}
                   </p>
                 ) : null}
                 <p className="mt-1 text-xs text-muted">{inquiry.createdAt.toLocaleString()}</p>

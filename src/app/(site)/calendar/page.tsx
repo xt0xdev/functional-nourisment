@@ -41,12 +41,21 @@ function formatWhen(startsAt: Date | null, endsAt: Date | null) {
   return `${start} – ${end}`;
 }
 
-export default async function CalendarPage() {
-  const [page, events, settings] = await Promise.all([
+export default async function CalendarPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ focus?: string }>;
+}) {
+  const [{ focus }, page, allEvents, settings] = await Promise.all([
+    searchParams,
     getPage("calendar"),
     getUpcomingEvents(),
     getSettings(),
   ]);
+  const events =
+    focus === "retreats"
+      ? allEvents.filter((event) => /retreat/i.test(`${event.title} ${event.description}`))
+      : allEvents;
   const content = parseContent<{ intro?: string }>(page?.content || "{}", {});
   const grouped = new Map<string, typeof events>();
   for (const event of events) {
@@ -65,20 +74,22 @@ export default async function CalendarPage() {
           page?.heroSubheading ||
           "Upcoming workshops and sound bath meditations. Reserve your spot with Stripe or PayPal."
         }
-        image={
-          page?.heroImage ||
-          "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=80"
-        }
-        imageAlt={page?.heroImageAlt || "Calm water for sound bath and workshop calendar"}
+        image={page?.heroImage || "/images/wellness-mats-bowls.png"}
+        imageAlt={page?.heroImageAlt || "Meditation mats and singing bowls at an outdoor gathering"}
       />
       <section className="mx-auto max-w-4xl px-4 py-16 md:px-6">
         <p className="mb-10 text-lg leading-relaxed text-muted">
           {content.intro ||
             "Join Anna for workshops and sound bath meditations. Browse upcoming dates below and pay securely through Stripe or PayPal. Sound Bath Meditations also remain listed on the events page."}
         </p>
+        {focus === "retreats" ? (
+          <p className="mb-8 text-sm text-teal">Showing retreat dates when they are posted to the calendar.</p>
+        ) : null}
         {events.length === 0 ? (
           <div className="rounded-3xl bg-white p-8 shadow-sm">
-            <h2 className="font-serif text-3xl text-primary">No upcoming public dates just yet</h2>
+            <h2 className="font-serif text-3xl text-primary">
+              {focus === "retreats" ? "No upcoming retreats posted just yet" : "No upcoming public dates just yet"}
+            </h2>
             <p className="mt-3 text-muted">
               Private and corporate bookings are available year-round. You can still reserve a sound bath
               meditation using the payment links below, or email Anna to plan a custom session.

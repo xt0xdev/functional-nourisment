@@ -130,6 +130,8 @@ model Post {
   metaDescription  String
   featuredImage    String   @default("")
   featuredImageAlt String   @default("")
+  kind             String   @default("journal")
+  tags             String   @default("")
   published        Boolean  @default(true)
   publishedAt      DateTime @default(now())
   updatedAt        DateTime @updatedAt

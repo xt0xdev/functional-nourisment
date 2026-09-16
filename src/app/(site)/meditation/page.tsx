@@ -4,6 +4,7 @@ import { buildMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/site/PageHero";
 import { CtaBand } from "@/components/site/CtaBand";
 import { SmartImage } from "@/components/site/SmartImage";
+import { SITE_IMAGES, isStockOrEmptyImage } from "@/lib/site-images";
 import {
   SPIRIT_EXPERIENCE_ITEMS,
   SPIRIT_EYEBROW,
@@ -40,11 +41,8 @@ export default async function MeditationPage() {
         eyebrow={SPIRIT_EYEBROW}
         heading={page?.heroHeading || "Nourish Spirit"}
         subheading={page?.heroSubheading?.includes("reconnect—with yourself") ? page.heroSubheading : SPIRIT_HERO}
-        image={page?.heroImage || "/images/meditation-2025-greece.jpg"}
-        imageAlt={
-          page?.heroImageAlt ||
-          "Meditation and sound bath on a pebble beach in Greece, 2025"
-        }
+        image={isStockOrEmptyImage(page?.heroImage) ? SITE_IMAGES.spiritSoundbath : page!.heroImage}
+        imageAlt={page?.heroImageAlt || SITE_IMAGES.spiritSoundbathAlt}
       />
 
       <section className="bg-mist">
@@ -94,23 +92,32 @@ export default async function MeditationPage() {
           <p className="mt-4 max-w-3xl leading-relaxed text-muted">
             {content.retreatsGreece || SPIRIT_RETREATS_GREECE}
           </p>
-          <div className="mt-10 grid gap-5 md:grid-cols-2">
+          <div className="mt-10 grid gap-5 md:grid-cols-3">
             <figure className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-mist shadow-sm ring-1 ring-primary/10">
               <SmartImage
-                src="/images/meditation-2025-greece.jpg"
-                alt="Sound bath and meditation circle on a pebble beach in Greece at dusk, 2025"
+                src={SITE_IMAGES.spiritSoundbath}
+                alt={SITE_IMAGES.spiritSoundbathAlt}
                 fill
                 className="object-cover"
-                sizes="(min-width: 768px) 50vw, 100vw"
+                sizes="(min-width: 768px) 33vw, 100vw"
               />
             </figure>
             <figure className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-mist shadow-sm ring-1 ring-primary/10">
               <SmartImage
-                src="/images/meditation-2025-greece-circle.jpg"
-                alt="Closer view of the 2025 Greece retreat sound bath circle and singing bowls"
+                src={SITE_IMAGES.greeceCircle}
+                alt={SITE_IMAGES.greeceCircleAlt}
                 fill
                 className="object-cover"
-                sizes="(min-width: 768px) 50vw, 100vw"
+                sizes="(min-width: 768px) 33vw, 100vw"
+              />
+            </figure>
+            <figure className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-mist shadow-sm ring-1 ring-primary/10">
+              <SmartImage
+                src={SITE_IMAGES.greeceClose}
+                alt={SITE_IMAGES.greeceCloseAlt}
+                fill
+                className="object-cover"
+                sizes="(min-width: 768px) 33vw, 100vw"
               />
             </figure>
           </div>

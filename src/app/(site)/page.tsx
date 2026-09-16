@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Brain, HeartPulse, Sparkles } from "lucide-react";
 import { SmartImage } from "@/components/site/SmartImage";
 import { getPage, getSettings, parseContent } from "@/lib/content";
-import { bookingLinkProps, resolveBookingUrl } from "@/lib/booking";
+import { SITE_IMAGES, isStockOrEmptyImage } from "@/lib/site-images";
 import { buildMetadata, JsonLd, faqPageSchema, practiceFaqs } from "@/lib/seo";
 import { CtaBand } from "@/components/site/CtaBand";
 import { FAQ_HEADING, HERO_EYEBROW, HERO_INTRO, isLegacyHeroIntro } from "@/lib/site-defaults";
@@ -59,9 +59,9 @@ export default async function HomePage() {
               {isLegacyHeroIntro(content.intro) ? HERO_INTRO : content.intro}
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <a className="btn-primary" {...bookingLinkProps(resolveBookingUrl(settings))}>
+              <Link className="btn-primary" href="/book">
                 Book a Discovery Call
-              </a>
+              </Link>
               <Link href="/nutrition" className="btn-outline">
                 Explore Services
               </Link>
@@ -69,11 +69,8 @@ export default async function HomePage() {
           </div>
           <div className="relative aspect-[4/3] overflow-hidden rounded-3xl">
             <SmartImage
-              src={
-                page?.heroImage ||
-                "https://images.unsplash.com/photo-1467453678174-768ec283a940?auto=format&fit=crop&w=1400&q=80"
-              }
-              alt={page?.heroImageAlt || "Fresh greens and tea prepared for functional nutrition counseling in Astoria, Queens"}
+              src={isStockOrEmptyImage(page?.heroImage) ? SITE_IMAGES.landingHero : page!.heroImage}
+              alt={page?.heroImageAlt || SITE_IMAGES.landingHeroAlt}
               fill
               priority
               className="object-cover"
@@ -107,10 +104,10 @@ export default async function HomePage() {
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-16 md:grid-cols-2 md:px-6">
           <div className="relative aspect-[4/5] overflow-hidden rounded-3xl">
             <Image
-              src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1200&q=80"
-              alt="Nourishing bowl of vegetables for Medical Nutrition Therapy clients in NYC and Queens"
+              src={SITE_IMAGES.landingMeet}
+              alt={SITE_IMAGES.landingMeetAlt}
               fill
-              className="object-cover"
+              className="object-cover object-[center_20%]"
             />
             <p className="absolute bottom-5 left-5 right-5 rounded-2xl bg-white/90 px-4 py-3 font-serif text-lg italic text-navy">
               “{content.quote || "True nourishment begins with listening to the body."}”

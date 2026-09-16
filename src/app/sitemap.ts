@@ -18,6 +18,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/book",
     "/contact",
     "/journal",
+    "/nourish",
+    "/recipes",
+    "/retreats",
     "/privacy",
   ];
 
@@ -43,7 +46,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.7,
       })),
     ...posts.map((post) => ({
-      url: siteUrl(`/journal/${post.slug}`),
+      url: siteUrl(post.kind === "recipe" ? `/recipes/${post.slug}` : `/journal/${post.slug}`),
       lastModified: post.updatedAt,
       changeFrequency: "monthly" as const,
       priority: 0.7,

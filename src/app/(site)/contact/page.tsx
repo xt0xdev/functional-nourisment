@@ -1,38 +1,46 @@
 import { getPage, getSettings } from "@/lib/content";
+import { resolveBookingUrl } from "@/lib/booking";
 import { buildMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/site/PageHero";
 import { ContactForm } from "@/components/site/ContactForm";
 import { ServiceArea } from "@/components/site/ServiceArea";
+import { CONTACT_HERO, CONTACT_SECOND } from "@/lib/page-copy";
+import { SITE_IMAGES, isStockOrEmptyImage } from "@/lib/site-images";
 
 export async function generateMetadata() {
   const page = await getPage("contact");
   return buildMetadata({
     title: page?.metaTitle || "Contact a Nutritionist in Astoria, Queens & NYC",
-    description: page?.metaDescription || "",
+    description: page?.metaDescription || CONTACT_HERO,
     path: "/contact",
   });
 }
 
-export default async function ContactPage() {
-  const [page, settings] = await Promise.all([getPage("contact"), getSettings()]);
+export default async function ContactPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ discovery?: string; interest?: string }>;
+}) {
+  const [{ discovery, interest }, page, settings] = await Promise.all([
+    searchParams,
+    getPage("contact"),
+    getSettings(),
+  ]);
+  const isDiscovery = discovery === "1";
+  const calendlyUrl = resolveBookingUrl(settings);
 
   return (
     <>
       <PageHero
         eyebrow="Say hello"
-        heading={page?.heroHeading || ""}
-        subheading={page?.heroSubheading}
-        image={
-          page?.heroImage ||
-          "https://images.unsplash.com/photo-1467453678174-768ec283a940?auto=format&fit=crop&w=1400&q=80"
-        }
-        imageAlt={page?.heroImageAlt || "Tea and a notebook for contacting a nutritionist in Astoria, Queens"}
+        heading={page?.heroHeading || "Contact"}
+        subheading={CONTACT_HERO}
+        image={isStockOrEmptyImage(page?.heroImage) ? SITE_IMAGES.landingMeet : page!.heroImage}
+        imageAlt={page?.heroImageAlt || SITE_IMAGES.landingMeetAlt}
       />
       <section className="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-2 md:px-6">
         <div>
-          <p className="text-lg text-muted">
-            In-person mind-body sessions in Astoria, Queens, and remote nutrition counseling across New York City.
-          </p>
+          <p className="text-lg text-muted">{CONTACT_SECOND}</p>
           <p className="mt-6 text-forest">
             Email:{" "}
             <a className="underline" href={`mailto:${settings.email}`}>
@@ -40,7 +48,6 @@ export default async function ContactPage() {
             </a>
           </p>
           <p className="mt-2 text-muted">{settings.address}</p>
-          <p className="mt-6 text-sm text-muted">{settings.bookingNote}</p>
           <div className="mt-8 overflow-hidden rounded-3xl border border-forest/10">
             <iframe
               title="Map of Astoria, New York"
@@ -50,7 +57,20 @@ export default async function ContactPage() {
           </div>
         </div>
         <div className="rounded-3xl bg-white p-6 shadow-sm">
-          <ContactForm defaultTopic="General" />
+          {isDiscovery ? (
+            <>
+              <h2 className="font-serif text-3xl text-forest">Book a Discovery Call</h2>
+              <p className="mt-2 mb-6 text-sm text-muted">
+                Share a few details first. After you send your inquiry, you can choose a time for your
+                complimentary call.
+              </p>
+            </>
+          ) : null}
+          <ContactForm
+            defaultTopic={isDiscovery ? "Nutrition Counseling" : interest || "General Inquiry"}
+            showCalendlyOnSuccess={isDiscovery}
+            calendlyUrl={calendlyUrl}
+          />
         </div>
       </section>
       <ServiceArea intro="Whether you live in Astoria, elsewhere in Queens, or across New York City, you can reach Anna for remote nutrition care or in-person mind-body sessions." />

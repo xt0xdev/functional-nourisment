@@ -2,8 +2,17 @@ import { PrismaClient } from "@prisma/client";
 import {
   ABOUT_HERO_SUBHEADING,
   ABOUT_NAME,
+  CONTACT_HERO,
+  CONTACT_SECOND,
   EXPERIENCES_INTRO,
   EXPERIENCES_INTRO_MORE,
+  EXPERIENCES_SUB,
+  EXPERIENCES_TITLE,
+  NOURISH_DESCRIPTION,
+  NOURISH_HERO_LINE,
+  NOURISH_TITLE,
+  RETREATS_SUB,
+  RETREATS_TITLE,
   MIND_HOW,
   MIND_HERO,
   MIND_MEDITATIVE,
@@ -29,6 +38,9 @@ import {
   withUpdatedSoundCredential,
 } from "../src/lib/page-copy";
 import { FOOTER_BLURB } from "../src/lib/site-defaults";
+import { SITE_IMAGES, isStockOrEmptyImage } from "../src/lib/site-images";
+import { STARTER_JOURNAL, STARTER_RECIPES } from "../src/lib/starter-content";
+import { syncLatestNavigation } from "./sync-nav";
 
 const prisma = new PrismaClient();
 
@@ -190,11 +202,75 @@ async function main() {
   });
 
   await mergePage("experiences", {
+    heroHeading: EXPERIENCES_TITLE,
+    heroSubheading: EXPERIENCES_SUB,
     content: {
       intro: EXPERIENCES_INTRO,
       introMore: EXPERIENCES_INTRO_MORE,
     },
   });
+
+  await mergePage("contact", {
+    heroSubheading: CONTACT_HERO,
+    content: { intro: CONTACT_SECOND },
+  });
+
+  const retreats = await prisma.page.findUnique({ where: { slug: "retreats" } });
+  if (!retreats) {
+    await prisma.page.create({
+      data: {
+        slug: "retreats",
+        title: RETREATS_TITLE,
+        metaTitle: "Retreats | Functional Nourishment",
+        metaDescription: RETREATS_SUB,
+        heroHeading: RETREATS_TITLE,
+        heroSubheading: RETREATS_SUB,
+        heroImage: SITE_IMAGES.spiritSoundbath,
+        heroImageAlt: SITE_IMAGES.spiritSoundbathAlt,
+        content: JSON.stringify({ intro: RETREATS_SUB }),
+        system: true,
+        published: true,
+      },
+    });
+  }
+
+  const nourish = await prisma.page.findUnique({ where: { slug: "nourish" } });
+  if (!nourish) {
+    await prisma.page.create({
+      data: {
+        slug: "nourish",
+        title: NOURISH_TITLE,
+        metaTitle: "Nourish | Journal, Recipes & Resources",
+        metaDescription: NOURISH_DESCRIPTION,
+        heroHeading: NOURISH_TITLE,
+        heroSubheading: NOURISH_HERO_LINE,
+        heroImage: SITE_IMAGES.bodyBowl,
+        heroImageAlt: SITE_IMAGES.bodyBowlAlt,
+        content: JSON.stringify({ description: NOURISH_DESCRIPTION }),
+        system: true,
+        published: true,
+      },
+    });
+  }
+
+  const imageUpdates: Record<string, { image: string; alt: string }> = {
+    home: { image: SITE_IMAGES.landingHero, alt: SITE_IMAGES.landingHeroAlt },
+    nutrition: { image: SITE_IMAGES.bodyBowl, alt: SITE_IMAGES.bodyBowlAlt },
+    "sound-healing": { image: SITE_IMAGES.mindMeditation, alt: SITE_IMAGES.mindMeditationAlt },
+    meditation: { image: SITE_IMAGES.spiritSoundbath, alt: SITE_IMAGES.spiritSoundbathAlt },
+    experiences: { image: SITE_IMAGES.wellnessYoga, alt: SITE_IMAGES.wellnessYogaAlt },
+    contact: { image: SITE_IMAGES.landingMeet, alt: SITE_IMAGES.landingMeetAlt },
+    book: { image: SITE_IMAGES.landingMeet, alt: SITE_IMAGES.landingMeetAlt },
+  };
+  for (const [slug, next] of Object.entries(imageUpdates)) {
+    const page = await prisma.page.findUnique({ where: { slug } });
+    if (!page) continue;
+    if (!isStockOrEmptyImage(page.heroImage)) continue;
+    await prisma.page.update({
+      where: { slug },
+      data: { heroImage: next.image, heroImageAlt: next.alt },
+    });
+  }
 
   for (const experience of SQUARESPACE_EXPERIENCES) {
     await prisma.experience.upsert({
@@ -222,10 +298,27 @@ async function main() {
   await prisma.menuItem.updateMany({
     where: { label: { in: ["Book a Discovery Call", "Book Now"] } },
     data: {
-      href: CALENDLY,
-      openInNew: true,
+      href: "/book",
+      openInNew: false,
     },
   });
+
+  await syncLatestNavigation(prisma);
+
+  for (const post of STARTER_JOURNAL) {
+    const existing = await prisma.post.findUnique({ where: { slug: post.slug } });
+    if (existing) continue;
+    await prisma.post.create({
+      data: { ...post, kind: "journal", published: true },
+    });
+  }
+  for (const post of STARTER_RECIPES) {
+    const existing = await prisma.post.findUnique({ where: { slug: post.slug } });
+    if (existing) continue;
+    await prisma.post.create({
+      data: { ...post, kind: "recipe", published: true },
+    });
+  }
 
   const calendarExists = await prisma.menuItem.findFirst({ where: { href: "/calendar" } });
   if (!calendarExists) {

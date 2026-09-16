@@ -1,13 +1,16 @@
-import { Activity, Heart, Leaf, Scale, Sparkle, Sun } from "lucide-react";
 import { getPage, getSettings, parseContent } from "@/lib/content";
 import { buildMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/site/PageHero";
 import { CtaBand } from "@/components/site/CtaBand";
 import { SmartImage } from "@/components/site/SmartImage";
+import { areaIcons } from "@/components/site/SupportIcons";
+import { isStockOrEmptyImage } from "@/lib/site-images";
 import {
   NUTRITION_APPROACH,
   NUTRITION_AREAS,
   NUTRITION_CLOSING,
+  NUTRITION_COOKING_ALT,
+  NUTRITION_COOKING_IMAGE,
   NUTRITION_FOOD_FIRST,
   NUTRITION_GOAL,
   NUTRITION_HEADING,
@@ -27,15 +30,6 @@ export async function generateMetadata() {
     path: "/nutrition",
   });
 }
-
-const areaIcons = {
-  heart: Heart,
-  activity: Activity,
-  scale: Scale,
-  leaf: Leaf,
-  sparkle: Sparkle,
-  sun: Sun,
-} as const;
 
 type NutritionContent = {
   intro?: string;
@@ -62,17 +56,17 @@ export default async function NutritionPage() {
         eyebrow="Body · Astoria, Queens & NYC"
         heading={page?.heroHeading || "Nourish Body"}
         subheading={page?.heroSubheading?.includes("foundation of your well-being") ? page.heroSubheading : NUTRITION_HERO}
-        image={page?.heroImage || NUTRITION_IMAGE}
+        image={isStockOrEmptyImage(page?.heroImage) ? NUTRITION_IMAGE : page!.heroImage}
         imageAlt={page?.heroImageAlt || NUTRITION_IMAGE_ALT}
       />
       <section className="bg-background">
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 md:grid-cols-2 md:px-6">
           <div className="relative aspect-[4/5] overflow-hidden rounded-3xl bg-mist">
             <SmartImage
-              src={NUTRITION_IMAGE}
-              alt={NUTRITION_IMAGE_ALT}
+              src={NUTRITION_COOKING_IMAGE}
+              alt={NUTRITION_COOKING_ALT}
               fill
-              className="object-cover"
+              className="object-cover object-top"
               sizes="(min-width: 768px) 50vw, 100vw"
             />
           </div>
@@ -89,8 +83,8 @@ export default async function NutritionPage() {
 
       <section className="bg-mist">
         <div className="mx-auto max-w-6xl px-4 py-16 md:px-6">
-          <p className="eyebrow">How it works</p>
-          <h2 className="mt-3 font-serif text-4xl text-primary md:text-5xl">How it works</h2>
+          <p className="eyebrow">Getting Started</p>
+          <h2 className="mt-3 font-serif text-4xl text-primary md:text-5xl">How it Works</h2>
           <div className="mt-10 grid gap-5 md:grid-cols-3">
             {NUTRITION_HOW_IT_WORKS.map((step) => (
               <article key={step.title} className="rounded-3xl bg-background p-6 shadow-sm">

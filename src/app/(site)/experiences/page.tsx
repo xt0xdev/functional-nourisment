@@ -1,81 +1,98 @@
 import Link from "next/link";
-import { getExperiences, getPage, getSettings, parseContent } from "@/lib/content";
+import { getPage, parseContent } from "@/lib/content";
 import { buildMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/site/PageHero";
-import { CtaBand } from "@/components/site/CtaBand";
+import { SmartImage } from "@/components/site/SmartImage";
 import {
+  EXPERIENCES_GROUP_BODY,
+  EXPERIENCES_GROUP_HEADING,
   EXPERIENCES_INTRO,
   EXPERIENCES_INTRO_MORE,
-  SQUARESPACE_EXPERIENCES,
+  EXPERIENCES_SUB,
+  EXPERIENCES_TITLE,
+  EXPERIENCE_SECTIONS,
 } from "@/lib/page-copy";
+import { SITE_IMAGES, WELLNESS_GALLERY, isStockOrEmptyImage } from "@/lib/site-images";
 
 export async function generateMetadata() {
   const page = await getPage("experiences");
   return buildMetadata({
-    title: page?.metaTitle || "Corporate Wellness Workshops in NYC | Nutrition & Sound Baths",
-    description: page?.metaDescription || EXPERIENCES_INTRO,
+    title: page?.metaTitle || "Workshops & Experiences | Functional Nourishment",
+    description: page?.metaDescription || EXPERIENCES_SUB,
     path: "/experiences",
   });
 }
 
 export default async function ExperiencesPage() {
-  const [page, settings, experiences] = await Promise.all([
-    getPage("experiences"),
-    getSettings(),
-    getExperiences(),
-  ]);
+  const page = await getPage("experiences");
   const content = parseContent<{ intro?: string; introMore?: string }>(page?.content || "{}", {});
-  const listings = experiences.length
-    ? experiences
-    : SQUARESPACE_EXPERIENCES.map((item) => ({
-        id: item.slug,
-        ...item,
-      }));
 
   return (
     <>
       <PageHero
-        eyebrow="Community · NYC, Queens & Astoria"
-        heading={page?.heroHeading || "Wellness Experiences"}
-        subheading={
-          page?.heroSubheading ||
-          "Bespoke corporate wellness workshops and intimate local experiences across New York City, Queens, and Astoria."
-        }
-        image={
-          page?.heroImage ||
-          "https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=1400&q=80"
-        }
-        imageAlt={page?.heroImageAlt || "Hands preparing whole foods for a wellness workshop in New York City"}
+        eyebrow="Wellness"
+        heading={page?.heroHeading || EXPERIENCES_TITLE}
+        subheading={page?.heroSubheading || EXPERIENCES_SUB}
+        image={isStockOrEmptyImage(page?.heroImage) ? SITE_IMAGES.wellnessYoga : page!.heroImage}
+        imageAlt={page?.heroImageAlt || SITE_IMAGES.wellnessYogaAlt}
       />
       <section className="mx-auto max-w-5xl px-4 py-16 md:px-6">
         <p className="max-w-3xl text-lg leading-relaxed text-muted">
-          {content.intro?.includes("bespoke corporate wellness workshops") ? content.intro : EXPERIENCES_INTRO}
+          {content.intro?.includes("invitation to pause") ? content.intro : EXPERIENCES_INTRO}
         </p>
         <p className="mt-4 max-w-3xl text-lg leading-relaxed text-muted">
           {content.introMore || EXPERIENCES_INTRO_MORE}
         </p>
-        <div className="mt-10 grid gap-6">
-          {listings.map((experience) => (
-            <article key={experience.id} className="rounded-3xl bg-white p-8 shadow-sm">
-              <p className="text-xs uppercase tracking-[0.2em] text-clay">{experience.subtitle}</p>
-              <h2 className="mt-2 font-serif text-3xl text-forest">{experience.title}</h2>
-              <div className="mt-4 space-y-4 leading-relaxed text-muted">
-                {experience.body.split(/\n\n+/).map((paragraph) => (
-                  <p key={paragraph.slice(0, 48)}>{paragraph}</p>
-                ))}
-              </div>
-              <p className="mt-5 text-sm text-muted">
-                Stay tuned for future dates by checking the{" "}
-                <Link href="/calendar" className="text-teal hover:underline">
-                  workshop page
-                </Link>
-                .
-              </p>
+        <p className="mt-8">
+          <Link href="/calendar" className="btn-primary">
+            View Upcoming Events
+          </Link>
+        </p>
+
+        <div className="mt-14 grid gap-6">
+          {EXPERIENCE_SECTIONS.map((section) => (
+            <article key={section.title} className="rounded-3xl bg-white p-8 shadow-sm">
+              <h2 className="font-serif text-3xl text-primary">{section.title}</h2>
+              <p className="mt-4 leading-relaxed text-muted">{section.body}</p>
             </article>
           ))}
         </div>
+
+        <div className="mt-14 rounded-3xl bg-mist p-8">
+          <h2 className="font-serif text-3xl text-primary">{EXPERIENCES_GROUP_HEADING}</h2>
+          <p className="mt-4 max-w-3xl leading-relaxed text-muted">{EXPERIENCES_GROUP_BODY}</p>
+          <Link href="/contact?interest=Workshops+%26+Events" className="btn-primary mt-6">
+            Inquire About a Private or Group Experience
+          </Link>
+        </div>
+
+        <div className="mt-14">
+          <p className="eyebrow">From the field</p>
+          <h2 className="mt-3 font-serif text-3xl text-primary">Workshops, sound, and gathering</h2>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {WELLNESS_GALLERY.map((photo) => (
+              <figure key={photo.src} className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-mist">
+                <SmartImage src={photo.src} alt={photo.alt} fill className="object-cover" sizes="(min-width: 1024px) 33vw, 50vw" />
+              </figure>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-14 grid gap-6 md:grid-cols-2">
+          <article className="rounded-3xl bg-white p-8 shadow-sm">
+            <h2 className="font-serif text-3xl text-primary">Looking for an upcoming experience?</h2>
+            <Link href="/calendar" className="btn-outline mt-6">
+              View Calendar
+            </Link>
+          </article>
+          <article className="rounded-3xl bg-white p-8 shadow-sm">
+            <h2 className="font-serif text-3xl text-primary">Looking for something more immersive?</h2>
+            <Link href="/retreats" className="btn-outline mt-6">
+              Explore Retreats
+            </Link>
+          </article>
+        </div>
       </section>
-      <CtaBand berryStreetUrl={settings.berryStreetUrl} bookingUrl={settings.bookingUrl} />
     </>
   );
 }
