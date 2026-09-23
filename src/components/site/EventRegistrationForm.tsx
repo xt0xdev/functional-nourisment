@@ -65,7 +65,7 @@ export function EventRegistrationForm({
   }
 
   return (
-    <form onSubmit={onSubmit} className="grid gap-4 rounded-3xl bg-white p-6 shadow-sm md:p-8" noValidate>
+    <form onSubmit={onSubmit} className="grid gap-4 rounded-3xl bg-white p-6 shadow-sm md:p-8">
       <label className="grid gap-1 text-sm">
         Event Name
         <input
