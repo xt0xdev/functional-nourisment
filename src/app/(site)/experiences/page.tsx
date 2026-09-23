@@ -45,7 +45,7 @@ export default async function ExperiencesPage() {
         </p>
         <p className="mt-8">
           <Link href="/calendar" className="btn-primary">
-            View Upcoming Events
+            View Upcoming Dates
           </Link>
         </p>
 

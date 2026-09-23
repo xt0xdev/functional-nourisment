@@ -3,10 +3,16 @@ import {
   ABOUT_CREDENTIALS,
   ABOUT_HERO_SUBHEADING,
   ABOUT_NAME,
+  CALENDAR_DESCRIPTION,
+  CALENDAR_META_TITLE,
+  CALENDAR_TITLE,
   COLLABORATIVE_CARE_BODY,
   COLLABORATIVE_CARE_META_DESCRIPTION,
   COLLABORATIVE_CARE_META_TITLE,
   COLLABORATIVE_CARE_TITLE,
+  BOOK_HEADING,
+  BOOK_LEAD,
+  BOOK_META_DESCRIPTION,
   CONTACT_HERO,
   CONTACT_SECOND,
   EXPERIENCES_INTRO,
@@ -44,7 +50,8 @@ import {
   withUpdatedSoundCredential,
 } from "../src/lib/page-copy";
 import { FOOTER_BLURB } from "../src/lib/site-defaults";
-import { SITE_IMAGES, isStockOrEmptyImage } from "../src/lib/site-images";
+import { inferEventKind } from "../src/lib/events";
+import { SITE_IMAGES, isPractitionerImage, isStockOrEmptyImage } from "../src/lib/site-images";
 import { STARTER_JOURNAL, STARTER_RECIPES } from "../src/lib/starter-content";
 import { syncLatestNavigation } from "./sync-nav";
 
@@ -228,6 +235,29 @@ async function main() {
     content: { intro: CONTACT_SECOND },
   });
 
+  const book = await prisma.page.findUnique({ where: { slug: "book" } });
+  if (book) {
+    const legacyHeading =
+      !book.heroHeading.trim() ||
+      book.heroHeading === "Book an Appointment" ||
+      book.heroHeading === "Book";
+    await prisma.page.update({
+      where: { slug: "book" },
+      data: {
+        heroHeading: legacyHeading ? BOOK_HEADING : book.heroHeading,
+        heroSubheading: book.heroSubheading.includes("Remote nutrition counseling")
+          ? BOOK_LEAD
+          : book.heroSubheading || BOOK_LEAD,
+        metaDescription: book.metaDescription.includes("insurance-covered nutrition counseling")
+          ? BOOK_META_DESCRIPTION
+          : book.metaDescription,
+        ...(isStockOrEmptyImage(book.heroImage) || isPractitionerImage(book.heroImage)
+          ? { heroImage: SITE_IMAGES.bodyBowl, heroImageAlt: SITE_IMAGES.bodyBowlAlt }
+          : {}),
+      },
+    });
+  }
+
   const retreats = await prisma.page.findUnique({ where: { slug: "retreats" } });
   if (!retreats) {
     await prisma.page.create({
@@ -335,12 +365,13 @@ async function main() {
     meditation: { image: SITE_IMAGES.spiritSoundbath, alt: SITE_IMAGES.spiritSoundbathAlt },
     experiences: { image: SITE_IMAGES.wellnessYoga, alt: SITE_IMAGES.wellnessYogaAlt },
     contact: { image: SITE_IMAGES.landingMeet, alt: SITE_IMAGES.landingMeetAlt },
-    book: { image: SITE_IMAGES.landingMeet, alt: SITE_IMAGES.landingMeetAlt },
+    book: { image: SITE_IMAGES.bodyBowl, alt: SITE_IMAGES.bodyBowlAlt },
   };
   for (const [slug, next] of Object.entries(imageUpdates)) {
     const page = await prisma.page.findUnique({ where: { slug } });
     if (!page) continue;
-    if (!isStockOrEmptyImage(page.heroImage)) continue;
+    const replaceBookPortrait = slug === "book" && isPractitionerImage(page.heroImage);
+    if (!isStockOrEmptyImage(page.heroImage) && !replaceBookPortrait) continue;
     await prisma.page.update({
       where: { slug },
       data: { heroImage: next.image, heroImageAlt: next.alt },
@@ -442,20 +473,35 @@ async function main() {
     await prisma.page.create({
       data: {
         slug: "calendar",
-        title: "Calendar",
-        metaTitle: "Workshop & Sound Bath Calendar | Functional Nourishment",
-        metaDescription:
-          "Upcoming workshops and sound bath meditations with Anna Almiroudis. Book and pay online with Stripe or PayPal.",
-        heroHeading: "Calendar",
-        heroSubheading: "Upcoming workshops and sound bath meditations. Reserve your spot with Stripe or PayPal.",
-        content: JSON.stringify({
-          intro:
-            "Join Anna for workshops and sound bath meditations. Browse upcoming dates and pay securely through Stripe or PayPal.",
-        }),
+        title: CALENDAR_TITLE,
+        metaTitle: CALENDAR_META_TITLE,
+        metaDescription: CALENDAR_DESCRIPTION,
+        heroHeading: CALENDAR_TITLE,
+        heroSubheading: CALENDAR_DESCRIPTION,
+        content: JSON.stringify({ intro: CALENDAR_DESCRIPTION }),
         system: true,
         published: true,
       },
     });
+  } else {
+    await prisma.page.update({
+      where: { slug: "calendar" },
+      data: {
+        metaTitle: CALENDAR_META_TITLE,
+        metaDescription: CALENDAR_DESCRIPTION,
+        heroHeading: calendarPage.heroHeading || CALENDAR_TITLE,
+        heroSubheading: CALENDAR_DESCRIPTION,
+        content: JSON.stringify({ ...parseJson(calendarPage.content), intro: CALENDAR_DESCRIPTION }),
+      },
+    });
+  }
+
+  const events = await prisma.event.findMany({ select: { id: true, title: true, description: true, kind: true } });
+  for (const event of events) {
+    const inferred = inferEventKind(event);
+    if (event.kind !== inferred) {
+      await prisma.event.update({ where: { id: event.id }, data: { kind: inferred } });
+    }
   }
 
   console.log("Targeted site-update sync complete.");

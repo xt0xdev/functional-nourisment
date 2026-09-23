@@ -52,7 +52,10 @@ export default async function SoundHealingPage() {
           <p>{how}</p>
           <p>{meditative}</p>
           <p>{close}</p>
-          <p className="mt-8">
+          <p className="mt-8 flex flex-wrap gap-3">
+            <Link href="/calendar" className="btn-primary no-underline">
+              View Upcoming Dates
+            </Link>
             <Link href="/calendar" className="btn-outline no-underline">
               Book your next sound bath experience
             </Link>

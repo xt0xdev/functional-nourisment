@@ -2,17 +2,22 @@
 
 import { useMemo, useState } from "react";
 import { CalendlyEmbed } from "@/components/site/CalendlyEmbed";
-import { INQUIRY_INTERESTS, INQUIRY_SOURCES, showsReferredBy } from "@/lib/inquiry";
+import { INQUIRY_INTERESTS, INQUIRY_SOURCES, showsReferredBy, showsSourceOther } from "@/lib/inquiry";
 
 export function ContactForm({
   defaultTopic = "General Inquiry",
   showCalendlyOnSuccess = false,
   calendlyUrl = "",
+  variant = "contact",
+  redirectTo = "",
 }: {
   defaultTopic?: string;
   showCalendlyOnSuccess?: boolean;
   calendlyUrl?: string;
+  variant?: "contact" | "discovery";
+  redirectTo?: string;
 }) {
+  const isDiscovery = variant === "discovery";
   const initialInterest = INQUIRY_INTERESTS.includes(defaultTopic as (typeof INQUIRY_INTERESTS)[number])
     ? defaultTopic
     : defaultTopic.toLowerCase().includes("discover")
@@ -20,8 +25,9 @@ export function ContactForm({
       : "General Inquiry";
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [source, setSource] = useState("");
-  const [interest, setInterest] = useState(initialInterest);
+  const [interest, setInterest] = useState(isDiscovery ? "Nutrition Counseling" : initialInterest);
   const needsReferral = useMemo(() => showsReferredBy(source), [source]);
+  const needsSourceOther = useMemo(() => showsSourceOther(source), [source]);
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -34,10 +40,14 @@ export function ContactForm({
       body: JSON.stringify(data),
     });
     if (response.ok) {
+      if (redirectTo) {
+        window.location.assign(redirectTo);
+        return;
+      }
       setStatus("sent");
       form.reset();
       setSource("");
-      setInterest(initialInterest);
+      setInterest(isDiscovery ? "Nutrition Counseling" : initialInterest);
     } else {
       setStatus("error");
     }
@@ -83,22 +93,26 @@ export function ContactForm({
           className="rounded-xl border border-forest/15 bg-white px-3 py-2"
         />
       </label>
-      <label className="grid gap-1 text-sm">
-        What are you interested in?*
-        <select
-          required
-          name="topic"
-          value={interest}
-          onChange={(event) => setInterest(event.target.value)}
-          className="rounded-xl border border-forest/15 bg-white px-3 py-2"
-        >
-          {INQUIRY_INTERESTS.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-      </label>
+      {isDiscovery ? (
+        <input type="hidden" name="topic" value="Nutrition Counseling" />
+      ) : (
+        <label className="grid gap-1 text-sm">
+          What are you interested in?*
+          <select
+            required
+            name="topic"
+            value={interest}
+            onChange={(event) => setInterest(event.target.value)}
+            className="rounded-xl border border-forest/15 bg-white px-3 py-2"
+          >
+            {INQUIRY_INTERESTS.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
       <label className="grid gap-1 text-sm">
         How did you hear about Functional Nourishment?*
         <select
@@ -118,6 +132,19 @@ export function ContactForm({
           ))}
         </select>
       </label>
+      {needsSourceOther ? (
+        <label className="grid gap-1 text-sm">
+          Please tell us how you heard about us*
+          <input
+            required
+            name="sourceOther"
+            className="rounded-xl border border-forest/15 bg-white px-3 py-2"
+            placeholder="How did you hear about Functional Nourishment?"
+          />
+        </label>
+      ) : (
+        <input type="hidden" name="sourceOther" value="" />
+      )}
       {needsReferral ? (
         <label className="grid gap-1 text-sm">
           Who referred you?*

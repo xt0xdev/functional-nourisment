@@ -124,6 +124,10 @@ export function Footer({
         <Link href="/privacy" className="hover:text-white">
           Privacy
         </Link>
+        {" · "}
+        <Link href="/event-policy" className="hover:text-white">
+          Event policy
+        </Link>
         <p className="mt-2">{PRACTITIONER_CREDIT}</p>
       </div>
     </footer>

@@ -29,7 +29,9 @@ export default async function EditEventPage({ params }: { params: Promise<{ id: 
       </p>
       <h1 className="mt-2 font-serif text-4xl text-forest">Edit event</h1>
       <p className="mt-2 text-sm text-muted">
-        Public URL: /events/{event.slug || event.id}. Add a cover photo and as many gallery images as you like.
+        Public URL: /{event.kind === "retreat" ? "retreats" : "events"}/{event.slug || event.id}.
+        Add a cover photo and as many gallery images as you like. Use Event type “Retreat” for a
+        dedicated retreat page and the longer registration form.
       </p>
 
       <form action={saveEvent} className="mt-6 grid gap-4">
@@ -42,7 +44,22 @@ export default async function EditEventPage({ params }: { params: Promise<{ id: 
           URL slug
           <input name="slug" defaultValue={event.slug || ""} className="rounded-xl border border-forest/15 bg-white px-3 py-2" />
         </label>
+        <label className="grid gap-1 text-sm">
+          Event type
+          <select name="kind" defaultValue={event.kind || "workshop"} className="rounded-xl border border-forest/15 bg-white px-3 py-2">
+            <option value="sound-bath">Sound bath</option>
+            <option value="workshop">Workshop</option>
+            <option value="retreat">Retreat</option>
+            <option value="gathering">Gathering</option>
+          </select>
+        </label>
         <InsertImageField name="description" defaultValue={event.description} rows={8} label="Description" />
+        <InsertImageField
+          name="itinerary"
+          defaultValue={event.itinerary}
+          rows={10}
+          label="Itinerary (shown on dedicated retreat pages)"
+        />
         <label className="grid gap-1 text-sm">
           Location
           <input name="location" defaultValue={event.location} className="rounded-xl border border-forest/15 bg-white px-3 py-2" />

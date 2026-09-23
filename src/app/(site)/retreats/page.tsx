@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getPage } from "@/lib/content";
+import { getPage, getUpcomingRetreats } from "@/lib/content";
 import { buildMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/site/PageHero";
 import { SmartImage } from "@/components/site/SmartImage";
@@ -14,6 +14,7 @@ import {
   RETREATS_WHAT_HEADING,
 } from "@/lib/page-copy";
 import { SITE_IMAGES, isStockOrEmptyImage } from "@/lib/site-images";
+import { eventPublicPath, eventRegisterPath, formatEventWhen } from "@/lib/events";
 
 export async function generateMetadata() {
   const page = await getPage("retreats");
@@ -25,7 +26,7 @@ export async function generateMetadata() {
 }
 
 export default async function RetreatsPage() {
-  const page = await getPage("retreats");
+  const [page, retreats] = await Promise.all([getPage("retreats"), getUpcomingRetreats()]);
 
   return (
     <>
@@ -56,7 +57,11 @@ export default async function RetreatsPage() {
 
         <div className="mt-14">
           <h2 className="font-serif text-4xl text-primary">{RETREATS_NATURE_HEADING}</h2>
-          <p className="mt-5 max-w-3xl leading-relaxed text-muted">{RETREATS_NATURE}</p>
+          <div className="mt-5 max-w-3xl space-y-5 leading-relaxed text-muted">
+            {RETREATS_NATURE.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </div>
           <div className="mt-8 grid gap-4 md:grid-cols-2">
             <figure className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-mist">
               <SmartImage
@@ -81,15 +86,45 @@ export default async function RetreatsPage() {
 
         <div className="mt-14 rounded-3xl bg-white p-8 shadow-sm">
           <h2 className="font-serif text-3xl text-primary">Upcoming Retreats</h2>
-          <p className="mt-4 text-muted">
-            Dates are posted on the calendar as they are announced. Join the mailing list to hear about
-            upcoming retreats first.
-          </p>
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-            <Link href="/calendar?focus=retreats" className="btn-primary">
-              View Upcoming Retreats
-            </Link>
-          </div>
+          {retreats.length === 0 ? (
+            <>
+              <p className="mt-4 text-muted">
+                Dates are posted on the calendar as they are announced. Join the mailing list to hear
+                about upcoming retreats first.
+              </p>
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                <Link href="/calendar?focus=retreats" className="btn-primary">
+                  View Upcoming Retreats
+                </Link>
+              </div>
+            </>
+          ) : (
+            <div className="mt-6 space-y-5">
+              {retreats.map((event) => {
+                const href = eventPublicPath(event);
+                return (
+                  <article key={event.id} className="rounded-2xl border border-forest/10 p-5">
+                    <p className="text-sm text-teal">{formatEventWhen(event.startsAt, event.endsAt)}</p>
+                    <h3 className="mt-1 font-serif text-2xl text-primary">
+                      <Link href={href}>{event.title}</Link>
+                    </h3>
+                    {event.location ? <p className="mt-1 text-sm text-muted">{event.location}</p> : null}
+                    <p className="mt-3 text-sm leading-relaxed text-muted">
+                      {event.description.replace(/!\[[^\]]*\]\([^)]+\)/g, "").trim()}
+                    </p>
+                    <div className="mt-4 flex flex-wrap gap-3">
+                      <Link href={href} className="btn-outline">
+                        View retreat
+                      </Link>
+                      <Link href={eventRegisterPath(event)} className="btn-primary">
+                        Register
+                      </Link>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         <div className="mt-10 rounded-3xl bg-mist p-8">

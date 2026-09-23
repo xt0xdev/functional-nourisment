@@ -20,7 +20,11 @@ export default async function AdminInquiriesPage() {
                 {inquiry.source ? (
                   <p className="mt-1 text-sm text-muted">
                     How they heard about FN: {inquiry.source}
-                    {inquiry.referredBy ? ` · Referred by: ${inquiry.referredBy}` : ""}
+                    {inquiry.referredBy
+                      ? inquiry.source === "Other"
+                        ? ` · Other: ${inquiry.referredBy}`
+                        : ` · Referred by: ${inquiry.referredBy}`
+                      : ""}
                   </p>
                 ) : null}
                 <p className="mt-1 text-xs text-muted">{inquiry.createdAt.toLocaleString()}</p>

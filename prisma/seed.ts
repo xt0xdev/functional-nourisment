@@ -205,13 +205,13 @@ const pages = [
     title: "Calendar",
     metaTitle: "Workshop & Sound Bath Calendar | Functional Nourishment",
     metaDescription:
-      "Upcoming workshops and sound bath meditations with Anna Almiroudis. Book and pay online with Stripe or PayPal.",
+      "Explore upcoming sound bath meditations, wellness workshops, retreats and special gatherings. Find an experience that speaks to you and reserve your spot.",
     heroHeading: "Calendar",
     heroSubheading:
-      "Upcoming workshops and sound bath meditations. Reserve your spot with Stripe or PayPal.",
+      "Explore upcoming sound bath meditations, wellness workshops, retreats and special gatherings. Find an experience that speaks to you and reserve your spot.",
     content: JSON.stringify({
       intro:
-        "Join Anna for workshops and sound bath meditations. Browse upcoming dates and pay securely through Stripe or PayPal. Sound Bath Meditations also remain listed on the events page.",
+        "Explore upcoming sound bath meditations, wellness workshops, retreats and special gatherings. Find an experience that speaks to you and reserve your spot.",
     }),
   },
   {
@@ -219,16 +219,16 @@ const pages = [
     title: "Book",
     metaTitle: "Book a Nutritionist in Astoria, Queens & NYC",
     metaDescription:
-      "Book a free 20-minute discovery call or insurance-covered nutrition counseling with Anna Almiroudis. Remote Medical Nutrition Therapy for Astoria, Queens, and NYC.",
-    heroHeading: "Book an Appointment",
-    heroSubheading:
-      "Remote nutrition counseling for Astoria, Queens, and the NYC metro area, plus in-person Reiki and sound bath sessions in Astoria.",
+      "Book a complimentary 20-minute discovery call with Functional Nourishment. Share your health and nutrition goals, then schedule a time that works for you.",
+    heroHeading: "Book a Discovery Call",
+    heroSubheading: "Take the first step toward a more nourished, balanced you.",
+    heroImage: "/images/nourish-body-bowl.png",
+    heroImageAlt: "Mediterranean bowl with chicken, lentils, roasted vegetables, and greens",
     content: JSON.stringify({
       paragraphs: [
-        "Please note that all nutrition appointments are conducted remotely for clients in Astoria, Queens, and across New York City. I offer in-person Reiki-Sound Bath Meditation sessions in Astoria, NY.",
-        "If you are out of network and interested in booking nutritional counseling services, please use the form below to book a free, 20-minute discovery call.",
-        "I am currently in network with UnitedHealthcare, Aetna and Blue Cross Blue Shield insurance providers. To book a nutritional counseling appointment through your insurance, please book through Berry Street.",
-        "Please email functionalnurture@gmail.com if you have any questions or would like to find out more about my services.",
+        "Schedule a complimentary 20-minute discovery call to share your health and nutrition goals, ask questions, and explore how personalized nutrition counseling can support your well-being.",
+        "If you're using insurance and ready to begin nutrition counseling, you can schedule your appointment directly through Berry Street. No discovery call is required.",
+        "For questions about my services, sound bath meditations, wellness events, or collaborations, please email functionalnurture@gmail.com.",
       ],
     }),
   },

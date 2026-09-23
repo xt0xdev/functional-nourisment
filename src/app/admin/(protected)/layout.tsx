@@ -12,6 +12,7 @@ const nav = [
   { href: "/admin/services", label: "Services" },
   { href: "/admin/experiences", label: "Experiences" },
   { href: "/admin/events", label: "Events" },
+  { href: "/admin/registrations", label: "Registrations" },
   { href: "/admin/posts", label: "Journal & Recipes" },
   { href: "/admin/inquiries", label: "Inquiries" },
   { href: "/admin/subscribers", label: "Mailing list" },

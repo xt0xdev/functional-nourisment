@@ -2,18 +2,20 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 
 export default async function AdminHomePage() {
-  const [pages, events, media, inquiries, unread, subscribers] = await Promise.all([
+  const [pages, events, media, inquiries, unread, subscribers, registrations] = await Promise.all([
     prisma.page.count(),
     prisma.event.count(),
     prisma.media.count(),
     prisma.inquiry.count(),
     prisma.inquiry.count({ where: { read: false } }),
     prisma.subscriber.count(),
+    prisma.eventRegistration.count(),
   ]);
 
   const cards = [
     { label: "Pages", value: pages, href: "/admin/pages" },
     { label: "Events", value: events, href: "/admin/events" },
+    { label: "Registrations", value: registrations, href: "/admin/registrations" },
     { label: "Media", value: media, href: "/admin/media" },
     { label: "Inquiries", value: `${inquiries}${unread ? ` · ${unread} new` : ""}`, href: "/admin/inquiries" },
     { label: "Mailing list", value: subscribers, href: "/admin/subscribers" },

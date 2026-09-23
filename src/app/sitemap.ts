@@ -3,6 +3,7 @@ import { getEvents, getPosts, getPublishedPages } from "@/lib/content";
 import { locations } from "@/lib/locations";
 import { RESERVED_SLUGS } from "@/lib/menu";
 import { siteUrl } from "@/lib/content";
+import { eventPublicPath } from "@/lib/events";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [posts, pages, events] = await Promise.all([getPosts(), getPublishedPages(), getEvents()]);
@@ -23,6 +24,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/retreats",
     "/collaborative-care",
     "/privacy",
+    "/event-policy",
   ];
 
   return [
@@ -53,7 +55,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     })),
     ...events.map((event) => ({
-      url: siteUrl(`/events/${event.slug || event.id}`),
+      url: siteUrl(eventPublicPath(event)),
       lastModified: new Date(),
       changeFrequency: "weekly" as const,
       priority: 0.6,

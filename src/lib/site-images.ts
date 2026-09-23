@@ -49,3 +49,34 @@ export function isStockOrEmptyImage(url?: string | null) {
   if (!value) return true;
   return value.includes("unsplash.com") || value.includes("images.unsplash");
 }
+
+const PRACTITIONER_IMAGE_PATHS = new Set<string>([
+  SITE_IMAGES.landingHero,
+  SITE_IMAGES.landingMeet,
+  SITE_IMAGES.practitionerPortrait,
+  SITE_IMAGES.bodyCooking,
+  "/images/anna-almiroudis.webp",
+]);
+
+export function isPractitionerImage(url?: string | null) {
+  const value = url?.trim() || "";
+  if (!value) return false;
+  if (PRACTITIONER_IMAGE_PATHS.has(value)) return true;
+  const lower = value.toLowerCase();
+  return (
+    lower.includes("landing-meet-anna") ||
+    lower.includes("anna-almiroudis") ||
+    lower.includes("nourish-body-cooking") ||
+    lower.includes("landing-hero-terrace")
+  );
+}
+
+export const BOOK_BRAND_IMAGE = SITE_IMAGES.bodyBowl;
+export const BOOK_BRAND_IMAGE_ALT = SITE_IMAGES.bodyBowlAlt;
+
+export function resolveBookBrandImage(url?: string | null, alt?: string | null) {
+  if (!url?.trim() || isStockOrEmptyImage(url) || isPractitionerImage(url)) {
+    return { src: BOOK_BRAND_IMAGE, alt: BOOK_BRAND_IMAGE_ALT };
+  }
+  return { src: url, alt: alt?.trim() || BOOK_BRAND_IMAGE_ALT };
+}

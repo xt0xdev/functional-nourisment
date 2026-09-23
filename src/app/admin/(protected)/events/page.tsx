@@ -50,7 +50,7 @@ export default async function AdminEventsPage() {
                 {event.title}
               </Link>
               <p className="text-xs text-muted">
-                /events/{event.slug || event.id}
+                {event.kind || "workshop"} · /{event.kind === "retreat" ? "retreats" : "events"}/{event.slug || event.id}
                 {event.images.length ? ` · ${event.images.length} gallery` : ""}
               </p>
             </div>

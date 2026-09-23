@@ -1,6 +1,7 @@
 import { prisma } from "./prisma";
 import { cache } from "react";
 import { eventMediaInclude } from "./media";
+import { isRetreatEvent } from "./events";
 
 export const getSettings = cache(async () => {
   const rows = await prisma.setting.findMany();
@@ -49,6 +50,11 @@ export const getEvent = cache(async (slug: string) => {
     where: { published: true, OR: [{ slug }, { id: slug }] },
     include: eventMediaInclude,
   });
+});
+
+export const getUpcomingRetreats = cache(async () => {
+  const events = await getUpcomingEvents();
+  return events.filter((event) => isRetreatEvent(event));
 });
 
 export const getPosts = cache(async (kind?: "journal" | "recipe") => {

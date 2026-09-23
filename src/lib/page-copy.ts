@@ -229,11 +229,15 @@ export const RETREATS_WHAT = [
   "Gentle movement and time outdoors",
   "Herbal exploration and seasonal practices",
   "Community, rest, and meaningful connection",
+  "Local culture, traditions and immersive experiences.",
 ] as const;
 
 export const RETREATS_NATURE_HEADING = "Rooted in Nature";
-export const RETREATS_NATURE =
-  "From intimate local gatherings to immersive experiences inspired by the natural beauty and traditions of Greece, each retreat is thoughtfully created to nourish mind, body, and spirit. Rooted in nature, these offerings invite you to reconnect with the land, with others, and with your own inner rhythm.";
+export const RETREATS_NATURE = [
+  "From intimate local gatherings to immersive retreats inspired by the natural beauty and rich traditions of Greece, each experience is thoughtfully created to nourish mind, body, and spirit.",
+  "Rooted in nature and inspired by the Mediterranean way of life, our retreats invite you to slow down, reconnect with yourself, and embrace the simple pleasures of mindful living. Through nourishing food, restorative practices, and authentic cultural experiences, you may explore local traditions, discover the island's unique herbs and agricultural heritage, savor regional cuisine, and connect with the people and communities that make each destination special.",
+  "Whether through quiet moments in nature, shared meals, or meaningful cultural encounters, each experience offers an opportunity to reconnect with the land, with others, and with your own inner rhythm.",
+] as const;
 
 export const NOURISH_TITLE = "Nourish";
 export const NOURISH_HERO_LINE = "Nutrition, wellness, and inspiration for more intentional living.";
@@ -264,6 +268,32 @@ export const NOURISH_RECIPE_TAGS = [
   "Seasonal",
 ] as const;
 
+export const BOOK_EYEBROW = "FUNCTIONAL NOURISHMENT · LET'S CONNECT";
+export const BOOK_HEADING = "Book a Discovery Call";
+export const BOOK_LEAD = "Take the first step toward a more nourished, balanced you.";
+export const BOOK_INTRO =
+  "Schedule a complimentary 20-minute discovery call to share your health and nutrition goals, ask questions, and explore how personalized nutrition counseling can support your well-being.";
+export const BOOK_CONNECT_TITLE = "Let's Connect";
+export const BOOK_CONNECT_BODY =
+  "I look forward to learning more about you and exploring how personalized nutrition counseling can support your health and well-being.";
+export const BOOK_INSURANCE_TITLE = "Booking with Insurance?";
+export const BOOK_INSURANCE_BODY =
+  "If you're using insurance and ready to begin nutrition counseling, you can schedule your appointment directly through Berry Street. No discovery call is required.";
+export const BOOK_BERRY_STREET_LABEL = "Book Through Berry Street →";
+export const BOOK_INQUIRIES_TITLE = "General Inquiries";
+export const BOOK_INQUIRIES_BODY =
+  "For questions about my services, sound bath meditations, wellness events, or collaborations, please email functionalnurture@gmail.com.";
+export const BOOK_TAGLINE = "Nourishment for mind, body and spirit.";
+export const BOOK_FORM_TITLE = "Complimentary 20-Minute Discovery Call";
+export const BOOK_FORM_LEAD = "Interested in personalized nutrition counseling?";
+export const BOOK_FORM_INTRO =
+  "Complete the brief inquiry form below to share a little about yourself and your health and nutrition goals. Once submitted, you'll be directed to schedule your discovery call at a time that works best for you.";
+export const BOOK_FORM_NOTE =
+  "This form is exclusively for individuals interested in nutrition counseling. For all other inquiries, please email functionalnurture@gmail.com.";
+export const BOOK_META_TITLE = "Book a Nutritionist in Astoria, Queens & NYC";
+export const BOOK_META_DESCRIPTION =
+  "Book a complimentary 20-minute discovery call with Functional Nourishment. Share your health and nutrition goals, then schedule a time that works for you.";
+
 export const CONTACT_HERO =
   "Have a question or interested in working together? Get in touch to learn more about nutrition counseling, sound baths, workshops, retreats and other wellness offerings.";
 
@@ -281,6 +311,21 @@ export const COLLABORATIVE_CARE_BODY =
 export const COLLABORATIVE_CARE_PARTNER_LABEL =
   "Mike Kokkolis — Bell Dental Care, nutritionist collaboration";
 export const COLLABORATIVE_CARE_PARTNER_URL = "https://belldentalcare.com/nutritionist";
+
+export const CALENDAR_TITLE = "Calendar";
+export const CALENDAR_META_TITLE = "Workshop & Sound Bath Calendar | Functional Nourishment";
+export const CALENDAR_DESCRIPTION =
+  "Explore upcoming sound bath meditations, wellness workshops, retreats and special gatherings. Find an experience that speaks to you and reserve your spot.";
+
+export const EVENT_REGISTRATION_HEADING = "Event Registration";
+export const EVENT_REGISTRATION_INTRO =
+  "We look forward to welcoming you! Please complete the form below to register for your upcoming experience.";
+export const EVENT_REGISTRATION_REQUIRED_NOTE = "Required fields are marked with an asterisk (*).";
+export const EVENT_REGISTRATION_SUBMIT = "Continue to Payment";
+
+export const EVENT_POLICY_TITLE = "Cancellation & Refund Policy";
+export const EVENT_POLICY_INTRO =
+  "Please review this policy before registering for a sound bath, workshop, retreat, or special gathering.";
 
 export const EXPERIENCES_WORKSHOP_NOTE =
   "Stay tuned for future dates by checking the workshop page.";

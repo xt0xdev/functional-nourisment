@@ -77,20 +77,42 @@ model Experience {
 }
 
 model Event {
-  id           String       @id @default(cuid())
-  slug         String?      @unique
-  title        String
-  description  String
-  startsAt     DateTime?
-  endsAt       DateTime?
-  location     String       @default("")
-  published    Boolean      @default(true)
-  sortOrder    Int          @default(0)
-  stripeUrl    String       @default("")
-  paypalUrl    String       @default("")
-  coverImageId String?
-  coverImage   Media?       @relation("EventCover", fields: [coverImageId], references: [id], onDelete: SetNull)
-  images       EventImage[]
+  id             String              @id @default(cuid())
+  slug           String?             @unique
+  title          String
+  description    String
+  itinerary      String              @default("")
+  kind           String              @default("workshop")
+  startsAt       DateTime?
+  endsAt         DateTime?
+  location       String              @default("")
+  published      Boolean             @default(true)
+  sortOrder      Int                 @default(0)
+  stripeUrl      String              @default("")
+  paypalUrl      String              @default("")
+  coverImageId   String?
+  coverImage     Media?              @relation("EventCover", fields: [coverImageId], references: [id], onDelete: SetNull)
+  images         EventImage[]
+  registrations  EventRegistration[]
+}
+
+model EventRegistration {
+  id               String   @id @default(cuid())
+  eventId          String
+  event            Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  formKind         String   @default("workshop")
+  name             String
+  email            String
+  phone            String   @default("")
+  residence        String   @default("")
+  participantCount Int      @default(1)
+  notes            String   @default("")
+  details          String   @default("{}")
+  mailingOptIn     Boolean  @default(false)
+  createdAt        DateTime @default(now())
+
+  @@index([eventId])
+  @@index([createdAt])
 }
 
 /// Image metadata only — never store file bytes in Postgres.
@@ -156,3 +178,4 @@ model Subscriber {
   email     String   @unique
   createdAt DateTime @default(now())
 }
+

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { INQUIRY_INTERESTS, INQUIRY_SOURCES, showsReferredBy } from "@/lib/inquiry";
+import { INQUIRY_INTERESTS, INQUIRY_SOURCES, showsReferredBy, showsSourceOther } from "@/lib/inquiry";
 
 const schema = z
   .object({
@@ -11,6 +11,7 @@ const schema = z
     topic: z.enum(INQUIRY_INTERESTS).optional().default("General Inquiry"),
     source: z.enum(INQUIRY_SOURCES),
     referredBy: z.string().max(160).optional().default(""),
+    sourceOther: z.string().max(160).optional().default(""),
     message: z.string().min(1).max(4000),
   })
   .superRefine((value, ctx) => {
@@ -21,6 +22,13 @@ const schema = z
         path: ["referredBy"],
       });
     }
+    if (showsSourceOther(value.source) && !value.sourceOther.trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Please tell us how you heard about Functional Nourishment.",
+        path: ["sourceOther"],
+      });
+    }
   });
 
 export async function POST(request: Request) {
@@ -29,6 +37,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Please complete the required fields." }, { status: 400 });
   }
 
-  await prisma.inquiry.create({ data: parsed.data });
+  const { sourceOther, ...data } = parsed.data;
+  await prisma.inquiry.create({
+    data: {
+      ...data,
+      referredBy: showsSourceOther(data.source) ? sourceOther.trim() : data.referredBy.trim(),
+    },
+  });
   return NextResponse.json({ ok: true });
 }

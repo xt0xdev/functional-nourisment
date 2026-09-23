@@ -67,9 +67,9 @@ export default async function ContactPage({
             </>
           ) : null}
           <ContactForm
+            variant={isDiscovery ? "discovery" : "contact"}
             defaultTopic={isDiscovery ? "Nutrition Counseling" : interest || "General Inquiry"}
-            showCalendlyOnSuccess={isDiscovery}
-            calendlyUrl={calendlyUrl}
+            redirectTo={isDiscovery ? calendlyUrl : undefined}
           />
         </div>
       </section>

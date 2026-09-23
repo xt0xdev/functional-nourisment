@@ -55,8 +55,9 @@ export default async function SettingsPage() {
             )}
             {key === "bookingUrl" ? (
               <p className="text-xs text-muted">
-                Calendly URL shown after someone submits the discovery inquiry form. Header, footer,
-                and CTA buttons go to /book first — they no longer open Calendly directly.
+                Calendly URL people are redirected to after submitting the discovery inquiry on /book.
+                Header, footer, and CTA buttons still go to /book first — they do not open Calendly
+                directly.
               </p>
             ) : null}
             {key === "stripeUrl" || key === "paypalUrl" ? (

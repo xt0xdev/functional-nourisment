@@ -31,3 +31,7 @@ export const REFERRAL_SOURCES = new Set<InquirySource>([
 export function showsReferredBy(source: string) {
   return REFERRAL_SOURCES.has(source as InquirySource);
 }
+
+export function showsSourceOther(source: string) {
+  return source === "Other";
+}

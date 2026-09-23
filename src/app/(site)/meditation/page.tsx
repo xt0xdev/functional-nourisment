@@ -71,7 +71,7 @@ export default async function MeditationPage() {
               Explore Upcoming Workshops & Retreats
             </Link>
             <Link href="/calendar" className="btn-outline">
-              View schedule
+              View Upcoming Dates
             </Link>
           </div>
         </div>

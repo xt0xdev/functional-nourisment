@@ -49,6 +49,7 @@ export {
   INQUIRY_SOURCES,
   REFERRAL_SOURCES,
   showsReferredBy,
+  showsSourceOther,
 } from "./inquiry";
 export type { InquiryInterest, InquirySource } from "./inquiry";
 

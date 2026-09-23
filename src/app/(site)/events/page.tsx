@@ -5,6 +5,7 @@ import { PageHero } from "@/components/site/PageHero";
 import { CtaBand } from "@/components/site/CtaBand";
 import { SmartImage } from "@/components/site/SmartImage";
 import { EventPayButtons } from "@/components/site/EventPayButtons";
+import { eventPublicPath, eventRegisterPath, isRetreatEvent } from "@/lib/events";
 
 export async function generateMetadata() {
   const page = await getPage("events");
@@ -35,7 +36,8 @@ export default async function EventsPage() {
         {content.intro ? <p className="mb-8 text-lg leading-relaxed text-muted">{content.intro}</p> : null}
         <div className="space-y-5">
           {events.map((event) => {
-            const href = `/events/${event.slug || event.id}`;
+            const href = eventPublicPath(event);
+            const registerHref = eventRegisterPath(event);
             return (
               <article key={event.id} className="overflow-hidden rounded-2xl bg-white shadow-sm">
                 {event.coverImage ? (
@@ -62,9 +64,14 @@ export default async function EventsPage() {
                   {event.location ? <p className="mt-2 text-sm text-muted">{event.location}</p> : null}
                   <div className="mt-4 flex flex-wrap items-center gap-4">
                     <Link href={href} className="text-sm text-moss">
-                      View event
+                      {isRetreatEvent(event) ? "View retreat" : "View event"}
                     </Link>
-                    <EventPayButtons event={event} settings={settings} compact />
+                    <Link href={registerHref} className="btn-primary !px-4 !py-2 text-sm">
+                      Register
+                    </Link>
+                    {isRetreatEvent(event) ? null : (
+                      <EventPayButtons event={event} settings={settings} compact />
+                    )}
                   </div>
                 </div>
               </article>

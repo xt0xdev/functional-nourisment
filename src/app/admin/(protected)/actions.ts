@@ -204,6 +204,8 @@ export async function saveEvent(formData: FormData) {
     coverImageId,
     stripeUrl: String(formData.get("stripeUrl") || "").trim(),
     paypalUrl: String(formData.get("paypalUrl") || "").trim(),
+    kind: (await import("@/lib/events")).normalizeEventKind(String(formData.get("kind") || "workshop")),
+    itinerary: String(formData.get("itinerary") || ""),
   };
 
   const event = id
@@ -229,7 +231,9 @@ export async function saveEvent(formData: FormData) {
   revalidatePath("/admin/events");
   revalidatePath("/events");
   revalidatePath("/calendar");
+  revalidatePath("/retreats");
   revalidatePath(`/events/${event.slug}`);
+  revalidatePath(`/retreats/${event.slug}`);
   revalidatePath(`/admin/events/${event.id}`);
 }
 
@@ -242,6 +246,8 @@ export async function createEvent() {
       title: "Untitled event",
       slug,
       description: "",
+      itinerary: "",
+      kind: "workshop",
       published: false,
       sortOrder: 99,
     },
@@ -258,7 +264,11 @@ export async function toggleEventPublished(formData: FormData) {
   revalidatePath("/admin/events");
   revalidatePath("/events");
   revalidatePath("/calendar");
-  if (event.slug) revalidatePath(`/events/${event.slug}`);
+  revalidatePath("/retreats");
+  if (event.slug) {
+    revalidatePath(`/events/${event.slug}`);
+    revalidatePath(`/retreats/${event.slug}`);
+  }
 }
 
 export async function deleteEvent(formData: FormData) {
@@ -267,7 +277,11 @@ export async function deleteEvent(formData: FormData) {
   revalidatePath("/admin/events");
   revalidatePath("/events");
   revalidatePath("/calendar");
-  if (event.slug) revalidatePath(`/events/${event.slug}`);
+  revalidatePath("/retreats");
+  if (event.slug) {
+    revalidatePath(`/events/${event.slug}`);
+    revalidatePath(`/retreats/${event.slug}`);
+  }
   redirect("/admin/events");
 }
 
@@ -335,6 +349,12 @@ export async function markInquiryRead(formData: FormData) {
     data: { read: true },
   });
   revalidatePath("/admin/inquiries");
+}
+
+export async function deleteEventRegistration(formData: FormData) {
+  await guard();
+  await prisma.eventRegistration.delete({ where: { id: String(formData.get("id")) } });
+  revalidatePath("/admin/registrations");
 }
 
 export async function deleteInquiry(formData: FormData) {
