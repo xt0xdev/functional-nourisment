@@ -1,7 +1,12 @@
 import { PrismaClient } from "@prisma/client";
 import {
+  ABOUT_CREDENTIALS,
   ABOUT_HERO_SUBHEADING,
   ABOUT_NAME,
+  COLLABORATIVE_CARE_BODY,
+  COLLABORATIVE_CARE_META_DESCRIPTION,
+  COLLABORATIVE_CARE_META_TITLE,
+  COLLABORATIVE_CARE_TITLE,
   CONTACT_HERO,
   CONTACT_SECOND,
   EXPERIENCES_INTRO,
@@ -35,6 +40,7 @@ import {
   SPIRIT_RETREATS_GREECE,
   SPIRIT_RETREATS_LEAD,
   SQUARESPACE_EXPERIENCES,
+  normalizeCredentials,
   withUpdatedSoundCredential,
 } from "../src/lib/page-copy";
 import { FOOTER_BLURB } from "../src/lib/site-defaults";
@@ -155,7 +161,14 @@ async function main() {
   if (about) {
     const content = parseJson(about.content);
     const paragraphs = Array.isArray(content.paragraphs)
-      ? (content.paragraphs as string[]).map(withUpdatedSoundCredential)
+      ? (content.paragraphs as string[]).map((paragraph) =>
+          normalizeCredentials(
+            withUpdatedSoundCredential(paragraph).replace(
+              /\bCertified Health Coach\b/g,
+              "Certified Integrative Nutrition Health Coach (CINHC)",
+            ),
+          ),
+        )
       : content.paragraphs;
     await prisma.page.update({
       where: { slug: "about" },
@@ -251,6 +264,68 @@ async function main() {
         published: true,
       },
     });
+  }
+
+  await prisma.page.deleteMany({
+    where: {
+      OR: [
+        { slug: "seasonal-reset" },
+        { slug: { equals: "seasonal-reset", mode: "insensitive" } },
+        { title: { equals: "Seasonal Reset", mode: "insensitive" } },
+      ],
+    },
+  });
+
+  const collaborative = await prisma.page.findUnique({ where: { slug: "collaborative-care" } });
+  if (!collaborative) {
+    await prisma.page.create({
+      data: {
+        slug: "collaborative-care",
+        title: COLLABORATIVE_CARE_TITLE,
+        metaTitle: COLLABORATIVE_CARE_META_TITLE,
+        metaDescription: COLLABORATIVE_CARE_META_DESCRIPTION,
+        heroHeading: COLLABORATIVE_CARE_TITLE,
+        heroSubheading: COLLABORATIVE_CARE_META_DESCRIPTION,
+        heroImage: SITE_IMAGES.wellnessDining,
+        heroImageAlt: SITE_IMAGES.wellnessDiningAlt,
+        content: JSON.stringify({ body: COLLABORATIVE_CARE_BODY }),
+        system: true,
+        published: true,
+      },
+    });
+  } else {
+    await prisma.page.update({
+      where: { slug: "collaborative-care" },
+      data: {
+        title: COLLABORATIVE_CARE_TITLE,
+        metaTitle: COLLABORATIVE_CARE_META_TITLE,
+        metaDescription: COLLABORATIVE_CARE_META_DESCRIPTION,
+        heroHeading: COLLABORATIVE_CARE_TITLE,
+        heroSubheading: COLLABORATIVE_CARE_META_DESCRIPTION,
+        content: JSON.stringify({ body: COLLABORATIVE_CARE_BODY }),
+        system: true,
+        published: true,
+      },
+    });
+  }
+
+  for (const key of ["practitionerName", "credentials"] as const) {
+    const row = await prisma.setting.findUnique({ where: { key } });
+    if (!row) {
+      await prisma.setting.create({
+        data: {
+          key,
+          value: key === "credentials" ? ABOUT_CREDENTIALS : `${ABOUT_NAME}, ${ABOUT_CREDENTIALS}`,
+        },
+      });
+      continue;
+    }
+    if (row.value.includes("CHHC")) {
+      await prisma.setting.update({
+        where: { key },
+        data: { value: normalizeCredentials(row.value) },
+      });
+    }
   }
 
   const imageUpdates: Record<string, { image: string; alt: string }> = {

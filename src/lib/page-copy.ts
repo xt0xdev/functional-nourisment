@@ -21,19 +21,29 @@ export function resolvePillarCopy(value: string | undefined, fallback: string) {
 }
 
 export const ABOUT_NAME = "Anna Almiroudis";
-export const ABOUT_CREDENTIALS = "MS, CNS, LN, CDN, CHHC";
+export const ABOUT_CREDENTIALS = "MS, CNS, LN, CDN, CINHC";
 export const ABOUT_HERO_SUBHEADING =
   "Certified and NYS licensed dietician-nutritionist and mind-body medicine practitioner based in Astoria, serving Queens and the New York City metro area.";
 
 export const ABOUT_CREDENTIAL_SOUND =
   "Sound Bath, Breathwork & Meditation Facilitator";
 
+export const ABOUT_CREDENTIAL_COACH =
+  "Certified Integrative Nutrition Health Coach (CINHC)";
+
+export function normalizeCredentials(value: string) {
+  return value.replace(/\bCHHC\b/g, "CINHC");
+}
+
 export function splitPractitionerHeading(heading?: string | null) {
   const text = heading?.trim() || "";
   if (!text) return { name: ABOUT_NAME, credentials: ABOUT_CREDENTIALS };
   const match = text.match(/^(.*?)(?:,\s*)(MS,?.*)$/i);
   if (match) {
-    return { name: match[1].trim() || ABOUT_NAME, credentials: match[2].trim() };
+    return {
+      name: match[1].trim() || ABOUT_NAME,
+      credentials: normalizeCredentials(match[2].trim()),
+    };
   }
   return { name: text, credentials: ABOUT_CREDENTIALS };
 }
@@ -259,6 +269,18 @@ export const CONTACT_HERO =
 
 export const CONTACT_SECOND =
   "In-person wellness services are offered in Astoria, Queens, with virtual nutrition counseling available in New York city metro area and NY State.";
+
+export const COLLABORATIVE_CARE_TITLE = "Collaborative Care";
+export const COLLABORATIVE_CARE_EYEBROW = "A whole-person care network";
+export const COLLABORATIVE_CARE_META_TITLE =
+  "Collaborative Care | Functional Nourishment";
+export const COLLABORATIVE_CARE_META_DESCRIPTION =
+  "Functional Nourishment works with a network of integrative healthcare and wellness professionals to support your unique health needs.";
+export const COLLABORATIVE_CARE_BODY =
+  "At Functional Nourishment, we believe that true well-being is supported through a collaborative, whole-person approach to care. Through our network of integrative healthcare and wellness professionals, we work together to support your unique health needs, bringing complementary perspectives and expertise to your journey toward lasting well-being.";
+export const COLLABORATIVE_CARE_PARTNER_LABEL =
+  "Mike Kokkolis — Bell Dental Care, nutritionist collaboration";
+export const COLLABORATIVE_CARE_PARTNER_URL = "https://belldentalcare.com/nutritionist";
 
 export const EXPERIENCES_WORKSHOP_NOTE =
   "Stay tuned for future dates by checking the workshop page.";

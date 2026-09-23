@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 export function Logo({
-  className = "h-14 w-14",
+  className = "h-16 w-16",
   priority = false,
 }: {
   className?: string;
@@ -10,9 +10,9 @@ export function Logo({
   return (
     <Image
       src="/images/functional-nourishment-logo.png"
-      alt="Functional Nourishment"
-      width={256}
-      height={256}
+      alt="Functional Nourishment — Nourishment for Mind, Body and Spirit"
+      width={512}
+      height={512}
       className={`rounded-full bg-transparent ${className}`}
       priority={priority}
       quality={100}

@@ -5,6 +5,9 @@ export const SITE_IMAGES = {
   landingMeet: "/images/landing-meet-anna.jpg",
   landingMeetAlt:
     "Anna Almiroudis at a table with a notebook and mug, overlooking the sea",
+  practitionerPortrait: "/images/anna-almiroudis-grass.png",
+  practitionerPortraitAlt:
+    "Anna Almiroudis sitting on the grass in a white dress with a water bottle and book",
   bodyBowl: "/images/nourish-body-bowl.png",
   bodyBowlAlt:
     "Mediterranean bowl with chicken, lentils, roasted vegetables, and greens",

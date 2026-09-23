@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { siteUrl } from "./content";
+import { ABOUT_CREDENTIALS, normalizeCredentials } from "./page-copy";
 
 type SeoInput = {
   title: string;
@@ -191,7 +192,7 @@ export function practiceSchema(settings: Record<string, string>) {
     founder: {
       "@type": "Person",
       name: settings.practitionerShortName || "Anna Almiroudis",
-      honorificSuffix: settings.credentials,
+      honorificSuffix: normalizeCredentials(settings.credentials || ABOUT_CREDENTIALS),
       jobTitle: "Certified Nutrition Specialist",
       knowsLanguage: ["English", "Greek"],
       address: {

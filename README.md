@@ -1,6 +1,6 @@
 # Functional Nourishment
 
-Modern, mobile-first website for **Anna Almiroudis, MS, CNS, LN, CDN, CHHC** — a functional nutrition and integrative wellness practice based in Astoria, serving the New York City metro area.
+Modern, mobile-first website for **Anna Almiroudis, MS, CNS, LN, CDN, CINHC** — a functional nutrition and integrative wellness practice based in Astoria, serving the New York City metro area.
 
 The public site is rebuilt from the content on [functional-nourishment.com](https://functional-nourishment.com/), with local SEO for nutritionists in NYC, Queens, Astoria, Manhattan, Brooklyn, and the wider metro area. An admin backend lets Anna (or her team) edit copy, services, workshops, events, journal posts, a media library, and incoming inquiries.
 

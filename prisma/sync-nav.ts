@@ -71,6 +71,10 @@ export async function syncLatestNavigation(prisma: PrismaClient) {
     data: { sortOrder: 50, visible: true },
   });
   await prisma.menuItem.updateMany({
+    where: { location: "header", label: "Collaborative Care" },
+    data: { href: "/collaborative-care", sortOrder: 60, visible: true, parentId: null },
+  });
+  await prisma.menuItem.updateMany({
     where: { location: "header", label: { in: ["Book a Discovery Call", "Book Now"] } },
     data: { href: "/book", openInNew: false, sortOrder: 70, style: "cta", visible: true },
   });
@@ -151,12 +155,19 @@ export async function syncLatestNavigation(prisma: PrismaClient) {
   });
   if (!nourish) {
     nourish = await prisma.menuItem.create({
-      data: { label: "Nourish", href: "/nourish", location: "header", sortOrder: 40, style: "link" },
+      data: {
+        label: "Nourish",
+        href: "/nourish",
+        location: "header",
+        sortOrder: 40,
+        style: "link",
+        visible: false,
+      },
     });
   } else {
     await prisma.menuItem.update({
       where: { id: nourish.id },
-      data: { href: "/nourish", sortOrder: 40, visible: true },
+      data: { href: "/nourish", sortOrder: 40, visible: false },
     });
   }
   await ensureItem(
@@ -233,6 +244,41 @@ export async function syncLatestNavigation(prisma: PrismaClient) {
       location: "footer",
       groupName: "Wellness",
       sortOrder: 28,
+      visible: true,
+    },
+  );
+
+  await prisma.menuItem.deleteMany({
+    where: {
+      OR: [
+        { label: { equals: "Seasonal Reset", mode: "insensitive" } },
+        { href: { in: ["/seasonal-reset", "seasonal-reset"] } },
+        { href: { contains: "seasonal-reset", mode: "insensitive" } },
+      ],
+    },
+  });
+
+  await ensureItem(
+    prisma,
+    { location: "header", href: "/collaborative-care", parentId: null },
+    {
+      label: "Collaborative Care",
+      href: "/collaborative-care",
+      location: "header",
+      parentId: null,
+      sortOrder: 60,
+      visible: true,
+    },
+  );
+  await ensureItem(
+    prisma,
+    { location: "footer", href: "/collaborative-care" },
+    {
+      label: "Collaborative Care",
+      href: "/collaborative-care",
+      location: "footer",
+      groupName: "Connect",
+      sortOrder: 25,
       visible: true,
     },
   );

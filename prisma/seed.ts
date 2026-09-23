@@ -4,6 +4,10 @@ import {
   ABOUT_CREDENTIAL_SOUND,
   ABOUT_HERO_SUBHEADING,
   ABOUT_NAME,
+  COLLABORATIVE_CARE_BODY,
+  COLLABORATIVE_CARE_META_DESCRIPTION,
+  COLLABORATIVE_CARE_META_TITLE,
+  COLLABORATIVE_CARE_TITLE,
   CONTACT_HERO,
   CONTACT_SECOND,
   EXPERIENCES_INTRO,
@@ -45,9 +49,9 @@ const prisma = new PrismaClient();
 
 const settings: Record<string, string> = {
   siteName: "Functional Nourishment",
-  practitionerName: "Anna Almiroudis, MS, CNS, LN, CDN, CHHC",
+  practitionerName: "Anna Almiroudis, MS, CNS, LN, CDN, CINHC",
   practitionerShortName: "Anna Almiroudis",
-  credentials: "MS, CNS, LN, CDN, CHHC",
+  credentials: "MS, CNS, LN, CDN, CINHC",
   tagline:
     "Optimal health and wellness is not just about the absence of disease — it is an intricate balance of your mental, emotional, spiritual and physical health.",
   email: "functionalnurture@gmail.com",
@@ -92,7 +96,7 @@ const pages = [
       spirit: PILLAR_SPIRIT,
       quote: "True nourishment begins with listening to the body.",
       practitioner:
-        "As a board certified nutrition specialist, licensed nutritionist, certified dietitian-nutritionist and certified holistic health coach based in Astoria, Queens, I bridge the gap between clinical science and intuitive wellness for clients across New York City.",
+        "As a board certified nutrition specialist, licensed nutritionist, certified dietitian-nutritionist and certified integrative nutrition health coach based in Astoria, Queens, I bridge the gap between clinical science and intuitive wellness for clients across New York City.",
       practitionerMore:
         "My practice is rooted in functional nutrition and medical nutrition therapy, with a whole-person view of health. I consider your bio-individuality, your environment and your emotional well-being together, because lasting change rarely comes from a meal plan alone.",
       support: [
@@ -113,7 +117,7 @@ const pages = [
     heroSubheading: ABOUT_HERO_SUBHEADING,
     content: JSON.stringify({
       paragraphs: [
-        `As a Certified Nutritionist Specialist (CNS), Certified Health Coach, Nutrition Educator, Writer, Karuna® and Usui Reiki Master, and ${ABOUT_CREDENTIAL_SOUND}, I bring a uniquely integrative approach to wellness—grounded in science, rooted in nature, and powered by compassion. With advanced training in functional nutrition and a specialization in herbal medicine, I blend evidence-based nutrition with holistic healing practices to support mind-body transformation.`,
+        `As a Certified Nutritionist Specialist (CNS), Certified Integrative Nutrition Health Coach (CINHC), Nutrition Educator, Writer, Karuna® and Usui Reiki Master, and ${ABOUT_CREDENTIAL_SOUND}, I bring a uniquely integrative approach to wellness—grounded in science, rooted in nature, and powered by compassion. With advanced training in functional nutrition and a specialization in herbal medicine, I blend evidence-based nutrition with holistic healing practices to support mind-body transformation.`,
         "I specialize in cardiometabolic health, weight management, gastrointestinal disorders, and mental health nutrition. I provide evidence-based Medical Nutrition Therapy (MNT) for individuals with dyslipidemia, hypertension, insulin resistance, prediabetes and diabetes, gut dysbiosis, metabolic syndrome, irritable bowel syndrome (IBS), celiac disease, weight management, and stress induced health outcomes.",
         "My clinical approach integrates functional nutrition and mind-body medicine to identify and address the root causes of health imbalances. By integrating nutrition interventions, lifestyle modifications, and mind-body stress reduction interventions such as Reiki, Sound Healing and Meditation, I help clients restore metabolic balance, improve gut-health, mitigate stress and barriers to their health and wellness goals.",
         "My ultimate goal is to educate, support and empower individuals to improve their health and mental well-being through sustainable, whole-person, personalized care. Whether I am guiding a private client, leading a corporate wellness workshop, teaching a class, or writing, my goal is to create sustainable pathways to health that nourish all aspects of one’s being, mind, body and spirit.",
@@ -257,6 +261,15 @@ const pages = [
     heroHeading: NOURISH_TITLE,
     heroSubheading: NOURISH_HERO_LINE,
     content: JSON.stringify({ description: NOURISH_DESCRIPTION }),
+  },
+  {
+    slug: "collaborative-care",
+    title: COLLABORATIVE_CARE_TITLE,
+    metaTitle: COLLABORATIVE_CARE_META_TITLE,
+    metaDescription: COLLABORATIVE_CARE_META_DESCRIPTION,
+    heroHeading: COLLABORATIVE_CARE_TITLE,
+    heroSubheading: COLLABORATIVE_CARE_META_DESCRIPTION,
+    content: JSON.stringify({ body: COLLABORATIVE_CARE_BODY }),
   },
 ];
 
@@ -435,7 +448,7 @@ Nutrition visits are remote. In-person sound bath and Reiki sessions are offered
 
 ## Meet the practice
 
-Functional Nourishment is based in Astoria, NY 11105. Anna Almiroudis, MS, CNS, LN, CDN, CHHC is a Certified Nutrition Specialist and New York Certified Dietitian-Nutritionist. She offers remote Medical Nutrition Therapy and in-person Reiki and sound bath sessions in Astoria.
+Functional Nourishment is based in Astoria, NY 11105. Anna Almiroudis, MS, CNS, LN, CDN, CINHC is a Certified Nutrition Specialist and New York Certified Dietitian-Nutritionist. She offers remote Medical Nutrition Therapy and in-person Reiki and sound bath sessions in Astoria.
 
 ## Insurance currently listed
 
@@ -463,7 +476,7 @@ async function main() {
     create: { email, passwordHash, name: "Anna Almiroudis" },
   });
 
-  const preserveKeys = new Set(["clientPortalUrl"]);
+  const preserveKeys = new Set(["clientPortalUrl", "bookingUrl"]);
   for (const [key, value] of Object.entries(settings)) {
     if (preserveKeys.has(key)) {
       const existing = await prisma.setting.findUnique({ where: { key } });
@@ -633,6 +646,7 @@ async function seedMenu() {
       location: "header",
       sortOrder: 40,
       style: "link",
+      visible: false,
     },
   });
 
@@ -655,6 +669,7 @@ async function seedMenu() {
     data: [
       { label: "About", href: "/about", location: "header", sortOrder: 10, style: "link" },
       { label: "Contact", href: "/contact", location: "header", sortOrder: 50, style: "link" },
+      { label: "Collaborative Care", href: "/collaborative-care", location: "header", sortOrder: 60, style: "link" },
       { label: "Book a Discovery Call", href: "/book", location: "header", sortOrder: 70, style: "cta", openInNew: false },
       { label: "Nourish Mind", href: "/sound-healing", location: "footer", groupName: "Services", sortOrder: 10 },
       { label: "Nourish Body", href: "/nutrition", location: "footer", groupName: "Services", sortOrder: 20 },
@@ -665,6 +680,7 @@ async function seedMenu() {
       { label: "Nourish", href: "/nourish", location: "footer", groupName: "Wellness", sortOrder: 25 },
       { label: "About", href: "/about", location: "footer", groupName: "Connect", sortOrder: 10 },
       { label: "Contact", href: "/contact", location: "footer", groupName: "Connect", sortOrder: 20 },
+      { label: "Collaborative Care", href: "/collaborative-care", location: "footer", groupName: "Connect", sortOrder: 25 },
       { label: "Book a Discovery Call", href: "/book", location: "footer", groupName: "Connect", sortOrder: 30, openInNew: false },
       { label: "Client Portal", href: "https://client.practicebetter.io/#/signin", location: "footer", groupName: "Connect", sortOrder: 40, openInNew: true },
       { label: "Nutritionist in Astoria", href: "/locations/astoria", location: "footer", groupName: "Serving", sortOrder: 10 },

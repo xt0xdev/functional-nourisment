@@ -5,13 +5,16 @@ import { PageHero } from "@/components/site/PageHero";
 import { CtaBand } from "@/components/site/CtaBand";
 import { CHILDRENS_BOOK_NOTE, PRACTITIONER_CREDIT } from "@/lib/site-defaults";
 import {
+  ABOUT_CREDENTIAL_COACH,
   ABOUT_CREDENTIAL_SOUND,
   ABOUT_CREDENTIALS,
   ABOUT_HERO_SUBHEADING,
   AMAZON_BOOK_URL,
+  normalizeCredentials,
   splitPractitionerHeading,
   withUpdatedSoundCredential,
 } from "@/lib/page-copy";
+import { SITE_IMAGES } from "@/lib/site-images";
 
 export async function generateMetadata() {
   const page = await getPage("about");
@@ -47,15 +50,22 @@ export default async function AboutPage() {
       <section className="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-[1fr_1.2fr] md:px-6">
         <div className="relative aspect-[3/4] overflow-hidden rounded-3xl">
           <Image
-            src="/images/anna-almiroudis.webp"
-            alt="Anna Almiroudis, functional nutritionist in Astoria, Queens, serving New York City"
+            src={SITE_IMAGES.practitionerPortrait}
+            alt={SITE_IMAGES.practitionerPortraitAlt}
             fill
             className="object-cover object-top"
           />
         </div>
         <div className="prose-fn">
           {content.paragraphs.map((paragraph) => (
-            <p key={paragraph.slice(0, 40)}>{withUpdatedSoundCredential(paragraph)}</p>
+            <p key={paragraph.slice(0, 40)}>
+              {normalizeCredentials(
+                withUpdatedSoundCredential(paragraph).replace(
+                  /\bCertified Health Coach\b/g,
+                  "Certified Integrative Nutrition Health Coach (CINHC)",
+                ),
+              )}
+            </p>
           ))}
           <h2>Credentials</h2>
           <ul>
@@ -63,7 +73,7 @@ export default async function AboutPage() {
             <li>Certified Nutrition Specialist (CNS)</li>
             <li>Licensed Nutritionist (LN)</li>
             <li>Certified Dietitian-Nutritionist, New York (CDN)</li>
-            <li>Certified Holistic Health Coach (CHHC)</li>
+            <li>{ABOUT_CREDENTIAL_COACH}</li>
             <li>Karuna® and Usui Reiki Master</li>
             <li>{ABOUT_CREDENTIAL_SOUND}</li>
           </ul>

@@ -88,6 +88,7 @@ export const RESERVED_SLUGS = new Set([
   "nourish",
   "recipes",
   "retreats",
+  "collaborative-care",
   "privacy",
   "locations",
   "home",

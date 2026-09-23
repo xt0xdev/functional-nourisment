@@ -104,8 +104,8 @@ export default async function HomePage() {
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-16 md:grid-cols-2 md:px-6">
           <div className="relative aspect-[4/5] overflow-hidden rounded-3xl">
             <Image
-              src={SITE_IMAGES.landingMeet}
-              alt={SITE_IMAGES.landingMeetAlt}
+              src={SITE_IMAGES.practitionerPortrait}
+              alt={SITE_IMAGES.practitionerPortraitAlt}
               fill
               className="object-cover object-[center_20%]"
             />
@@ -118,7 +118,7 @@ export default async function HomePage() {
             <h2 className="mt-3 font-serif text-4xl text-primary md:text-5xl">Anna Almiroudis</h2>
             <p className="mt-5 leading-relaxed text-muted">
               {content.practitioner ||
-                "As a board certified nutrition specialist, licensed nutritionist, certified dietitian-nutritionist and certified holistic health coach based in Astoria, Queens, I bridge the gap between clinical science and intuitive wellness for clients across New York City."}
+                "As a board certified nutrition specialist, licensed nutritionist, certified dietitian-nutritionist and certified integrative nutrition health coach based in Astoria, Queens, I bridge the gap between clinical science and intuitive wellness for clients across New York City."}
             </p>
             <p className="mt-4 leading-relaxed text-muted">
               {content.practitionerMore ||
