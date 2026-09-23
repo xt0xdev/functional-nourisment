@@ -16,12 +16,23 @@ Also set in Vercel → Settings → Environment Variables (Production + Preview)
 - `SESSION_SECRET` — long random string
 - `ADMIN_EMAIL` — admin login email
 - `ADMIN_PASSWORD` — strong password
-- `NEXT_PUBLIC_SITE_URL` — `https://functional-nourishment.vercel.app` (or your custom domain)
+- `NEXT_PUBLIC_SITE_URL` — `https://functionalnourishment.com`
 - `BLOB_READ_WRITE_TOKEN` — from a Vercel Blob store (required for persistent event/page photos)
 - `RESEND_API_KEY` — required for live form emails to Anna at Microsoft 365
 - `FORMS_FROM_EMAIL` — optional. Verified sending address; otherwise Resend onboarding default
 
 Never commit secrets. Redeploy after env vars are saved. Build runs `prisma db push` via `vercel-build`.
+
+## Custom domain (FunctionalNourishment.com)
+
+The public site URL is **functionalnourishment.com** (no hyphen). Code and CMS defaults use that host. This repo cannot attach a custom domain from git — Mike must do it in the Vercel dashboard:
+
+1. In **Vercel → Project → Settings → Domains**, add `functionalnourishment.com` and `www.functionalnourishment.com`.
+2. Point DNS (A/CNAME records, or nameservers) at Vercel using the values Vercel shows for those domains.
+3. Set Production `NEXT_PUBLIC_SITE_URL` to `https://functionalnourishment.com` so sitemap, canonicals, Open Graph, robots, and schema.org `url` match the live host.
+4. Optionally 301 redirect `functional-nourishment.com` → `functionalnourishment.com` if you still own the hyphenated domain.
+
+Keep `anna@functionalnourishment.com` as-is. Do not rename the GitHub repo (`functional-nourisment`) or the Vercel project slug.
 
 ## Form emails (Microsoft 365)
 

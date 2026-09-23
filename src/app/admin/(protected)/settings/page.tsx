@@ -25,6 +25,7 @@ const fields = [
   ["bookingNote", "Booking note"],
   ["npi", "NPI"],
   ["languages", "Languages"],
+  ["siteUrl", "Public site URL"],
   ["footerText", "Footer text"],
   ["footerBlurb", "Footer description"],
   ["clientPortalUrl", "Client portal URL"],
@@ -72,6 +73,12 @@ export default async function SettingsPage() {
               <p className="text-xs text-muted">
                 Every public form (contact, discovery, mailing list, event and retreat registration)
                 emails this address. Default is {DEFAULT_NOTIFY_EMAIL}. Reply-To is the visitor.
+              </p>
+            ) : null}
+            {key === "siteUrl" ? (
+              <p className="text-xs text-muted">
+                Public website is FunctionalNourishment.com (no hyphen). Sitemap, canonicals, and
+                Open Graph still follow the Vercel <code>NEXT_PUBLIC_SITE_URL</code> env var.
               </p>
             ) : null}
             {key === "bookingUrl" ? (

@@ -2,6 +2,7 @@ import { prisma } from "./prisma";
 import { cache } from "react";
 import { eventMediaInclude } from "./media";
 import { isRetreatEvent } from "./events";
+import { DEFAULT_SITE_URL } from "./site-defaults";
 
 export const getSettings = cache(async () => {
   const rows = await prisma.setting.findMany();
@@ -79,7 +80,7 @@ export function parseContent<T>(raw: string, fallback: T): T {
 }
 
 export function siteUrl(path = "") {
-  const base = (process.env.NEXT_PUBLIC_SITE_URL || "https://functional-nourishment.com").replace(
+  const base = (process.env.NEXT_PUBLIC_SITE_URL || DEFAULT_SITE_URL).replace(
     /\/$/,
     "",
   );

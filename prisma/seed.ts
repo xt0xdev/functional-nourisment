@@ -42,7 +42,7 @@ import {
   SPIRIT_RETREATS_LEAD,
   SQUARESPACE_EXPERIENCES,
 } from "../src/lib/page-copy";
-import { DEFAULT_NOTIFY_EMAIL, FOOTER_BLURB } from "../src/lib/site-defaults";
+import { DEFAULT_NOTIFY_EMAIL, DEFAULT_SITE_URL, FOOTER_BLURB, PRACTITIONER_CREDIT } from "../src/lib/site-defaults";
 import { STARTER_JOURNAL, STARTER_RECIPES } from "../src/lib/starter-content";
 
 const prisma = new PrismaClient();
@@ -73,7 +73,8 @@ const settings: Record<string, string> = {
     "Nutrition appointments are conducted by telehealth throughout New York City and New York State. Meditation and sound bath experiences are offered locally.",
   npi: "1326877432",
   languages: "English, Greek",
-  footerText: "Anna Almiroudis, MS, CNS, LN, CDN — Functional Nourishment, LLC — Functional-Nourishment.com",
+  siteUrl: DEFAULT_SITE_URL,
+  footerText: PRACTITIONER_CREDIT,
   footerBlurb: FOOTER_BLURB,
   clientPortalUrl: "https://client.practicebetter.io/#/signin",
   bookingUrl: "https://calendly.com/functionalnourishment-krbc/new-meeting",

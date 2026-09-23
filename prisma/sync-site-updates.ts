@@ -49,7 +49,12 @@ import {
   normalizeCredentials,
   withUpdatedSoundCredential,
 } from "../src/lib/page-copy";
-import { DEFAULT_NOTIFY_EMAIL, FOOTER_BLURB } from "../src/lib/site-defaults";
+import {
+  DEFAULT_NOTIFY_EMAIL,
+  DEFAULT_SITE_URL,
+  FOOTER_BLURB,
+  PRACTITIONER_CREDIT,
+} from "../src/lib/site-defaults";
 import { inferEventKind } from "../src/lib/events";
 import { SITE_IMAGES, isPractitionerImage, isStockOrEmptyImage } from "../src/lib/site-images";
 import { STARTER_JOURNAL, STARTER_RECIPES } from "../src/lib/starter-content";
@@ -95,6 +100,18 @@ function isLegacyIntro(value?: string | null) {
   return text.includes("Holistic functional nutrition and mind-body care from Astoria, Queens");
 }
 
+function isLegacySiteUrl(value?: string | null) {
+  const url = value?.trim().toLowerCase() || "";
+  if (!url) return true;
+  return url.includes("functional-nourishment.com");
+}
+
+function isLegacyFooterText(value?: string | null) {
+  const text = value?.trim() || "";
+  if (!text) return true;
+  return /functional-nourishment\.com/i.test(text);
+}
+
 function parseJson(raw?: string | null): Record<string, unknown> {
   try {
     return JSON.parse(raw || "{}") as Record<string, unknown>;
@@ -135,13 +152,17 @@ async function mergePage(
 
 async function main() {
   const rows = await prisma.setting.findMany({
-    where: { key: { in: ["bookingUrl", "instagram", "footerBlurb", "stripeUrl", "paypalUrl", "notifyEmail"] } },
+    where: {
+      key: { in: ["bookingUrl", "instagram", "footerBlurb", "footerText", "siteUrl", "stripeUrl", "paypalUrl", "notifyEmail"] },
+    },
   });
   const current = Object.fromEntries(rows.map((row) => [row.key, row.value]));
 
   await upsertSetting("bookingUrl", CALENDLY, isLegacyBooking(current.bookingUrl));
   await upsertSetting("instagram", INSTAGRAM, isLegacyInstagram(current.instagram));
   await upsertSetting("footerBlurb", FOOTER_BLURB, isLegacyFooter(current.footerBlurb));
+  await upsertSetting("footerText", PRACTITIONER_CREDIT, isLegacyFooterText(current.footerText));
+  await upsertSetting("siteUrl", DEFAULT_SITE_URL, isLegacySiteUrl(current.siteUrl));
   await upsertSetting("stripeUrl", STRIPE, !current.stripeUrl?.trim());
   await upsertSetting("paypalUrl", PAYPAL, !current.paypalUrl?.trim());
   await upsertSetting("notifyEmail", DEFAULT_NOTIFY_EMAIL, !current.notifyEmail?.trim());

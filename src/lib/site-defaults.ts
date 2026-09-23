@@ -1,5 +1,9 @@
 export const DEFAULT_NOTIFY_EMAIL = "anna@FunctionalNourishment.com";
 
+/** Public site origin — no hyphen. GitHub/Vercel project slugs stay hyphenated. */
+export const DEFAULT_SITE_URL = "https://functionalnourishment.com";
+export const PUBLIC_SITE_HOST = "FunctionalNourishment.com";
+
 export const CALENDLY_URL =
   "https://calendly.com/functionalnourishment-krbc/new-meeting";
 
@@ -36,7 +40,7 @@ export const FOOTER_BLURB =
   "Based in Astoria, Queens, Functional Nourishment offers personalized, evidence-based functional nutrition through telehealth across New York City and New York State, with meditation, breathwork, sound bath and holistic wellness experiences offered locally.";
 
 export const PRACTITIONER_CREDIT =
-  "Anna Almiroudis, MS, CNS, LN, CDN — Functional Nourishment, LLC — Functional-Nourishment.com";
+  `Anna Almiroudis, MS, CNS, LN, CDN — Functional Nourishment, LLC — ${PUBLIC_SITE_HOST}`;
 
 export const CHILDRENS_BOOK_NOTE =
   "Explore my new children's book on nutrition and mindfulness! Plant Superheroes: The Adventures of Cee and her Citrus Cousins";
