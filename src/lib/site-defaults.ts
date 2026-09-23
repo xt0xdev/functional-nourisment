@@ -1,3 +1,5 @@
+export const DEFAULT_NOTIFY_EMAIL = "anna@FunctionalNourishment.com";
+
 export const CALENDLY_URL =
   "https://calendly.com/functionalnourishment-krbc/new-meeting";
 

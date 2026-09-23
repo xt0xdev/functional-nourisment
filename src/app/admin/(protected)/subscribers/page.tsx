@@ -1,8 +1,10 @@
 import { prisma } from "@/lib/prisma";
 import { deleteSubscriber } from "../actions";
+import { formEmailAdminNote, formEmailConfigured } from "@/lib/notify";
 
 export default async function AdminSubscribersPage() {
   const subscribers = await prisma.subscriber.findMany({ orderBy: { createdAt: "desc" } });
+  const emailReady = formEmailConfigured();
 
   return (
     <div>
@@ -11,6 +13,7 @@ export default async function AdminSubscribersPage() {
         People who subscribed from the site footer. Stored here so you can see names and emails — no Mailchimp
         connection is required.
       </p>
+      <p className={`mt-2 max-w-3xl text-sm ${emailReady ? "text-muted" : "text-clay"}`}>{formEmailAdminNote()}</p>
       <div className="mt-6 overflow-hidden rounded-2xl bg-white">
         {subscribers.length === 0 ? <p className="p-5 text-sm text-muted">No subscribers yet.</p> : null}
         {subscribers.map((subscriber) => (

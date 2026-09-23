@@ -6,7 +6,18 @@ import { ALLOWED_IMAGE_TYPE_SET, MAX_UPLOAD_BYTES } from "./media-constants";
 
 export { MAX_UPLOAD_BYTES, ALLOWED_IMAGE_TYPE_SET as ALLOWED_IMAGE_TYPES } from "./media-constants";
 
-export type StorageDriver = "vercel-blob" | "filesystem";
+export type StorageDriver = "vercel-blob" | "filesystem" | "unconfigured";
+
+export const BLOB_REQUIRED_MESSAGE =
+  "Add BLOB_READ_WRITE_TOKEN in Vercel (Blob store) — local disk cannot be used on production.";
+
+export class StorageConfigError extends Error {
+  status = 503;
+  constructor(message = BLOB_REQUIRED_MESSAGE) {
+    super(message);
+    this.name = "StorageConfigError";
+  }
+}
 
 export type SavedUpload = {
   url: string;
@@ -17,14 +28,38 @@ export type SavedUpload = {
   height?: number;
 };
 
+export function isVercelRuntime() {
+  return Boolean(process.env.VERCEL);
+}
+
+export function hasBlobToken() {
+  return Boolean(process.env.BLOB_READ_WRITE_TOKEN?.trim());
+}
+
+export function localUploadsAllowed() {
+  return !isVercelRuntime() && process.env.NODE_ENV !== "production";
+}
+
 export function storageDriver(): StorageDriver {
-  return process.env.BLOB_READ_WRITE_TOKEN ? "vercel-blob" : "filesystem";
+  if (hasBlobToken()) return "vercel-blob";
+  if (localUploadsAllowed()) return "filesystem";
+  return "unconfigured";
 }
 
 export function storageLabel(driver: StorageDriver = storageDriver()) {
-  return driver === "vercel-blob"
-    ? "Vercel Blob (persistent object storage)"
-    : "Local filesystem (public/uploads)";
+  if (driver === "vercel-blob") return "Vercel Blob (persistent object storage)";
+  if (driver === "filesystem") return "Local filesystem (public/uploads)";
+  return "Not configured — add BLOB_READ_WRITE_TOKEN in Vercel (Blob store)";
+}
+
+export function blobAdminNote(driver: StorageDriver = storageDriver()) {
+  if (driver === "vercel-blob") {
+    return "Files are stored in Vercel Blob. Neon only keeps the URL and captions, so the free database stays small.";
+  }
+  if (driver === "filesystem") {
+    return "This environment can write to public/uploads for local development. On Vercel that disk is read-only — production uploads must use a Blob store.";
+  }
+  return BLOB_REQUIRED_MESSAGE;
 }
 
 const EXT_BY_TYPE: Record<string, string> = {
@@ -54,8 +89,13 @@ export async function saveUpload(file: File): Promise<SavedUpload> {
   const filename = safeFilename(file.name, file.type);
   const buffer = Buffer.from(await file.arrayBuffer());
   const dimensions = readImageSize(buffer);
+  const driver = storageDriver();
 
-  if (storageDriver() === "vercel-blob") {
+  if (driver === "unconfigured" || (isVercelRuntime() && !hasBlobToken())) {
+    throw new StorageConfigError();
+  }
+
+  if (driver === "vercel-blob") {
     const blob = await put(filename, buffer, {
       access: "public",
       contentType: file.type,
@@ -68,6 +108,10 @@ export async function saveUpload(file: File): Promise<SavedUpload> {
       size: file.size,
       ...dimensions,
     };
+  }
+
+  if (isVercelRuntime() || !localUploadsAllowed()) {
+    throw new StorageConfigError();
   }
 
   const dir = path.join(process.cwd(), "public", "uploads");

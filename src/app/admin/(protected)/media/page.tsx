@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { formatBytes, storageDriver, storageLabel } from "@/lib/storage";
+import { blobAdminNote, BLOB_REQUIRED_MESSAGE, formatBytes, storageDriver, storageLabel } from "@/lib/storage";
 import { MediaLibrary } from "./media-library";
 
 export default async function AdminMediaPage() {
@@ -17,15 +17,7 @@ export default async function AdminMediaPage() {
         <p>
           <span className="font-medium text-forest">Storage:</span> {storageLabel(driver)}
         </p>
-        {driver === "filesystem" ? (
-          <p className="mt-2">
-            This environment has no <code className="text-forest">BLOB_READ_WRITE_TOKEN</code>, so files are written to{" "}
-            <code className="text-forest">public/uploads</code>. On Vercel that disk is ephemeral — add a Blob token in
-            production so event photos persist after deploys.
-          </p>
-        ) : (
-          <p className="mt-2">Files are stored in Vercel Blob. Neon only keeps the URL and captions, so the free database stays small.</p>
-        )}
+        <p className={`mt-2 ${driver === "unconfigured" ? "text-clay" : ""}`}>{blobAdminNote(driver)}</p>
         <p className="mt-2">
           Neon free tier is about 0.5 GB of storage and limited compute. Putting image binaries in Postgres would exhaust
           that quickly. URLs-only is safe: a thousand CMS rows are still tiny compared with one photo.
@@ -45,6 +37,8 @@ export default async function AdminMediaPage() {
           createdAt: item.createdAt.toISOString(),
         }))}
         driver={driver}
+        uploadBlocked={driver === "unconfigured"}
+        uploadBlockedMessage={driver === "unconfigured" ? BLOB_REQUIRED_MESSAGE : ""}
       />
       <p className="mt-4 text-xs text-muted">{items.length} files · {formatBytes(items.reduce((sum, item) => sum + item.size, 0))} tracked</p>
     </div>

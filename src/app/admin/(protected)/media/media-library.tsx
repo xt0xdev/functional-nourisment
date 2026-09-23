@@ -8,10 +8,17 @@ import { formatBytes } from "@/lib/format";
 
 type MediaLibraryProps = {
   initialItems: MediaDTO[];
-  driver: "vercel-blob" | "filesystem";
+  driver: "vercel-blob" | "filesystem" | "unconfigured";
+  uploadBlocked?: boolean;
+  uploadBlockedMessage?: string;
 };
 
-export function MediaLibrary({ initialItems, driver }: MediaLibraryProps) {
+export function MediaLibrary({
+  initialItems,
+  driver,
+  uploadBlocked = false,
+  uploadBlockedMessage = "",
+}: MediaLibraryProps) {
   const [items, setItems] = useState(initialItems);
   const [query, setQuery] = useState("");
   const [error, setError] = useState("");
@@ -36,6 +43,13 @@ export function MediaLibrary({ initialItems, driver }: MediaLibraryProps) {
     }
     if (file.size > MAX_UPLOAD_BYTES) {
       setError("Images must be 10 MB or smaller.");
+      return;
+    }
+    if (uploadBlocked || driver === "unconfigured") {
+      setError(
+        uploadBlockedMessage ||
+          "Add BLOB_READ_WRITE_TOKEN in Vercel (Blob store) — local disk cannot be used on production.",
+      );
       return;
     }
     setBusy(true);
@@ -118,6 +132,13 @@ export function MediaLibrary({ initialItems, driver }: MediaLibraryProps) {
 
   return (
     <div className="mt-6">
+      {uploadBlocked || driver === "unconfigured" ? (
+        <p className="mb-4 rounded-2xl bg-white p-4 text-sm text-clay">
+          {uploadBlockedMessage ||
+            "Add BLOB_READ_WRITE_TOKEN in Vercel (Blob store) — local disk cannot be used on production."}
+        </p>
+      ) : null}
+
       <label className="block rounded-2xl border border-dashed border-forest/20 bg-white p-5">
         <span className="font-medium text-forest">{busy ? "Working…" : "Upload images"}</span>
         <p className="mt-1 text-xs text-muted">JPEG, PNG, WebP, or GIF · 10 MB max · files are not stored in Neon</p>
@@ -125,7 +146,7 @@ export function MediaLibrary({ initialItems, driver }: MediaLibraryProps) {
           type="file"
           accept="image/jpeg,image/png,image/webp,image/gif"
           className="mt-3 block w-full text-sm"
-          disabled={busy}
+          disabled={busy || uploadBlocked || driver === "unconfigured"}
           multiple
           onChange={(event) => {
             const files = Array.from(event.target.files || []);

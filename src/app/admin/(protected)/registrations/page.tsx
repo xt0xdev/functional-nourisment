@@ -3,12 +3,14 @@ import { prisma } from "@/lib/prisma";
 import { deleteEventRegistration } from "../actions";
 import { formatEventWhen } from "@/lib/events";
 import { parseRegistrationDetails } from "@/lib/registration";
+import { formEmailAdminNote, formEmailConfigured } from "@/lib/notify";
 
 export default async function AdminRegistrationsPage() {
   const registrations = await prisma.eventRegistration.findMany({
     orderBy: { createdAt: "desc" },
     include: { event: true },
   });
+  const emailReady = formEmailConfigured();
 
   return (
     <div>
@@ -17,6 +19,7 @@ export default async function AdminRegistrationsPage() {
         People who completed the calendar or retreat registration form. Mailing-list opt-ins also
         appear under Subscribers.
       </p>
+      <p className={`mt-2 max-w-3xl text-sm ${emailReady ? "text-muted" : "text-clay"}`}>{formEmailAdminNote()}</p>
       <div className="mt-6 overflow-x-auto rounded-2xl bg-white">
         <div className="hidden min-w-[920px] grid-cols-[1.1fr_1fr_140px_1.2fr_1.4fr_90px_auto] gap-4 border-b border-forest/10 px-4 py-3 text-xs uppercase tracking-wide text-muted md:grid">
           <span>Name</span>

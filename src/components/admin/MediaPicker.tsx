@@ -22,8 +22,13 @@ type MediaPickerProps = {
 
 type LibraryState = {
   items: MediaDTO[];
-  driver: "vercel-blob" | "filesystem";
+  driver: "vercel-blob" | "filesystem" | "unconfigured";
   storageLabel: string;
+  blobConfigured?: boolean;
+  vercelReadonly?: boolean;
+  uploadBlocked?: boolean;
+  uploadBlockedMessage?: string;
+  adminNote?: string;
 };
 
 async function readDimensions(file: File): Promise<{ width?: number; height?: number }> {
@@ -87,9 +92,22 @@ export function MediaPicker({
     }
     setBusy(true);
     try {
+      let current = library;
+      if (!current) {
+        const response = await fetch("/api/admin/media");
+        if (!response.ok) throw new Error("Could not load the media library.");
+        current = (await response.json()) as LibraryState;
+        setLibrary(current);
+      }
+      if (current.uploadBlocked || current.driver === "unconfigured") {
+        throw new Error(
+          current.uploadBlockedMessage ||
+            "Add BLOB_READ_WRITE_TOKEN in Vercel (Blob store) — local disk cannot be used on production.",
+        );
+      }
       const dims = await readDimensions(file);
       let item: MediaDTO;
-      if (library?.driver === "vercel-blob") {
+      if (current.driver === "vercel-blob" || current.blobConfigured) {
         const blob = await upload(file.name, file, {
           access: "public",
           handleUploadUrl: "/api/admin/blob",
@@ -259,6 +277,12 @@ export function MediaPicker({
                 <p className="mt-1 text-xs text-muted">
                   {library?.storageLabel || "Loading storage…"} · JPEG, PNG, WebP, GIF · up to 10 MB
                 </p>
+                {library?.uploadBlocked || library?.driver === "unconfigured" ? (
+                  <p className="mt-2 max-w-xl text-xs text-clay">
+                    {library.uploadBlockedMessage ||
+                      "Add BLOB_READ_WRITE_TOKEN in Vercel (Blob store) — local disk cannot be used on production."}
+                  </p>
+                ) : null}
               </div>
               <button type="button" onClick={() => setOpen(false)} className="rounded-full bg-white px-3 py-1.5 text-sm">
                 Close
@@ -272,7 +296,7 @@ export function MediaPicker({
                 type="file"
                 accept="image/jpeg,image/png,image/webp,image/gif"
                 className="mt-2 block w-full text-xs"
-                disabled={busy}
+                disabled={busy || library?.uploadBlocked || library?.driver === "unconfigured"}
                 onChange={(event) => {
                   const file = event.target.files?.[0];
                   event.target.value = "";

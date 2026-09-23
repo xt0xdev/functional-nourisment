@@ -29,6 +29,8 @@ Default admin login (change immediately in production):
 
 Set `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `SESSION_SECRET`, and `NEXT_PUBLIC_SITE_URL` in `.env` before deploying.
 
+For live form emails and production photo uploads, also set `RESEND_API_KEY` and `BLOB_READ_WRITE_TOKEN` in Vercel. See **[VERCEL.md](./VERCEL.md)**. Never commit `.env` secrets.
+
 ## Admin capabilities
 
 - Site settings (name, email, insurance copy, Berry Street URL, address)
@@ -45,7 +47,7 @@ Do **not** store photo binaries in Postgres. Neon’s free tier is about **0.5 G
 This app stores **only URLs, alt text, and captions** in Neon. Files go to:
 
 - **Local/dev:** `public/uploads/`
-- **Production (Vercel):** [Vercel Blob](https://vercel.com/docs/storage/vercel-blob) when `BLOB_READ_WRITE_TOKEN` is set
+- **Production (Vercel):** [Vercel Blob](https://vercel.com/docs/storage/vercel-blob). `BLOB_READ_WRITE_TOKEN` is required; the serverless disk is read-only.
 
 CMS text rows are tiny compared with photos, so Neon stays well within free limits if images stay out of the database. On Vercel, the serverless filesystem is ephemeral — Blob (or similar object storage) is required for photos to survive deploys.
 
@@ -66,5 +68,6 @@ See **[VERCEL.md](./VERCEL.md)** for the full checklist. Summary:
 1. Deploy from `mikes-branch` (must include the Next.js app, not the empty initial commit).
 2. Add **Neon** (free serverless Postgres) and connect it to the project.
 3. Confirm `DATABASE_URL` and `DATABASE_URL_UNPOOLED` are set, plus `SESSION_SECRET`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, and `NEXT_PUBLIC_SITE_URL`.
-4. Add a **Vercel Blob** store and set `BLOB_READ_WRITE_TOKEN` so uploaded event photos persist. Without it, uploads only work locally via `public/uploads`.
-5. Redeploy. Production schema is applied on build; seed once if the site is empty.
+4. Add a **Vercel Blob** store and set `BLOB_READ_WRITE_TOKEN` so uploaded event photos persist. Without it, production uploads return a clear error instead of writing `/var/task/public`.
+5. Add `RESEND_API_KEY` so contact, discovery, mailing-list, and registration forms email Anna at Microsoft 365. Optional: `FORMS_FROM_EMAIL` after the sending domain is verified.
+6. Redeploy. Production schema is applied on build; seed once if the site is empty.

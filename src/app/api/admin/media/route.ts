@@ -2,7 +2,17 @@ import { NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { toMediaDTO } from "@/lib/media";
-import { formatBytes, saveUpload, storageDriver, storageLabel } from "@/lib/storage";
+import {
+  BLOB_REQUIRED_MESSAGE,
+  blobAdminNote,
+  formatBytes,
+  hasBlobToken,
+  isVercelRuntime,
+  saveUpload,
+  StorageConfigError,
+  storageDriver,
+  storageLabel,
+} from "@/lib/storage";
 
 export const runtime = "nodejs";
 
@@ -24,7 +34,12 @@ export async function GET() {
     items: items.map(toMediaDTO),
     driver,
     storageLabel: storageLabel(driver),
-    ephemeral: driver === "filesystem",
+    ephemeral: driver !== "vercel-blob",
+    blobConfigured: hasBlobToken(),
+    vercelReadonly: isVercelRuntime(),
+    uploadBlocked: driver === "unconfigured",
+    uploadBlockedMessage: driver === "unconfigured" ? BLOB_REQUIRED_MESSAGE : "",
+    adminNote: blobAdminNote(driver),
   });
 }
 
@@ -70,6 +85,9 @@ export async function POST(request: Request) {
     if (!(file instanceof File) || file.size === 0) {
       return NextResponse.json({ error: "Choose an image to upload." }, { status: 400 });
     }
+    if (isVercelRuntime() && !hasBlobToken()) {
+      return NextResponse.json({ error: BLOB_REQUIRED_MESSAGE }, { status: 503 });
+    }
     const saved = await saveUpload(file);
     const media = await prisma.media.create({
       data: {
@@ -85,6 +103,8 @@ export async function POST(request: Request) {
     });
     return NextResponse.json({ item: toMediaDTO(media), bytes: formatBytes(saved.size) });
   } catch (error) {
-    return NextResponse.json({ error: (error as Error).message || "Upload failed." }, { status: 400 });
+    const message = (error as Error).message || "Upload failed.";
+    const status = error instanceof StorageConfigError ? error.status : 400;
+    return NextResponse.json({ error: message }, { status });
   }
 }

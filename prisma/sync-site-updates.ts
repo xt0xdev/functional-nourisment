@@ -49,7 +49,7 @@ import {
   normalizeCredentials,
   withUpdatedSoundCredential,
 } from "../src/lib/page-copy";
-import { FOOTER_BLURB } from "../src/lib/site-defaults";
+import { DEFAULT_NOTIFY_EMAIL, FOOTER_BLURB } from "../src/lib/site-defaults";
 import { inferEventKind } from "../src/lib/events";
 import { SITE_IMAGES, isPractitionerImage, isStockOrEmptyImage } from "../src/lib/site-images";
 import { STARTER_JOURNAL, STARTER_RECIPES } from "../src/lib/starter-content";
@@ -135,7 +135,7 @@ async function mergePage(
 
 async function main() {
   const rows = await prisma.setting.findMany({
-    where: { key: { in: ["bookingUrl", "instagram", "footerBlurb", "stripeUrl", "paypalUrl"] } },
+    where: { key: { in: ["bookingUrl", "instagram", "footerBlurb", "stripeUrl", "paypalUrl", "notifyEmail"] } },
   });
   const current = Object.fromEntries(rows.map((row) => [row.key, row.value]));
 
@@ -144,6 +144,7 @@ async function main() {
   await upsertSetting("footerBlurb", FOOTER_BLURB, isLegacyFooter(current.footerBlurb));
   await upsertSetting("stripeUrl", STRIPE, !current.stripeUrl?.trim());
   await upsertSetting("paypalUrl", PAYPAL, !current.paypalUrl?.trim());
+  await upsertSetting("notifyEmail", DEFAULT_NOTIFY_EMAIL, !current.notifyEmail?.trim());
 
   const home = await prisma.page.findUnique({ where: { slug: "home" } });
   if (home) {

@@ -7,6 +7,7 @@ import {
   RETREAT_HEAR_ABOUT_OPTIONS,
 } from "@/lib/registration";
 import { resolveStripeUrl } from "@/lib/site-defaults";
+import { notifyFormSubmission } from "@/lib/notify";
 
 const workshopSchema = z.object({
   eventId: z.string().min(1),
@@ -108,6 +109,42 @@ export async function POST(request: Request) {
       await prisma.subscriber.update({ where: { email }, data: { name } });
     }
   }
+
+  await notifyFormSubmission({
+    subject: `New ${data.formKind} registration: ${event.title} — ${data.name.trim()}`,
+    heading:
+      data.formKind === "retreat"
+        ? "A retreat registration was submitted on Functional Nourishment."
+        : "An event registration was submitted on Functional Nourishment.",
+    replyTo: data.email,
+    fields:
+      data.formKind === "retreat"
+        ? [
+            { label: "Event", value: event.title },
+            { label: "Name", value: data.name },
+            { label: "Email", value: data.email },
+            { label: "Phone", value: data.phone },
+            { label: "Residence", value: data.residence },
+            { label: "Participants", value: data.participantCount },
+            { label: "Dietary preferences", value: data.dietaryPreferences },
+            { label: "Dietary other", value: data.dietaryOther },
+            { label: "Food allergies", value: data.foodAllergies },
+            { label: "Accessibility needs", value: data.accessibilityNeeds },
+            { label: "Inspiration", value: data.inspiration },
+            { label: "Hopes", value: data.hopes },
+            { label: "How they heard", value: data.heardAbout },
+            { label: "Mailing list", value: data.mailingOptIn },
+          ]
+        : [
+            { label: "Event", value: event.title },
+            { label: "Name", value: data.name },
+            { label: "Email", value: data.email },
+            { label: "Phone", value: data.phone },
+            { label: "Participants", value: data.participantCount },
+            { label: "Notes", value: data.notes },
+            { label: "Mailing list", value: data.mailingOptIn },
+          ],
+  });
 
   const settingsRows = await prisma.setting.findMany({
     where: { key: { in: ["stripeUrl"] } },

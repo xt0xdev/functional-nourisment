@@ -42,7 +42,7 @@ import {
   SPIRIT_RETREATS_LEAD,
   SQUARESPACE_EXPERIENCES,
 } from "../src/lib/page-copy";
-import { FOOTER_BLURB } from "../src/lib/site-defaults";
+import { DEFAULT_NOTIFY_EMAIL, FOOTER_BLURB } from "../src/lib/site-defaults";
 import { STARTER_JOURNAL, STARTER_RECIPES } from "../src/lib/starter-content";
 
 const prisma = new PrismaClient();
@@ -55,6 +55,7 @@ const settings: Record<string, string> = {
   tagline:
     "Optimal health and wellness is not just about the absence of disease — it is an intricate balance of your mental, emotional, spiritual and physical health.",
   email: "functionalnurture@gmail.com",
+  notifyEmail: DEFAULT_NOTIFY_EMAIL,
   phone: "",
   address: "Astoria, NY 11105",
   city: "Astoria",

@@ -1,12 +1,15 @@
 import { prisma } from "@/lib/prisma";
 import { deleteInquiry, markInquiryRead } from "../actions";
+import { formEmailAdminNote, formEmailConfigured } from "@/lib/notify";
 
 export default async function AdminInquiriesPage() {
   const inquiries = await prisma.inquiry.findMany({ orderBy: { createdAt: "desc" } });
+  const emailReady = formEmailConfigured();
 
   return (
     <div>
       <h1 className="font-serif text-4xl text-forest">Inquiries</h1>
+      <p className={`mt-2 max-w-3xl text-sm ${emailReady ? "text-muted" : "text-clay"}`}>{formEmailAdminNote()}</p>
       <div className="mt-6 space-y-4">
         {inquiries.length === 0 ? <p className="text-muted">No messages yet.</p> : null}
         {inquiries.map((inquiry) => (

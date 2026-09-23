@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { INQUIRY_INTERESTS, INQUIRY_SOURCES, showsReferredBy, showsSourceOther } from "@/lib/inquiry";
+import { notifyFormSubmission } from "@/lib/notify";
 
 const schema = z
   .object({
@@ -38,11 +39,26 @@ export async function POST(request: Request) {
   }
 
   const { sourceOther, ...data } = parsed.data;
+  const referredBy = showsSourceOther(data.source) ? sourceOther.trim() : data.referredBy.trim();
   await prisma.inquiry.create({
     data: {
       ...data,
-      referredBy: showsSourceOther(data.source) ? sourceOther.trim() : data.referredBy.trim(),
+      referredBy,
     },
+  });
+  await notifyFormSubmission({
+    subject: `New inquiry: ${data.topic} — ${data.name}`,
+    heading: "A new inquiry was submitted on Functional Nourishment.",
+    replyTo: data.email,
+    fields: [
+      { label: "Name", value: data.name },
+      { label: "Email", value: data.email },
+      { label: "Phone", value: data.phone },
+      { label: "Interest", value: data.topic },
+      { label: "How they heard", value: data.source },
+      { label: showsSourceOther(data.source) ? "Other source" : "Referred by", value: referredBy },
+      { label: "Message", value: data.message },
+    ],
   });
   return NextResponse.json({ ok: true });
 }

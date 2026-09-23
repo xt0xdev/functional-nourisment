@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
+import { normalizeNotifyEmail } from "@/lib/notify";
 
 async function guard() {
   try {
@@ -16,11 +17,12 @@ async function guard() {
 export async function saveSettings(formData: FormData) {
   await guard();
   const entries = Array.from(formData.entries()).filter(([key]) => key !== "intent");
-  for (const [key, value] of entries) {
+  for (const [key, raw] of entries) {
+    const value = key === "notifyEmail" ? normalizeNotifyEmail(String(raw)) : String(raw);
     await prisma.setting.upsert({
       where: { key },
-      update: { value: String(value) },
-      create: { key, value: String(value) },
+      update: { value },
+      create: { key, value },
     });
   }
 
