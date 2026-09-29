@@ -43,7 +43,7 @@ Do **not** SMTP directly to Microsoft 365 without auth — it will fail. Use **R
 1. Create a Resend account and API key.
 2. Set `RESEND_API_KEY` in Vercel (Production + Preview).
 3. Optional: set `FORMS_FROM_EMAIL` after you verify `functionalnourishment.com` in Resend (SPF/DKIM) so mail lands cleanly in Outlook.
-4. Until the domain is verified, Resend → M365 usually lands in inbox or junk. Reply-To is the visitor so Anna can reply from Outlook.
+4. Until the domain is verified, the site sends from Resend’s onboarding address (`onboarding@resend.dev`). That does **not** need SPF on FunctionalNourishment.com. Reply-To is the visitor so Anna can reply from Outlook.
 
 If `RESEND_API_KEY` is missing, the form still saves and does **not** 500. The admin shows a note that live email is off.
 
