@@ -108,7 +108,7 @@ export default async function NutritionPage() {
               const Icon = areaIcons[area.icon];
               return (
                 <article key={area.title} className="rounded-3xl bg-mist p-6">
-                  <Icon className="h-7 w-7 text-teal" strokeWidth={1.5} />
+                  <Icon className="h-9 w-9 text-teal" strokeWidth={1.6} />
                   <h3 className="mt-4 font-serif text-2xl text-primary">{area.title}</h3>
                   <p className="mt-3 text-sm leading-relaxed text-muted">{area.detail}</p>
                 </article>

@@ -318,7 +318,7 @@ export const COLLABORATIVE_CARE_PARTNER_BODY = [
   "As the practice's functional nutritionist, I provide personalized nutritional guidance to help patients address underlying nutritional factors, support oral health, and cultivate sustainable habits that promote overall well-being.",
 ] as const;
 export const COLLABORATIVE_CARE_PARTNER_LABEL = "Visit Arista Smiles";
-export const COLLABORATIVE_CARE_PARTNER_URL = "https://www.aristasmiles.com";
+export const COLLABORATIVE_CARE_PARTNER_URL = "https://belldentalcare.com/nutritionist";
 
 export const CALENDAR_TITLE = "Calendar";
 export const CALENDAR_META_TITLE = "Workshop & Sound Bath Calendar | Functional Nourishment";
