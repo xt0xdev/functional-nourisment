@@ -2,7 +2,7 @@ import { prisma } from "./prisma";
 import { DEFAULT_NOTIFY_EMAIL } from "./site-defaults";
 
 export { DEFAULT_NOTIFY_EMAIL };
-export const DEFAULT_FORMS_FROM_EMAIL = "Functional Nourishment <onboarding@resend.dev>";
+export const DEFAULT_FORMS_FROM_EMAIL = "Functional Nourishment <forms@functionalnourishment.com>";
 
 const SMTP_ENV_KEYS = ["SMTP_HOST", "SMTP_USER", "SMTP_PASS"] as const;
 

@@ -19,7 +19,7 @@ Also set in Vercel → Settings → Environment Variables (Production + Preview)
 - `NEXT_PUBLIC_SITE_URL` — `https://functionalnourishment.com`
 - `BLOB_READ_WRITE_TOKEN` — from a Vercel Blob store (required for persistent event/page photos)
 - `RESEND_API_KEY` — required for live form emails to Anna at Microsoft 365
-- `FORMS_FROM_EMAIL` — optional. Verified sending address; otherwise Resend onboarding default
+- `FORMS_FROM_EMAIL` — optional override. Default is `Functional Nourishment <forms@functionalnourishment.com>` after the domain is verified in Resend
 
 Never commit secrets. Redeploy after env vars are saved. Build runs `prisma db push` via `vercel-build`.
 
@@ -42,8 +42,8 @@ Do **not** SMTP directly to Microsoft 365 without auth — it will fail. Use **R
 
 1. Create a Resend account and API key.
 2. Set `RESEND_API_KEY` in Vercel (Production + Preview).
-3. Optional: set `FORMS_FROM_EMAIL` after you verify `functionalnourishment.com` in Resend (SPF/DKIM) so mail lands cleanly in Outlook.
-4. Until the domain is verified, the site sends from Resend’s onboarding address (`onboarding@resend.dev`). That does **not** need SPF on FunctionalNourishment.com. Reply-To is the visitor so Anna can reply from Outlook.
+3. Verify `functionalnourishment.com` in Resend (SPF/DKIM/DMARC). The site then sends from `forms@functionalnourishment.com`.
+4. Optional: set `FORMS_FROM_EMAIL` if you want a different verified From address. Reply-To is the visitor so Anna can reply from Outlook.
 
 If `RESEND_API_KEY` is missing, the form still saves and does **not** 500. The admin shows a note that live email is off.
 
