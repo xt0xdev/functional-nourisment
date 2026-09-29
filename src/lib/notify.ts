@@ -110,8 +110,8 @@ export function renderFormEmail(input: FormNotifyInput) {
         <td align="center">
           <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="max-width:600px;width:100%;background:#ffffff;border:1px solid #eadfce;">
             <tr>
-              <td style="padding:28px 32px 8px;font-family:Georgia,'Times New Roman',serif;color:#1b2a24;">
-                <p style="margin:0 0 6px;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:#5c6f68;">Functional Nourishment</p>
+              <td style="padding:28px 32px 8px;font-family:Arial,Helvetica,sans-serif;color:#1b2a24;">
+                <p style="margin:0 0 6px;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#5c6f68;">Functional Nourishment</p>
                 <p style="margin:0 0 14px;font-size:22px;line-height:1.35;">${escapeHtml(input.heading)}</p>
                 <p style="margin:0 0 18px;font-size:15px;line-height:1.55;color:#355046;">
                   A visitor submitted this form on
