@@ -45,6 +45,8 @@ Do **not** SMTP directly to Microsoft 365 without auth — it will fail. Use **R
 3. Verify `functionalnourishment.com` in Resend (SPF/DKIM/DMARC). The site then sends from `forms@functionalnourishment.com`.
 4. Optional: set `FORMS_FROM_EMAIL` if you want a different verified From address. Reply-To is the visitor so Anna can reply from Outlook.
 
+Microsoft 365 can still put the first messages from a new sending domain in **Junk** even when SPF, DKIM, and DMARC all pass (SCL 5). Extra SPF records will not fix that. In Outlook: open the message → **Not junk** / never junk from Functional Nourishment, and allow `forms@functionalnourishment.com` (or `@functionalnourishment.com`) in junk settings. Avoid sending short “test email” probes — they score worse than a real form notification.
+
 If `RESEND_API_KEY` is missing, the form still saves and does **not** 500. The admin shows a note that live email is off.
 
 SMTP (`SMTP_HOST`, `SMTP_USER`, `SMTP_PASS`) is a fallback only. Prefer Resend.

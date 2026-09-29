@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/auth";
-import { formEmailConfigured, formsFromAddress } from "@/lib/notify";
+import { formEmailConfigured, formsFromAddress, notifyFormSubmission } from "@/lib/notify";
 
 export const runtime = "nodejs";
 
@@ -22,26 +22,35 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "A valid to address is required." }, { status: 400 });
   }
 
-  const from = formsFromAddress();
-  const { Resend } = await import("resend");
-  const resend = new Resend(process.env.RESEND_API_KEY);
-  const { data, error } = await resend.emails.send({
-    from,
+  const result = await notifyFormSubmission({
     to,
-    subject: "Functional Nourishment test email",
-    text: [
-      "This is a test from the live Functional Nourishment site.",
-      `Sent by admin ${user.email}.`,
-      `From: ${from}`,
-      "If you received this, Resend is delivering mail.",
-    ].join("\n"),
-    html: `<p>This is a test from the live Functional Nourishment site.</p>
-      <p>Sent by admin ${user.email}.</p>
-      <p>If you received this, Resend is delivering mail.</p>`,
+    subject: "New inquiry: Practice notification — Functional Nourishment",
+    heading: "A form notification was sent from Functional Nourishment.",
+    replyTo: user.email,
+    fields: [
+      { label: "Requested by", value: user.email },
+      { label: "Purpose", value: "Confirm delivery of site form notifications." },
+      { label: "Practice", value: "Functional Nourishment, LLC — Astoria, NY" },
+      { label: "Website", value: "https://functionalnourishment.com" },
+      {
+        label: "Outlook note",
+        value:
+          "If this landed in Junk, mark it Not junk and allow forms@functionalnourishment.com. The sending domain is new, so Microsoft may filter the first messages even when SPF, DKIM, and DMARC pass.",
+      },
+    ],
   });
 
-  if (error) {
-    return NextResponse.json({ ok: false, from, to, error: error.message }, { status: 502 });
+  if (!result.sent) {
+    return NextResponse.json(
+      { ok: false, from: result.from || formsFromAddress(), to, error: result.skippedReason || "Send failed." },
+      { status: 502 },
+    );
   }
-  return NextResponse.json({ ok: true, from, to, id: data?.id || null });
+
+  return NextResponse.json({
+    ok: true,
+    from: result.from || formsFromAddress(),
+    to: result.to || to,
+    id: result.id || null,
+  });
 }
