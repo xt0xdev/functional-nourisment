@@ -41,7 +41,7 @@ export function Footer({
       : staticServing),
   ];
   if (!servingLinks.some((item) => item.href === "/locations/new-york-state")) {
-    servingLinks.push({ href: "/locations/new-york-state", label: "New York State telehealth" });
+    servingLinks.push({ href: "/locations/new-york-state", label: "New York State Telehealth" });
   }
 
   return (

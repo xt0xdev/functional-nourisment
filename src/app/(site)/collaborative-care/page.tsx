@@ -7,7 +7,11 @@ import {
   COLLABORATIVE_CARE_EYEBROW,
   COLLABORATIVE_CARE_META_DESCRIPTION,
   COLLABORATIVE_CARE_META_TITLE,
+  COLLABORATIVE_CARE_PARAGRAPHS,
+  COLLABORATIVE_CARE_PARTNER_BODY,
+  COLLABORATIVE_CARE_PARTNER_DETAIL,
   COLLABORATIVE_CARE_PARTNER_LABEL,
+  COLLABORATIVE_CARE_PARTNER_NAME,
   COLLABORATIVE_CARE_PARTNER_URL,
   COLLABORATIVE_CARE_TITLE,
 } from "@/lib/page-copy";
@@ -25,7 +29,11 @@ export async function generateMetadata() {
 export default async function CollaborativeCarePage() {
   const [page, settings] = await Promise.all([getPage("collaborative-care"), getSettings()]);
   const content = parseContent<{ body?: string }>(page?.content || "{}", {});
-  const body = content.body?.trim() || COLLABORATIVE_CARE_BODY;
+  const storedBody = content.body?.trim() || "";
+  const paragraphs =
+    storedBody && storedBody !== COLLABORATIVE_CARE_BODY
+      ? storedBody.split(/\n\n+/).filter(Boolean)
+      : [...COLLABORATIVE_CARE_PARAGRAPHS];
 
   return (
     <>
@@ -37,14 +45,20 @@ export default async function CollaborativeCarePage() {
         imageAlt={page?.heroImageAlt || SITE_IMAGES.wellnessDiningAlt}
       />
       <section className="mx-auto max-w-5xl px-4 py-16 md:px-6">
-        <p className="max-w-3xl text-lg leading-relaxed text-muted">{body}</p>
+        <div className="max-w-3xl space-y-5 text-lg leading-relaxed text-muted">
+          {paragraphs.map((paragraph) => (
+            <p key={paragraph.slice(0, 48)}>{paragraph}</p>
+          ))}
+        </div>
         <article className="mt-12 max-w-3xl rounded-3xl bg-mist p-8 shadow-sm ring-1 ring-primary/10">
-          <p className="eyebrow">Partner practitioner</p>
-          <h2 className="mt-3 font-serif text-3xl text-primary">Mike Kokkolis</h2>
-          <p className="mt-3 leading-relaxed text-muted">
-            Nutritionist collaboration with Bell Dental Care — complementary clinical perspective for
-            patients who want oral health and whole-person nutrition support together.
-          </p>
+          <p className="eyebrow">Wellness partner</p>
+          <h2 className="mt-3 font-serif text-3xl text-primary">{COLLABORATIVE_CARE_PARTNER_NAME}</h2>
+          <p className="mt-2 font-medium text-primary">{COLLABORATIVE_CARE_PARTNER_DETAIL}</p>
+          {COLLABORATIVE_CARE_PARTNER_BODY.map((paragraph) => (
+            <p key={paragraph.slice(0, 48)} className="mt-4 leading-relaxed text-muted">
+              {paragraph}
+            </p>
+          ))}
           <a
             href={COLLABORATIVE_CARE_PARTNER_URL}
             target="_blank"

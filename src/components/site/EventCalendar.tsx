@@ -20,14 +20,15 @@ export function EventCalendar({
   emptyTitle?: string;
   emptyBody?: string;
 }) {
+  const datedEvents = useMemo(() => events.filter((event) => event.startsAt), [events]);
   const now = new Date();
   const [cursor, setCursor] = useState({ year: now.getFullYear(), month: now.getMonth() });
-  const [openId, setOpenId] = useState<string | null>(events[0]?.id ?? null);
+  const [openId, setOpenId] = useState<string | null>(datedEvents[0]?.id ?? null);
   const [selectedDay, setSelectedDay] = useState("");
 
   const eventsByDay = useMemo(() => {
     const map = new Map<string, CalendarEventDTO[]>();
-    for (const event of events) {
+    for (const event of datedEvents) {
       const key = nyDateKey(event.startsAt);
       if (!key) continue;
       const list = map.get(key) ?? [];
@@ -35,21 +36,22 @@ export function EventCalendar({
       map.set(key, list);
     }
     return map;
-  }, [events]);
+  }, [datedEvents]);
 
   const grouped = useMemo(() => {
     const map = new Map<string, CalendarEventDTO[]>();
     const visible = selectedDay
-      ? events.filter((event) => nyDateKey(event.startsAt) === selectedDay)
-      : events;
+      ? datedEvents.filter((event) => nyDateKey(event.startsAt) === selectedDay)
+      : datedEvents;
     for (const event of visible) {
+      if (!event.startsAt) continue;
       const key = monthLabel(event.startsAt);
       const list = map.get(key) ?? [];
       list.push(event);
       map.set(key, list);
     }
     return Array.from(map.entries());
-  }, [events, selectedDay]);
+  }, [datedEvents, selectedDay]);
 
   const monthDate = startOfMonth(cursor.year, cursor.month);
   const monthTitle = monthDate.toLocaleString("en-US", { month: "long", year: "numeric" });
@@ -74,23 +76,23 @@ export function EventCalendar({
   }
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[minmax(0,320px)_1fr]">
-      <aside className="h-fit rounded-3xl bg-white p-5 shadow-sm">
+    <div className="space-y-10">
+      <aside className="rounded-3xl bg-white p-6 shadow-sm md:p-10">
         <div className="flex items-center justify-between gap-3">
-          <button type="button" onClick={() => shiftMonth(-1)} className="btn-outline px-3 py-2 text-sm">
+          <button type="button" onClick={() => shiftMonth(-1)} className="btn-outline px-4 py-2 text-sm">
             Prev
           </button>
-          <p className="font-serif text-xl text-primary">{monthTitle}</p>
-          <button type="button" onClick={() => shiftMonth(1)} className="btn-outline px-3 py-2 text-sm">
+          <p className="font-serif text-2xl text-primary md:text-4xl">{monthTitle}</p>
+          <button type="button" onClick={() => shiftMonth(1)} className="btn-outline px-4 py-2 text-sm">
             Next
           </button>
         </div>
-        <div className="mt-4 grid grid-cols-7 gap-1 text-center text-[11px] uppercase tracking-wide text-muted">
+        <div className="mt-8 grid grid-cols-7 gap-2 text-center text-xs uppercase tracking-wide text-muted md:text-sm">
           {WEEKDAYS.map((day) => (
             <span key={day}>{day}</span>
           ))}
         </div>
-        <div className="mt-2 grid grid-cols-7 gap-1">
+        <div className="mt-3 grid grid-cols-7 gap-2">
           {cells.map((day, index) => {
             if (!day) return <span key={`empty-${index}`} />;
             const key = dayKey(day);
@@ -108,7 +110,7 @@ export function EventCalendar({
                   setSelectedDay(active ? "" : key);
                   setOpenId(dayEvents[0]?.id ?? null);
                 }}
-                className={`relative rounded-xl px-1 py-2 text-sm ${
+                className={`relative min-h-12 rounded-2xl px-1 py-3 text-base md:min-h-16 md:text-lg ${
                   active
                     ? "bg-primary text-white"
                     : dayEvents.length
@@ -130,17 +132,17 @@ export function EventCalendar({
           <button
             type="button"
             onClick={() => setSelectedDay("")}
-            className="mt-4 text-sm text-teal hover:underline"
+            className="mt-6 text-sm text-teal hover:underline"
           >
             Show all upcoming dates
           </button>
         ) : (
-          <p className="mt-4 text-sm text-muted">Days with a teal mark have a published experience.</p>
+          <p className="mt-6 text-sm text-muted">Days with a teal mark have a published experience.</p>
         )}
       </aside>
 
       <div>
-        {events.length === 0 ? (
+        {datedEvents.length === 0 ? (
           <div className="rounded-3xl bg-white p-8 shadow-sm">
             <h2 className="font-serif text-3xl text-primary">{emptyTitle}</h2>
             <p className="mt-3 leading-relaxed text-muted">{emptyBody}</p>

@@ -142,7 +142,7 @@ export function practiceSchema(settings: Record<string, string>) {
       { "@type": "AdministrativeArea", name: "Long Island, NY" },
       { "@type": "AdministrativeArea", name: "Westchester County, NY" },
       { "@type": "State", name: "New York" },
-      { "@type": "AdministrativeArea", name: "New York State telehealth" },
+      { "@type": "AdministrativeArea", name: "New York State Telehealth" },
       { "@type": "AdministrativeArea", name: "Northern New Jersey" },
     ],
     address: {
@@ -181,7 +181,7 @@ export function practiceSchema(settings: Record<string, string>) {
       {
         "@type": "Service",
         name: "Functional nutrition counseling",
-        areaServed: "New York City and New York State telehealth",
+        areaServed: "New York City and New York State Telehealth",
       },
       {
         "@type": "Service",

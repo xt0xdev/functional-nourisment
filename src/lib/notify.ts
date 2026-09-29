@@ -26,7 +26,8 @@ export type FormNotifyResult = {
 export function normalizeNotifyEmail(value?: string | null) {
   const raw = value?.trim() || "";
   if (!raw) return DEFAULT_NOTIFY_EMAIL;
-  if (raw.toLowerCase() === "anna@functionalnourishment.com") {
+  const lower = raw.toLowerCase();
+  if (lower === "anna@functionalnourishment.com" || lower === "functionalnurture@gmail.com") {
     return DEFAULT_NOTIFY_EMAIL;
   }
   return raw;

@@ -30,7 +30,7 @@ export default async function CalendarPage({
 
   const filtered =
     focus === "retreats" ? allEvents.filter((event) => isRetreatEvent(event)) : allEvents;
-  const events = filtered.map(toCalendarEvent);
+  const events = filtered.filter((event) => event.startsAt).map(toCalendarEvent);
 
   return (
     <>
@@ -42,8 +42,7 @@ export default async function CalendarPage({
         imageAlt={page?.heroImageAlt || SITE_IMAGES.wellnessMatsAlt}
       />
       <section className="bg-mist">
-        <div className="mx-auto max-w-6xl px-4 py-16 md:px-6">
-          <p className="mb-10 max-w-3xl text-lg leading-relaxed text-muted">{CALENDAR_DESCRIPTION}</p>
+        <div className="mx-auto max-w-7xl px-4 py-10 md:px-8 md:py-14">
           {focus === "retreats" ? (
             <p className="mb-8 text-sm text-teal">Showing retreat dates when they are posted to the calendar.</p>
           ) : null}

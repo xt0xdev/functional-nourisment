@@ -106,7 +106,7 @@ export function toCalendarEvent(event: {
 }
 
 export function monthLabel(value: Date | string | null | undefined) {
-  if (!value) return "Open scheduling";
+  if (!value) return "Date to be announced";
   return new Date(value).toLocaleString("en-US", {
     timeZone: "America/New_York",
     month: "long",

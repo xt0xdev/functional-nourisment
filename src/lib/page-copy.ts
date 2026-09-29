@@ -90,7 +90,7 @@ export const NUTRITION_GOAL =
 export const NUTRITION_HOW_IT_WORKS = [
   {
     title: "We start with you",
-    text: "A comprehensive assessment helps me understand your health, nutrition, lifestyle, concerns, and goals.",
+    text: "A comprehensive initial nutrition assessment helps me understand your health, nutrition, lifestyle, concerns, and goals.",
   },
   {
     title: "We create your path forward",
@@ -129,7 +129,7 @@ export const NUTRITION_AREAS = [
   {
     title: "Nutritional Deficiencies",
     detail: "Iron · Vitamin & mineral deficiencies",
-    icon: "pill",
+    icon: "bowl",
   },
   {
     title: "General Well-Being & Stress Support",
@@ -282,14 +282,14 @@ export const BOOK_INSURANCE_BODY =
 export const BOOK_BERRY_STREET_LABEL = "Book Through Berry Street →";
 export const BOOK_INQUIRIES_TITLE = "General Inquiries";
 export const BOOK_INQUIRIES_BODY =
-  "For questions about my services, sound bath meditations, wellness events, or collaborations, please email functionalnurture@gmail.com.";
+  "For questions about my services, sound bath meditations, wellness events, or collaborations, please email Anna@functionalnourishment.com.";
 export const BOOK_TAGLINE = "Nourishment for mind, body and spirit.";
 export const BOOK_FORM_TITLE = "Complimentary 20-Minute Discovery Call";
 export const BOOK_FORM_LEAD = "Interested in personalized nutrition counseling?";
 export const BOOK_FORM_INTRO =
   "Complete the brief inquiry form below to share a little about yourself and your health and nutrition goals. Once submitted, you'll be directed to schedule your discovery call at a time that works best for you.";
 export const BOOK_FORM_NOTE =
-  "This form is exclusively for individuals interested in nutrition counseling. For all other inquiries, please email functionalnurture@gmail.com.";
+  "This form is exclusively for individuals interested in nutrition counseling. For all other inquiries, please email Anna@functionalnourishment.com.";
 export const BOOK_META_TITLE = "Book a Nutritionist in Astoria, Queens & NYC";
 export const BOOK_META_DESCRIPTION =
   "Book a complimentary 20-minute discovery call with Functional Nourishment. Share your health and nutrition goals, then schedule a time that works for you.";
@@ -305,12 +305,20 @@ export const COLLABORATIVE_CARE_EYEBROW = "A whole-person care network";
 export const COLLABORATIVE_CARE_META_TITLE =
   "Collaborative Care | Functional Nourishment";
 export const COLLABORATIVE_CARE_META_DESCRIPTION =
-  "Functional Nourishment works with a network of integrative healthcare and wellness professionals to support your unique health needs.";
-export const COLLABORATIVE_CARE_BODY =
-  "At Functional Nourishment, we believe that true well-being is supported through a collaborative, whole-person approach to care. Through our network of integrative healthcare and wellness professionals, we work together to support your unique health needs, bringing complementary perspectives and expertise to your journey toward lasting well-being.";
-export const COLLABORATIVE_CARE_PARTNER_LABEL =
-  "Mike Kokkolis — Bell Dental Care, nutritionist collaboration";
-export const COLLABORATIVE_CARE_PARTNER_URL = "https://belldentalcare.com/nutritionist";
+  "Explore Functional Nourishment’s network of wellness partners and our collaborative, whole-person approach to care.";
+export const COLLABORATIVE_CARE_PARAGRAPHS = [
+  "At Functional Nourishment, we believe that true well-being is supported through a collaborative, whole-person approach to care. By working alongside like-minded healthcare and wellness professionals, we bring together complementary areas of expertise to support your unique health needs.",
+  "Explore our network of wellness partners and discover how our collaborative approach can help you achieve greater balance, vitality, and lasting well-being.",
+] as const;
+export const COLLABORATIVE_CARE_BODY = COLLABORATIVE_CARE_PARAGRAPHS.join("\n\n");
+export const COLLABORATIVE_CARE_PARTNER_NAME = "Arista Smiles";
+export const COLLABORATIVE_CARE_PARTNER_DETAIL = "Biological & Integrative Dentistry | Bayside, NY";
+export const COLLABORATIVE_CARE_PARTNER_BODY = [
+  "Through our collaboration with Bell Dental Care, we bring together functional nutrition and biological dentistry to support the connection between oral health and whole-body wellness.",
+  "As the practice's functional nutritionist, I provide personalized nutritional guidance to help patients address underlying nutritional factors, support oral health, and cultivate sustainable habits that promote overall well-being.",
+] as const;
+export const COLLABORATIVE_CARE_PARTNER_LABEL = "Visit Arista Smiles";
+export const COLLABORATIVE_CARE_PARTNER_URL = "https://www.aristasmiles.com";
 
 export const CALENDAR_TITLE = "Calendar";
 export const CALENDAR_META_TITLE = "Workshop & Sound Bath Calendar | Functional Nourishment";

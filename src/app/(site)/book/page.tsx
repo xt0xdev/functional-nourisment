@@ -4,6 +4,7 @@ import { buildMetadata } from "@/lib/seo";
 import { ContactForm } from "@/components/site/ContactForm";
 import { SmartImage } from "@/components/site/SmartImage";
 import { resolveBookBrandImage } from "@/lib/site-images";
+import { DEFAULT_PUBLIC_EMAIL, isLegacyPublicEmail } from "@/lib/site-defaults";
 import {
   BOOK_BERRY_STREET_LABEL,
   BOOK_CONNECT_BODY,
@@ -37,7 +38,7 @@ export default async function BookPage() {
   const [page, settings] = await Promise.all([getPage("book"), getSettings()]);
   const calendlyUrl = resolveBookingUrl(settings);
   const brandImage = resolveBookBrandImage(page?.heroImage, page?.heroImageAlt);
-  const inquiryEmail = settings.email || "functionalnurture@gmail.com";
+  const inquiryEmail = isLegacyPublicEmail(settings.email) ? DEFAULT_PUBLIC_EMAIL : settings.email;
 
   return (
     <section className="bg-background">

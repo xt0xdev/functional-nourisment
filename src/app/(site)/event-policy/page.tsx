@@ -43,7 +43,7 @@ export default function EventPolicyPage() {
         </p>
         <p>
           Questions about a specific offering? Email{" "}
-          <a href="mailto:functionalnurture@gmail.com">functionalnurture@gmail.com</a>.
+          <a href="mailto:Anna@functionalnourishment.com">Anna@functionalnourishment.com</a>.
         </p>
       </section>
     </>

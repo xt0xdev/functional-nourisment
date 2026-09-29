@@ -206,7 +206,7 @@ export const locations: LocationPage[] = [
     paragraphs: [
       "Commuter schedules are built into the plan. Evening structure, travel weeks, and family cooking all get addressed during the three-month program.",
       "Clinical focus areas remain the same: cardiometabolic health, GI disorders, weight management, and mental health nutrition, with optional mind-body practices.",
-      "Confirm insurance on Berry Street or email functionalnurture@gmail.com to request a discovery call. In-person sound healing is a short trip to Astoria, Queens when you want it.",
+      "Confirm insurance on Berry Street or email Anna@functionalnourishment.com to request a discovery call. In-person sound healing is a short trip to Astoria, Queens when you want it.",
     ],
     neighborhoods: ["Long Island", "Westchester", "Northern New Jersey", "Connecticut"],
     faqs: [
@@ -251,8 +251,8 @@ export const locations: LocationPage[] = [
         a: "No. Nutrition visits are remote. The Astoria, Queens practice is the home base; telehealth is how we meet across New York State.",
       },
     ],
-    footerLabel: "New York State telehealth",
-    chipLabel: "New York State telehealth",
+    footerLabel: "New York State Telehealth",
+    chipLabel: "New York State Telehealth",
   },
 ];
 

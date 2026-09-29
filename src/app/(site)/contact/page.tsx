@@ -5,6 +5,7 @@ import { PageHero } from "@/components/site/PageHero";
 import { ContactForm } from "@/components/site/ContactForm";
 import { ServiceArea } from "@/components/site/ServiceArea";
 import { CONTACT_HERO, CONTACT_SECOND } from "@/lib/page-copy";
+import { DEFAULT_PUBLIC_EMAIL, isLegacyPublicEmail } from "@/lib/site-defaults";
 import { SITE_IMAGES, isStockOrEmptyImage } from "@/lib/site-images";
 
 export async function generateMetadata() {
@@ -28,6 +29,7 @@ export default async function ContactPage({
   ]);
   const isDiscovery = discovery === "1";
   const calendlyUrl = resolveBookingUrl(settings);
+  const contactEmail = isLegacyPublicEmail(settings.email) ? DEFAULT_PUBLIC_EMAIL : settings.email;
 
   return (
     <>
@@ -43,8 +45,8 @@ export default async function ContactPage({
           <p className="text-lg text-muted">{CONTACT_SECOND}</p>
           <p className="mt-6 text-forest">
             Email:{" "}
-            <a className="underline" href={`mailto:${settings.email}`}>
-              {settings.email}
+            <a className="underline" href={`mailto:${contactEmail}`}>
+              {contactEmail}
             </a>
           </p>
           <p className="mt-2 text-muted">{settings.address}</p>

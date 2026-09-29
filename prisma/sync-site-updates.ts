@@ -51,9 +51,11 @@ import {
 } from "../src/lib/page-copy";
 import {
   DEFAULT_NOTIFY_EMAIL,
+  DEFAULT_PUBLIC_EMAIL,
   DEFAULT_SITE_URL,
   FOOTER_BLURB,
   PRACTITIONER_CREDIT,
+  isLegacyPublicEmail,
 } from "../src/lib/site-defaults";
 import { inferEventKind } from "../src/lib/events";
 import { SITE_IMAGES, isPractitionerImage, isStockOrEmptyImage } from "../src/lib/site-images";
@@ -153,7 +155,7 @@ async function mergePage(
 async function main() {
   const rows = await prisma.setting.findMany({
     where: {
-      key: { in: ["bookingUrl", "instagram", "footerBlurb", "footerText", "siteUrl", "stripeUrl", "paypalUrl", "notifyEmail"] },
+      key: { in: ["bookingUrl", "instagram", "footerBlurb", "footerText", "siteUrl", "stripeUrl", "paypalUrl", "notifyEmail", "email"] },
     },
   });
   const current = Object.fromEntries(rows.map((row) => [row.key, row.value]));
@@ -165,7 +167,8 @@ async function main() {
   await upsertSetting("siteUrl", DEFAULT_SITE_URL, isLegacySiteUrl(current.siteUrl));
   await upsertSetting("stripeUrl", STRIPE, !current.stripeUrl?.trim());
   await upsertSetting("paypalUrl", PAYPAL, !current.paypalUrl?.trim());
-  await upsertSetting("notifyEmail", DEFAULT_NOTIFY_EMAIL, !current.notifyEmail?.trim());
+  await upsertSetting("notifyEmail", DEFAULT_NOTIFY_EMAIL, isLegacyPublicEmail(current.notifyEmail));
+  await upsertSetting("email", DEFAULT_PUBLIC_EMAIL, isLegacyPublicEmail(current.email));
 
   const home = await prisma.page.findUnique({ where: { slug: "home" } });
   if (home) {
@@ -475,13 +478,17 @@ async function main() {
     });
   }
 
+  await prisma.menuItem.updateMany({
+    where: { href: "/locations/new-york-state" },
+    data: { label: "New York State Telehealth" },
+  });
   const nys = await prisma.menuItem.findFirst({
     where: { location: "footer", href: "/locations/new-york-state" },
   });
   if (!nys) {
     await prisma.menuItem.create({
       data: {
-        label: "New York State telehealth",
+        label: "New York State Telehealth",
         href: "/locations/new-york-state",
         location: "footer",
         groupName: "Serving",

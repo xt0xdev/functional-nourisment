@@ -19,7 +19,7 @@ export default function PrivacyPage() {
         </p>
         <p>
           This website does not sell personal information. Clinical care through Berry Street is
-          governed by Berry Street’s privacy and HIPAA practices. Email functionalnurture@gmail.com
+          governed by Berry Street’s privacy and HIPAA practices. Email Anna@functionalnourishment.com
           with privacy questions.
         </p>
       </section>

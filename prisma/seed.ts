@@ -54,7 +54,7 @@ const settings: Record<string, string> = {
   credentials: "MS, CNS, LN, CDN, CINHC",
   tagline:
     "Optimal health and wellness is not just about the absence of disease — it is an intricate balance of your mental, emotional, spiritual and physical health.",
-  email: "functionalnurture@gmail.com",
+  email: "Anna@functionalnourishment.com",
   notifyEmail: DEFAULT_NOTIFY_EMAIL,
   phone: "",
   address: "Astoria, NY 11105",
@@ -62,7 +62,7 @@ const settings: Record<string, string> = {
   region: "NY",
   postalCode: "11105",
   serviceArea:
-    "Astoria, Queens, New York City, and New York State telehealth — plus remote care for eligible clients in NJ and CA",
+    "Astoria, Queens, New York City, and New York State Telehealth — plus remote care for eligible clients in NJ and CA",
   instagram: "https://www.instagram.com/functional_nourishment/",
   berryStreetUrl: "https://www.berrystreet.co/provider-details/anna-almiroudis",
   stripeUrl: "https://book.stripe.com/dRm7sLewW98h3uTaCo6Zy00",
@@ -230,7 +230,7 @@ const pages = [
       paragraphs: [
         "Schedule a complimentary 20-minute discovery call to share your health and nutrition goals, ask questions, and explore how personalized nutrition counseling can support your well-being.",
         "If you're using insurance and ready to begin nutrition counseling, you can schedule your appointment directly through Berry Street. No discovery call is required.",
-        "For questions about my services, sound bath meditations, wellness events, or collaborations, please email functionalnurture@gmail.com.",
+        "For questions about my services, sound bath meditations, wellness events, or collaborations, please email Anna@functionalnourishment.com.",
       ],
     }),
   },
@@ -239,7 +239,7 @@ const pages = [
     title: "Contact",
     metaTitle: "Contact a Nutritionist in Astoria, Queens & NYC",
     metaDescription:
-      "Contact Anna Almiroudis at Functional Nourishment in Astoria, NY. Remote nutrition care across Queens and New York City. Email functionalnurture@gmail.com.",
+      "Contact Anna Almiroudis at Functional Nourishment in Astoria, NY. Remote nutrition care across Queens and New York City. Email Anna@functionalnourishment.com.",
     heroHeading: "Contact",
     heroSubheading: CONTACT_HERO,
     content: JSON.stringify({
@@ -459,7 +459,7 @@ UnitedHealthcare, Aetna, and Blue Cross Blue Shield can be booked through Berry 
 ## Two ways to start
 
 1. **In network:** Book a nutrition appointment through Berry Street.
-2. **Out of network or unsure:** Request a free 20-minute discovery call using the booking form on this site, or email functionalnurture@gmail.com.
+2. **Out of network or unsure:** Request a free 20-minute discovery call using the booking form on this site, or email Anna@functionalnourishment.com.
 
 Nutrition appointments are telehealth, which is convenient if you live in Astoria, work in Manhattan, or commute from elsewhere in the metro area. Reiki and sound healing can be scheduled in person locally.
 
@@ -691,7 +691,7 @@ async function seedMenu() {
       { label: "Nutritionist in Manhattan", href: "/locations/manhattan", location: "footer", groupName: "Serving", sortOrder: 40 },
       { label: "Nutritionist in Brooklyn", href: "/locations/brooklyn", location: "footer", groupName: "Serving", sortOrder: 50 },
       { label: "NYC Metro Area", href: "/locations/metro", location: "footer", groupName: "Serving", sortOrder: 60 },
-      { label: "New York State telehealth", href: "/locations/new-york-state", location: "footer", groupName: "Serving", sortOrder: 70 },
+      { label: "New York State Telehealth", href: "/locations/new-york-state", location: "footer", groupName: "Serving", sortOrder: 70 },
     ],
   });
 }
@@ -804,7 +804,7 @@ async function ensureServingFooterLinks() {
     { label: "Nutritionist in Manhattan", href: "/locations/manhattan", sortOrder: 40 },
     { label: "Nutritionist in Brooklyn", href: "/locations/brooklyn", sortOrder: 50 },
     { label: "NYC Metro Area", href: "/locations/metro", sortOrder: 60 },
-    { label: "New York State telehealth", href: "/locations/new-york-state", sortOrder: 70 },
+    { label: "New York State Telehealth", href: "/locations/new-york-state", sortOrder: 70 },
   ];
 
   for (const item of serving) {

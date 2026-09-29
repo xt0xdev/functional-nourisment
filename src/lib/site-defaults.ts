@@ -1,4 +1,11 @@
-export const DEFAULT_NOTIFY_EMAIL = "anna@FunctionalNourishment.com";
+export const DEFAULT_NOTIFY_EMAIL = "Anna@functionalnourishment.com";
+export const DEFAULT_PUBLIC_EMAIL = "Anna@functionalnourishment.com";
+
+export function isLegacyPublicEmail(value?: string | null) {
+  const email = value?.trim().toLowerCase() || "";
+  if (!email) return true;
+  return email === "functionalnurture@gmail.com" || email === "anna@functionalnourishment.com";
+}
 
 /** Public site origin — no hyphen. GitHub/Vercel project slugs stay hyphenated. */
 export const DEFAULT_SITE_URL = "https://functionalnourishment.com";

@@ -3,7 +3,7 @@ import { getPage, getSettings, parseContent } from "@/lib/content";
 import { buildMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/site/PageHero";
 import { CtaBand } from "@/components/site/CtaBand";
-import { CHILDRENS_BOOK_NOTE, PRACTITIONER_CREDIT } from "@/lib/site-defaults";
+import { CHILDRENS_BOOK_NOTE } from "@/lib/site-defaults";
 import {
   ABOUT_CREDENTIAL_COACH,
   ABOUT_CREDENTIAL_SOUND,
@@ -77,8 +77,7 @@ export default async function AboutPage() {
             <li>Karuna® and Usui Reiki Master</li>
             <li>{ABOUT_CREDENTIAL_SOUND}</li>
           </ul>
-          <p className="mt-8 text-sm text-muted">{PRACTITIONER_CREDIT}</p>
-          <p className="mt-4 text-sm leading-relaxed text-muted">{CHILDRENS_BOOK_NOTE}</p>
+          <p className="mt-8 text-sm leading-relaxed text-muted">{CHILDRENS_BOOK_NOTE}</p>
           <p className="mt-5">
             <a
               href={AMAZON_BOOK_URL}
