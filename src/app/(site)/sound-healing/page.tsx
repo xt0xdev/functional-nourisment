@@ -1,10 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getPage, getSettings, parseContent } from "@/lib/content";
+import { getPage, getSettings } from "@/lib/content";
 import { buildMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/site/PageHero";
 import { CtaBand } from "@/components/site/CtaBand";
-import { MIND_HERO, MIND_HOW, MIND_MEDITATIVE, MIND_SESSIONS, MIND_WHAT } from "@/lib/page-copy";
+import { MIND_HERO } from "@/lib/page-copy";
+import { resolveHeroText, resolveSoundHealingContent } from "@/lib/page-templates";
 import { SITE_IMAGES, isStockOrEmptyImage } from "@/lib/site-images";
 
 export async function generateMetadata() {
@@ -18,40 +19,34 @@ export async function generateMetadata() {
 
 export default async function SoundHealingPage() {
   const [page, settings] = await Promise.all([getPage("sound-healing"), getSettings()]);
-  const content = parseContent<{ what?: string; how?: string; meditative?: string; close?: string }>(
-    page?.content || "{}",
-    {},
-  );
-  const what = content.what?.includes("Sound healing uses the tones") ? content.what : MIND_WHAT;
-  const how = content.how?.includes("entrainment") ? content.how : MIND_HOW;
-  const meditative = content.meditative?.includes("breathing naturally") ? content.meditative : MIND_MEDITATIVE;
-  const close = content.close?.includes("in-person sessions in Astoria") ? content.close : MIND_SESSIONS;
+  const hero = resolveHeroText(page);
+  const content = resolveSoundHealingContent(page?.content);
 
   return (
     <>
       <PageHero
         eyebrow="Mind · In person in Astoria"
-        heading={page?.heroHeading || "Nourish Mind"}
-        subheading={page?.heroSubheading?.includes("mental and emotional well-being") ? page.heroSubheading : MIND_HERO}
+        heading={hero.heading || "Nourish Mind"}
+        subheading={hero.subheading || MIND_HERO}
         image={isStockOrEmptyImage(page?.heroImage) ? SITE_IMAGES.mindMeditation : page!.heroImage}
         imageAlt={page?.heroImageAlt || SITE_IMAGES.mindMeditationAlt}
       />
       <section className="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-2 md:px-6">
         <div className="relative min-h-80 overflow-hidden rounded-3xl">
           <Image
-            src={SITE_IMAGES.mindBowls}
-            alt={SITE_IMAGES.mindBowlsAlt}
+            src={content.sectionImage}
+            alt={content.sectionImageAlt}
             fill
             className="object-cover"
           />
         </div>
         <div className="prose-fn">
-          <h2>What is sound healing?</h2>
-          <p>{what}</p>
-          <h2>How sound may influence awareness</h2>
-          <p>{how}</p>
-          <p>{meditative}</p>
-          <p>{close}</p>
+          <h2>{content.whatHeading}</h2>
+          <p>{content.what}</p>
+          <h2>{content.howHeading}</h2>
+          <p>{content.how}</p>
+          <p>{content.meditative}</p>
+          <p>{content.close}</p>
           <p className="mt-8 flex flex-wrap gap-3">
             <Link href="/calendar" className="btn-primary no-underline">
               View Upcoming Dates

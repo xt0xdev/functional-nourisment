@@ -1,26 +1,12 @@
-import { getPage, getSettings, parseContent } from "@/lib/content";
+import { getPage, getSettings } from "@/lib/content";
 import { buildMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/site/PageHero";
 import { CtaBand } from "@/components/site/CtaBand";
 import { SmartImage } from "@/components/site/SmartImage";
 import { areaIcons } from "@/components/site/SupportIcons";
 import { isStockOrEmptyImage } from "@/lib/site-images";
-import {
-  NUTRITION_APPROACH,
-  NUTRITION_AREAS,
-  NUTRITION_CLOSING,
-  NUTRITION_COOKING_ALT,
-  NUTRITION_COOKING_IMAGE,
-  NUTRITION_FOOD_FIRST,
-  NUTRITION_GOAL,
-  NUTRITION_HEADING,
-  NUTRITION_HERO,
-  NUTRITION_HOW_IT_WORKS,
-  NUTRITION_IMAGE,
-  NUTRITION_IMAGE_ALT,
-  NUTRITION_INTRO,
-  NUTRITION_NOT_ALONE,
-} from "@/lib/page-copy";
+import { NUTRITION_HERO, NUTRITION_IMAGE, NUTRITION_IMAGE_ALT } from "@/lib/page-copy";
+import { resolveHeroText, resolveNutritionContent } from "@/lib/page-templates";
 
 export async function generateMetadata() {
   const page = await getPage("nutrition");
@@ -31,31 +17,17 @@ export async function generateMetadata() {
   });
 }
 
-type NutritionContent = {
-  intro?: string;
-  notAlone?: string;
-  approach?: string;
-  foodFirst?: string;
-  goal?: string;
-  closing?: string;
-};
-
 export default async function NutritionPage() {
   const [page, settings] = await Promise.all([getPage("nutrition"), getSettings()]);
-  const content = parseContent<NutritionContent>(page?.content || "{}", {});
-  const intro = content.intro?.includes("overwhelmed by conflicting") ? content.intro : NUTRITION_INTRO;
-  const notAlone = content.notAlone?.includes("don’t have to figure") ? content.notAlone : NUTRITION_NOT_ALONE;
-  const approach = content.approach?.includes("nutrition should be as individual") ? content.approach : NUTRITION_APPROACH;
-  const foodFirst = content.foodFirst?.includes("personalized, food-first") ? content.foodFirst : NUTRITION_FOOD_FIRST;
-  const goal = content.goal?.includes("isn't simply to tell you") ? content.goal : NUTRITION_GOAL;
-  const closing = content.closing?.includes("Lasting change") ? content.closing : NUTRITION_CLOSING;
+  const hero = resolveHeroText(page);
+  const content = resolveNutritionContent(page?.content);
 
   return (
     <>
       <PageHero
         eyebrow="Body · Astoria, Queens & NYC"
-        heading={page?.heroHeading || "Nourish Body"}
-        subheading={page?.heroSubheading?.includes("foundation of your well-being") ? page.heroSubheading : NUTRITION_HERO}
+        heading={hero.heading || "Nourish Body"}
+        subheading={hero.subheading || NUTRITION_HERO}
         image={isStockOrEmptyImage(page?.heroImage) ? NUTRITION_IMAGE : page!.heroImage}
         imageAlt={page?.heroImageAlt || NUTRITION_IMAGE_ALT}
       />
@@ -63,30 +35,30 @@ export default async function NutritionPage() {
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 md:grid-cols-2 md:px-6">
           <div className="relative aspect-[4/5] overflow-hidden rounded-3xl bg-mist">
             <SmartImage
-              src={NUTRITION_COOKING_IMAGE}
-              alt={NUTRITION_COOKING_ALT}
+              src={content.cookingImage}
+              alt={content.cookingImageAlt}
               fill
               className="object-cover object-top"
               sizes="(min-width: 768px) 50vw, 100vw"
             />
           </div>
           <div>
-            <h2 className="font-serif text-4xl text-primary md:text-5xl">{NUTRITION_HEADING}</h2>
-            <p className="mt-6 leading-relaxed text-muted">{intro}</p>
-            <p className="mt-5 text-lg font-semibold leading-relaxed text-primary">{notAlone}</p>
-            <p className="mt-5 leading-relaxed text-muted">{approach}</p>
-            <p className="mt-5 leading-relaxed text-muted">{foodFirst}</p>
-            <p className="mt-5 leading-relaxed text-muted">{goal}</p>
+            <h2 className="font-serif text-4xl text-primary md:text-5xl">{content.heading}</h2>
+            <p className="mt-6 leading-relaxed text-muted">{content.intro}</p>
+            <p className="mt-5 text-lg font-semibold leading-relaxed text-primary">{content.notAlone}</p>
+            <p className="mt-5 leading-relaxed text-muted">{content.approach}</p>
+            <p className="mt-5 leading-relaxed text-muted">{content.foodFirst}</p>
+            <p className="mt-5 leading-relaxed text-muted">{content.goal}</p>
           </div>
         </div>
       </section>
 
       <section className="bg-mist">
         <div className="mx-auto max-w-6xl px-4 py-16 md:px-6">
-          <p className="eyebrow">Getting Started</p>
-          <h2 className="mt-3 font-serif text-4xl text-primary md:text-5xl">How it Works</h2>
+          <p className="eyebrow">{content.howEyebrow}</p>
+          <h2 className="mt-3 font-serif text-4xl text-primary md:text-5xl">{content.howHeading}</h2>
           <div className="mt-10 grid gap-5 md:grid-cols-3">
-            {NUTRITION_HOW_IT_WORKS.map((step) => (
+            {content.howItWorks.map((step) => (
               <article key={step.title} className="rounded-3xl bg-background p-6 shadow-sm">
                 <h3 className="font-serif text-2xl text-primary">{step.title}</h3>
                 <p className="mt-3 text-sm leading-relaxed text-muted">{step.text}</p>
@@ -94,18 +66,18 @@ export default async function NutritionPage() {
             ))}
           </div>
           <p className="mx-auto mt-10 max-w-3xl text-center font-serif text-xl italic text-primary md:text-2xl">
-            {closing}
+            {content.closing}
           </p>
         </div>
       </section>
 
       <section className="bg-background">
         <div className="mx-auto max-w-6xl px-4 py-16 md:px-6">
-          <p className="eyebrow">Care that meets you where you are</p>
-          <h2 className="mt-3 font-serif text-4xl text-primary md:text-5xl">Areas I Support</h2>
+          <p className="eyebrow">{content.areasEyebrow}</p>
+          <h2 className="mt-3 font-serif text-4xl text-primary md:text-5xl">{content.areasHeading}</h2>
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {NUTRITION_AREAS.map((area) => {
-              const Icon = areaIcons[area.icon];
+            {content.areas.map((area) => {
+              const Icon = areaIcons[area.icon as keyof typeof areaIcons] || areaIcons.lotus;
               return (
                 <article key={area.title} className="rounded-3xl bg-mist p-6">
                   <Icon className="h-9 w-9 text-teal" strokeWidth={1.6} />

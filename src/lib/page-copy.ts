@@ -31,6 +31,25 @@ export const ABOUT_CREDENTIAL_SOUND =
 export const ABOUT_CREDENTIAL_COACH =
   "Certified Integrative Nutrition Health Coach (CINHC)";
 
+export const ABOUT_CREDENTIAL_ITEMS = [
+  "Master of Science (MS)",
+  "Certified Nutrition Specialist (CNS)",
+  "Licensed Nutritionist (LN)",
+  "Certified Dietitian-Nutritionist, New York (CDN)",
+  ABOUT_CREDENTIAL_COACH,
+  "Karuna® and Usui Reiki Master",
+  ABOUT_CREDENTIAL_SOUND,
+] as const;
+
+export const ABOUT_PARAGRAPHS = [
+  `As a Certified Nutritionist Specialist (CNS), Certified Integrative Nutrition Health Coach (CINHC), Nutrition Educator, Writer, Karuna® and Usui Reiki Master, and ${ABOUT_CREDENTIAL_SOUND}, I bring a uniquely integrative approach to wellness—grounded in science, rooted in nature, and powered by compassion. With advanced training in functional nutrition and a specialization in herbal medicine, I blend evidence-based nutrition with holistic healing practices to support mind-body transformation.`,
+  "I specialize in cardiometabolic health, weight management, gastrointestinal disorders, and mental health nutrition. I provide evidence-based Medical Nutrition Therapy (MNT) for individuals with dyslipidemia, hypertension, insulin resistance, prediabetes and diabetes, gut dysbiosis, metabolic syndrome, irritable bowel syndrome (IBS), celiac disease, weight management, and stress induced health outcomes.",
+  "My clinical approach integrates functional nutrition and mind-body medicine to identify and address the root causes of health imbalances. By integrating nutrition interventions, lifestyle modifications, and mind-body stress reduction interventions such as Reiki, Sound Healing and Meditation, I help clients restore metabolic balance, improve gut-health, mitigate stress and barriers to their health and wellness goals.",
+  "My ultimate goal is to educate, support and empower individuals to improve their health and mental well-being through sustainable, whole-person, personalized care. Whether I am guiding a private client, leading a corporate wellness workshop, teaching a class, or writing, my goal is to create sustainable pathways to health that nourish all aspects of one’s being, mind, body and spirit.",
+  "I am especially passionate about the intersection of nutrition and mental health—helping individuals harness the power of food, meditation, self-awareness and energy healing practices to reduce stress, improve mood, resilience, and overall wellbeing.",
+  "With over 10 years of experience, my work is deeply plant-powered, personalized, and client-centered. I work with pediatric and adult clients from my Astoria, Queens practice and across New York City, and I offer services in English and Greek.",
+] as const;
+
 export function normalizeCredentials(value: string) {
   return value.replace(/\bCHHC\b/g, "CINHC");
 }
@@ -62,6 +81,10 @@ export const NUTRITION_HERO =
   "Your body is the foundation of your well-being. Through nourishment, movement, rest, and personalized nutrition, we can support the systems that help you feel energized, resilient, and well from the inside out.";
 
 export const NUTRITION_HEADING = "Nourishment from the inside out";
+export const NUTRITION_HOW_HEADING = "How it Works";
+export const NUTRITION_HOW_EYEBROW = "Getting Started";
+export const NUTRITION_AREAS_EYEBROW = "Care that meets you where you are";
+export const NUTRITION_AREAS_HEADING = "Areas I Support";
 
 export const NUTRITION_IMAGE = "/images/nourish-body-bowl.png";
 
@@ -180,6 +203,11 @@ export const SPIRIT_RETREATS_BODY =
 
 export const SPIRIT_RETREATS_GREECE =
   "From intimate local gatherings to immersive experiences inspired by the natural beauty and traditions of Greece, each retreat is thoughtfully created to nourish mind, body, and spirit.";
+export const SPIRIT_GATHER_EYEBROW = "Gather · Learn · Reconnect";
+export const SPIRIT_GATHER_HEADING = "Gather · Learn · Reconnect";
+export const SPIRIT_EXPERIENCE_HEADING = "Experiences may include:";
+export const SPIRIT_RETREATS_EYEBROW = "Retreats";
+export const SPIRIT_RETREATS_HEADING = "Retreats & Immersive Experiences";
 
 export const EXPERIENCES_TITLE = "Workshops & Experiences";
 export const EXPERIENCES_SUB = "Experiences designed to nourish, connect, and inspire.";
@@ -212,6 +240,10 @@ export const EXPERIENCE_SECTIONS = [
 export const EXPERIENCES_GROUP_HEADING = "Bring an Experience to Your Group";
 export const EXPERIENCES_GROUP_BODY =
   "Looking to bring an experience to your team, community, or private gathering? Workshops and wellness experiences can be customized for corporate settings, celebrations, and small groups.";
+export const EXPERIENCES_GALLERY_EYEBROW = "From the field";
+export const EXPERIENCES_GALLERY_HEADING = "Workshops, sound, and gathering";
+export const EXPERIENCES_DATES_HEADING = "Looking for an upcoming experience?";
+export const EXPERIENCES_RETREATS_HEADING = "Looking for something more immersive?";
 
 export const RETREATS_TITLE = "Retreats";
 export const RETREATS_SUB =
@@ -233,6 +265,12 @@ export const RETREATS_WHAT = [
 ] as const;
 
 export const RETREATS_NATURE_HEADING = "Rooted in Nature";
+export const RETREATS_UPCOMING_HEADING = "Upcoming Retreats";
+export const RETREATS_UPCOMING_EMPTY =
+  "Dates are posted on the calendar as they are announced. Join the mailing list to hear about upcoming retreats first.";
+export const RETREATS_MAILING_HEADING = "Join the Mailing List";
+export const RETREATS_MAILING_BODY =
+  "Sign up for updates on nutrition, wellness, workshops, sound baths, retreats, and upcoming offerings.";
 export const RETREATS_NATURE = [
   "From intimate local gatherings to immersive retreats inspired by the natural beauty and rich traditions of Greece, each experience is thoughtfully created to nourish mind, body, and spirit.",
   "Rooted in nature and inspired by the Mediterranean way of life, our retreats invite you to slow down, reconnect with yourself, and embrace the simple pleasures of mindful living. Through nourishing food, restorative practices, and authentic cultural experiences, you may explore local traditions, discover the island's unique herbs and agricultural heritage, savor regional cuisine, and connect with the people and communities that make each destination special.",
@@ -258,6 +296,28 @@ export const NOURISH_JOURNAL_TAGS = [
 export const NOURISH_RECIPES_LEAD = "Simple, nourishing recipes";
 export const NOURISH_RECIPES_BODY =
   "Explore wholesome recipes inspired by whole foods, Mediterranean flavors, and a food-first approach to feeling well.";
+export const HOME_QUOTE = "True nourishment begins with listening to the body.";
+export const HOME_PRACTITIONER =
+  "As a board certified nutrition specialist, licensed nutritionist, certified dietitian-nutritionist and certified integrative nutrition health coach based in Astoria, Queens, I bridge the gap between clinical science and intuitive wellness for clients across New York City.";
+export const HOME_PRACTITIONER_MORE =
+  "My practice is rooted in functional nutrition and medical nutrition therapy, with a whole-person view of health.";
+export const HOME_PILLARS_EYEBROW = "A whole-person approach";
+export const HOME_PILLARS_HEADING = "Our core pillars";
+export const HOME_PILLARS_SUB = "A comprehensive approach to your well-being.";
+export const HOME_MEET_EYEBROW = "Meet your practitioner";
+export const HOME_MEET_HEADING = "Anna Almiroudis";
+
+export const EVENTS_INTRO =
+  "Check back for upcoming cooking classes, sound baths, and community workshops in Astoria and across New York City. Private and corporate bookings are available year-round.";
+
+export const MIND_WHAT_HEADING = "What is sound healing?";
+export const MIND_HOW_HEADING = "How sound may influence awareness";
+
+export const NOURISH_RESOURCES_HEADING = "Starting points";
+export const NOURISH_RESOURCES_BODY =
+  "Practical places to begin — nutrition counseling, mind-body offerings, and ways to stay connected.";
+export const NOURISH_INSIGHTS_HEADING = "Insights";
+
 export const NOURISH_RECIPE_TAGS = [
   "Breakfast",
   "Main Dishes",

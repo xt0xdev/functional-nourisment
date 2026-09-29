@@ -46,17 +46,24 @@ export async function saveSettings(formData: FormData) {
 
 export async function savePage(formData: FormData) {
   await guard();
+  const { contentFromFormData, publicPathForSlug } = await import("@/lib/page-templates");
   const id = String(formData.get("id") || "");
+  const existing = id ? await prisma.page.findUnique({ where: { id } }) : null;
+  const slug = String(formData.get("slug") || existing?.slug || "");
+  const templateMode = String(formData.get("contentMode") || "") === "template";
+  const content = templateMode
+    ? contentFromFormData(slug, formData, existing?.content || "")
+    : String(formData.get("content") || existing?.content || "");
   const data = {
     title: String(formData.get("title") || ""),
-    slug: String(formData.get("slug") || ""),
+    slug,
     metaTitle: String(formData.get("metaTitle") || ""),
     metaDescription: String(formData.get("metaDescription") || ""),
     heroHeading: String(formData.get("heroHeading") || ""),
     heroSubheading: String(formData.get("heroSubheading") || ""),
     heroImage: String(formData.get("heroImage") || ""),
     heroImageAlt: String(formData.get("heroImageAlt") || ""),
-    content: String(formData.get("content") || ""),
+    content,
     published: formData.get("published") === "on",
   };
   if (id) {
@@ -65,6 +72,9 @@ export async function savePage(formData: FormData) {
     await prisma.page.create({ data: { ...data, system: false } });
   }
   revalidatePath("/", "layout");
+  revalidatePath("/admin/pages");
+  if (id) revalidatePath(`/admin/pages/${id}`);
+  if (slug) revalidatePath(publicPathForSlug(slug));
 }
 
 export async function createPage(formData: FormData) {

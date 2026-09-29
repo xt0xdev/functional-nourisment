@@ -1,9 +1,9 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import {
-  ABOUT_CREDENTIAL_SOUND,
   ABOUT_HERO_SUBHEADING,
   ABOUT_NAME,
+  ABOUT_PARAGRAPHS,
   COLLABORATIVE_CARE_BODY,
   COLLABORATIVE_CARE_META_DESCRIPTION,
   COLLABORATIVE_CARE_META_TITLE,
@@ -44,6 +44,7 @@ import {
 } from "../src/lib/page-copy";
 import { DEFAULT_NOTIFY_EMAIL, DEFAULT_SITE_URL, FOOTER_BLURB, PRACTITIONER_CREDIT } from "../src/lib/site-defaults";
 import { STARTER_JOURNAL, STARTER_RECIPES } from "../src/lib/starter-content";
+import { retreatsContentDefaults } from "../src/lib/page-templates";
 
 const prisma = new PrismaClient();
 
@@ -118,14 +119,7 @@ const pages = [
     heroHeading: ABOUT_NAME,
     heroSubheading: ABOUT_HERO_SUBHEADING,
     content: JSON.stringify({
-      paragraphs: [
-        `As a Certified Nutritionist Specialist (CNS), Certified Integrative Nutrition Health Coach (CINHC), Nutrition Educator, Writer, Karuna® and Usui Reiki Master, and ${ABOUT_CREDENTIAL_SOUND}, I bring a uniquely integrative approach to wellness—grounded in science, rooted in nature, and powered by compassion. With advanced training in functional nutrition and a specialization in herbal medicine, I blend evidence-based nutrition with holistic healing practices to support mind-body transformation.`,
-        "I specialize in cardiometabolic health, weight management, gastrointestinal disorders, and mental health nutrition. I provide evidence-based Medical Nutrition Therapy (MNT) for individuals with dyslipidemia, hypertension, insulin resistance, prediabetes and diabetes, gut dysbiosis, metabolic syndrome, irritable bowel syndrome (IBS), celiac disease, weight management, and stress induced health outcomes.",
-        "My clinical approach integrates functional nutrition and mind-body medicine to identify and address the root causes of health imbalances. By integrating nutrition interventions, lifestyle modifications, and mind-body stress reduction interventions such as Reiki, Sound Healing and Meditation, I help clients restore metabolic balance, improve gut-health, mitigate stress and barriers to their health and wellness goals.",
-        "My ultimate goal is to educate, support and empower individuals to improve their health and mental well-being through sustainable, whole-person, personalized care. Whether I am guiding a private client, leading a corporate wellness workshop, teaching a class, or writing, my goal is to create sustainable pathways to health that nourish all aspects of one’s being, mind, body and spirit.",
-        "I am especially passionate about the intersection of nutrition and mental health—helping individuals harness the power of food, meditation, self-awareness and energy healing practices to reduce stress, improve mood, resilience, and overall wellbeing.",
-        "With over 10 years of experience, my work is deeply plant-powered, personalized, and client-centered. I work with pediatric and adult clients from my Astoria, Queens practice and across New York City, and I offer services in English and Greek.",
-      ],
+      paragraphs: [...ABOUT_PARAGRAPHS],
     }),
   },
   {
@@ -253,7 +247,7 @@ const pages = [
     metaDescription: RETREATS_SUB,
     heroHeading: RETREATS_TITLE,
     heroSubheading: RETREATS_SUB,
-    content: JSON.stringify({ intro: RETREATS_SUB }),
+    content: JSON.stringify(retreatsContentDefaults()),
   },
   {
     slug: "nourish",

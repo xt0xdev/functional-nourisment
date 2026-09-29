@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { getEvents, getPage, getSettings, parseContent } from "@/lib/content";
+import { getEvents, getPage, getSettings } from "@/lib/content";
 import { buildMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/site/PageHero";
 import { CtaBand } from "@/components/site/CtaBand";
 import { SmartImage } from "@/components/site/SmartImage";
 import { EventPayButtons } from "@/components/site/EventPayButtons";
 import { eventPublicPath, eventRegisterPath, isRetreatEvent } from "@/lib/events";
+import { resolveEventsContent, resolveHeroText } from "@/lib/page-templates";
 
 export async function generateMetadata() {
   const page = await getPage("events");
@@ -18,14 +19,15 @@ export async function generateMetadata() {
 
 export default async function EventsPage() {
   const [page, events, settings] = await Promise.all([getPage("events"), getEvents(), getSettings()]);
-  const content = parseContent<{ intro?: string }>(page?.content || "{}", {});
+  const hero = resolveHeroText(page);
+  const content = resolveEventsContent(page?.content);
 
   return (
     <>
       <PageHero
         eyebrow="What's coming up"
-        heading={page?.heroHeading || ""}
-        subheading={page?.heroSubheading}
+        heading={hero.heading}
+        subheading={hero.subheading}
         image={
           page?.heroImage ||
           "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=80"

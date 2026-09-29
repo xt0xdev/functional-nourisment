@@ -4,6 +4,7 @@ import { PageHero } from "@/components/site/PageHero";
 import { CtaBand } from "@/components/site/CtaBand";
 import { EventCalendar } from "@/components/site/EventCalendar";
 import { CALENDAR_DESCRIPTION, CALENDAR_META_TITLE, CALENDAR_TITLE } from "@/lib/page-copy";
+import { resolveHeroText } from "@/lib/page-templates";
 import { SITE_IMAGES, isStockOrEmptyImage } from "@/lib/site-images";
 import { isRetreatEvent, toCalendarEvent } from "@/lib/events";
 
@@ -31,13 +32,14 @@ export default async function CalendarPage({
   const filtered =
     focus === "retreats" ? allEvents.filter((event) => isRetreatEvent(event)) : allEvents;
   const events = filtered.filter((event) => event.startsAt).map(toCalendarEvent);
+  const hero = resolveHeroText(page);
 
   return (
     <>
       <PageHero
         eyebrow="Upcoming experiences"
-        heading={page?.heroHeading || CALENDAR_TITLE}
-        subheading={page?.heroSubheading || CALENDAR_DESCRIPTION}
+        heading={hero.heading || CALENDAR_TITLE}
+        subheading={hero.subheading || CALENDAR_DESCRIPTION}
         image={isStockOrEmptyImage(page?.heroImage) ? SITE_IMAGES.wellnessMats : page!.heroImage}
         imageAlt={page?.heroImageAlt || SITE_IMAGES.wellnessMatsAlt}
       />

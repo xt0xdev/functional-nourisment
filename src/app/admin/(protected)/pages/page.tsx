@@ -11,7 +11,7 @@ export default async function AdminPagesPage() {
         <div>
           <h1 className="font-serif text-4xl text-forest">Pages</h1>
           <p className="mt-2 text-sm text-muted">
-            Edit existing pages or add a new one. Choose a hero image from the media library on each page.
+            Edit the same sections that appear on the published site. Images come from the media library.
           </p>
         </div>
       </div>

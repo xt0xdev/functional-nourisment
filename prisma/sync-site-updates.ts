@@ -22,6 +22,7 @@ import {
   NOURISH_DESCRIPTION,
   NOURISH_HERO_LINE,
   NOURISH_TITLE,
+  RETREATS_INTRO,
   RETREATS_SUB,
   RETREATS_TITLE,
   MIND_HOW,
@@ -36,9 +37,6 @@ import {
   NUTRITION_HERO,
   NUTRITION_INTRO,
   NUTRITION_NOT_ALONE,
-  PILLAR_BODY,
-  PILLAR_MIND,
-  PILLAR_SPIRIT,
   SPIRIT_GATHER_INTRO,
   SPIRIT_GATHER_MORE,
   SPIRIT_HERO,
@@ -61,6 +59,12 @@ import { inferEventKind } from "../src/lib/events";
 import { SITE_IMAGES, isPractitionerImage, isStockOrEmptyImage } from "../src/lib/site-images";
 import { STARTER_JOURNAL, STARTER_RECIPES } from "../src/lib/starter-content";
 import { syncLatestNavigation } from "./sync-nav";
+import {
+  defaultContentFor,
+  fillMissingContent,
+  parsePageJson,
+  retreatsContentDefaults,
+} from "../src/lib/page-templates";
 
 const prisma = new PrismaClient();
 
@@ -115,11 +119,11 @@ function isLegacyFooterText(value?: string | null) {
 }
 
 function parseJson(raw?: string | null): Record<string, unknown> {
-  try {
-    return JSON.parse(raw || "{}") as Record<string, unknown>;
-  } catch {
-    return {};
-  }
+  return parsePageJson(raw);
+}
+
+function isBlank(value?: string | null) {
+  return !value?.trim();
 }
 
 async function upsertSetting(key: string, value: string, shouldWrite: boolean) {
@@ -141,12 +145,15 @@ async function mergePage(
 ) {
   const page = await prisma.page.findUnique({ where: { slug } });
   if (!page) return;
-  const content = { ...parseJson(page.content), ...data.content };
+  const content = fillMissingContent(parseJson(page.content), {
+    ...defaultContentFor(slug),
+    ...(data.content || {}),
+  });
   await prisma.page.update({
     where: { slug },
     data: {
-      ...(data.heroHeading ? { heroHeading: data.heroHeading } : {}),
-      ...(data.heroSubheading ? { heroSubheading: data.heroSubheading } : {}),
+      ...(data.heroHeading && isBlank(page.heroHeading) ? { heroHeading: data.heroHeading } : {}),
+      ...(data.heroSubheading && isBlank(page.heroSubheading) ? { heroSubheading: data.heroSubheading } : {}),
       content: JSON.stringify(content),
     },
   });
@@ -178,13 +185,15 @@ async function main() {
       where: { slug: "home" },
       data: {
         heroSubheading: isLegacyIntro(home.heroSubheading) ? HOME_INTRO : home.heroSubheading,
-        content: JSON.stringify({
-          ...content,
-          intro: isLegacyIntro(intro) ? HOME_INTRO : intro,
-          mind: PILLAR_MIND,
-          body: PILLAR_BODY,
-          spirit: PILLAR_SPIRIT,
-        }),
+        content: JSON.stringify(
+          fillMissingContent(
+            {
+              ...content,
+              intro: isLegacyIntro(intro) ? HOME_INTRO : intro,
+            },
+            defaultContentFor("home"),
+          ),
+        ),
       },
     });
   }
@@ -284,6 +293,7 @@ async function main() {
   }
 
   const retreats = await prisma.page.findUnique({ where: { slug: "retreats" } });
+  const retreatsDefaults = retreatsContentDefaults();
   if (!retreats) {
     await prisma.page.create({
       data: {
@@ -295,9 +305,31 @@ async function main() {
         heroSubheading: RETREATS_SUB,
         heroImage: SITE_IMAGES.spiritSoundbath,
         heroImageAlt: SITE_IMAGES.spiritSoundbathAlt,
-        content: JSON.stringify({ intro: RETREATS_SUB }),
+        content: JSON.stringify(retreatsDefaults),
         system: true,
         published: true,
+      },
+    });
+  } else {
+    const content = parseJson(retreats.content);
+    const intro = content.intro;
+    const legacyIntro =
+      intro === RETREATS_SUB ||
+      (typeof intro === "string" && intro.trim() === RETREATS_SUB) ||
+      (Array.isArray(intro) && intro.length === 1 && intro[0] === RETREATS_SUB);
+    if (legacyIntro) delete content.intro;
+    await prisma.page.update({
+      where: { slug: "retreats" },
+      data: {
+        content: JSON.stringify(
+          fillMissingContent(
+            {
+              ...content,
+              ...(legacyIntro ? { intro: [...RETREATS_INTRO] } : {}),
+            },
+            retreatsDefaults,
+          ),
+        ),
       },
     });
   }
@@ -314,7 +346,7 @@ async function main() {
         heroSubheading: NOURISH_HERO_LINE,
         heroImage: SITE_IMAGES.bodyBowl,
         heroImageAlt: SITE_IMAGES.bodyBowlAlt,
-        content: JSON.stringify({ description: NOURISH_DESCRIPTION }),
+        content: JSON.stringify(defaultContentFor("nourish")),
         system: true,
         published: true,
       },
@@ -343,7 +375,7 @@ async function main() {
         heroSubheading: COLLABORATIVE_CARE_META_DESCRIPTION,
         heroImage: SITE_IMAGES.wellnessDining,
         heroImageAlt: SITE_IMAGES.wellnessDiningAlt,
-        content: JSON.stringify({ body: COLLABORATIVE_CARE_BODY }),
+        content: JSON.stringify(defaultContentFor("collaborative-care")),
         system: true,
         published: true,
       },
@@ -352,14 +384,11 @@ async function main() {
     await prisma.page.update({
       where: { slug: "collaborative-care" },
       data: {
-        title: COLLABORATIVE_CARE_TITLE,
-        metaTitle: COLLABORATIVE_CARE_META_TITLE,
-        metaDescription: COLLABORATIVE_CARE_META_DESCRIPTION,
-        heroHeading: COLLABORATIVE_CARE_TITLE,
-        heroSubheading: COLLABORATIVE_CARE_META_DESCRIPTION,
-        content: JSON.stringify({ body: COLLABORATIVE_CARE_BODY }),
         system: true,
         published: true,
+        content: JSON.stringify(
+          fillMissingContent(parseJson(collaborative.content), defaultContentFor("collaborative-care")),
+        ),
       },
     });
   }
@@ -507,7 +536,7 @@ async function main() {
         metaDescription: CALENDAR_DESCRIPTION,
         heroHeading: CALENDAR_TITLE,
         heroSubheading: CALENDAR_DESCRIPTION,
-        content: JSON.stringify({ intro: CALENDAR_DESCRIPTION }),
+        content: JSON.stringify(defaultContentFor("calendar")),
         system: true,
         published: true,
       },
@@ -516,11 +545,13 @@ async function main() {
     await prisma.page.update({
       where: { slug: "calendar" },
       data: {
-        metaTitle: CALENDAR_META_TITLE,
-        metaDescription: CALENDAR_DESCRIPTION,
+        metaTitle: calendarPage.metaTitle || CALENDAR_META_TITLE,
+        metaDescription: calendarPage.metaDescription || CALENDAR_DESCRIPTION,
         heroHeading: calendarPage.heroHeading || CALENDAR_TITLE,
-        heroSubheading: CALENDAR_DESCRIPTION,
-        content: JSON.stringify({ ...parseJson(calendarPage.content), intro: CALENDAR_DESCRIPTION }),
+        heroSubheading: calendarPage.heroSubheading || CALENDAR_DESCRIPTION,
+        content: JSON.stringify(
+          fillMissingContent(parseJson(calendarPage.content), defaultContentFor("calendar")),
+        ),
       },
     });
   }

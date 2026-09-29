@@ -4,7 +4,8 @@ import { buildMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/site/PageHero";
 import { ContactForm } from "@/components/site/ContactForm";
 import { ServiceArea } from "@/components/site/ServiceArea";
-import { CONTACT_HERO, CONTACT_SECOND } from "@/lib/page-copy";
+import { CONTACT_HERO } from "@/lib/page-copy";
+import { resolveContactContent, resolveHeroText } from "@/lib/page-templates";
 import { DEFAULT_PUBLIC_EMAIL, isLegacyPublicEmail } from "@/lib/site-defaults";
 import { SITE_IMAGES, isStockOrEmptyImage } from "@/lib/site-images";
 
@@ -30,19 +31,21 @@ export default async function ContactPage({
   const isDiscovery = discovery === "1";
   const calendlyUrl = resolveBookingUrl(settings);
   const contactEmail = isLegacyPublicEmail(settings.email) ? DEFAULT_PUBLIC_EMAIL : settings.email;
+  const hero = resolveHeroText(page);
+  const content = resolveContactContent(page?.content);
 
   return (
     <>
       <PageHero
         eyebrow="Say hello"
-        heading={page?.heroHeading || "Contact"}
-        subheading={CONTACT_HERO}
+        heading={hero.heading || "Contact"}
+        subheading={hero.subheading || CONTACT_HERO}
         image={isStockOrEmptyImage(page?.heroImage) ? SITE_IMAGES.landingMeet : page!.heroImage}
         imageAlt={page?.heroImageAlt || SITE_IMAGES.landingMeetAlt}
       />
       <section className="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-2 md:px-6">
         <div>
-          <p className="text-lg text-muted">{CONTACT_SECOND}</p>
+          <p className="text-lg text-muted">{content.intro}</p>
           <p className="mt-6 text-forest">
             Email:{" "}
             <a className="underline" href={`mailto:${contactEmail}`}>

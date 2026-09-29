@@ -4,11 +4,16 @@ import { prisma } from "@/lib/prisma";
 import { savePage } from "../../actions";
 import { MediaPicker } from "@/components/admin/MediaPicker";
 import { InsertImageField } from "@/components/admin/InsertImageField";
+import { PageTemplateFields } from "@/components/admin/PageTemplateFields";
+import { HERO_DEFAULTS, getPageTemplate } from "@/lib/page-templates";
 
 export default async function EditPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const page = await prisma.page.findUnique({ where: { id } });
   if (!page) notFound();
+
+  const template = getPageTemplate(page.slug);
+  const heroDefaults = HERO_DEFAULTS[page.slug];
 
   return (
     <div>
@@ -18,9 +23,15 @@ export default async function EditPage({ params }: { params: Promise<{ id: strin
         </Link>
       </p>
       <h1 className="mt-2 font-serif text-4xl text-forest">Edit {page.title}</h1>
-      {page.system ? (
+      {template ? (
         <p className="mt-2 text-sm text-muted">
-          Built-in page. Hero image can come from the media library; the structured content JSON stays for the designed template.
+          Built-in page. The labeled fields below match the published {page.title} page. Images come
+          from the media library.
+        </p>
+      ) : page.system ? (
+        <p className="mt-2 text-sm text-muted">
+          Built-in page. Hero image can come from the media library; the structured content JSON stays
+          for the designed template.
         </p>
       ) : (
         <p className="mt-2 text-sm text-muted">
@@ -52,11 +63,20 @@ export default async function EditPage({ params }: { params: Promise<{ id: strin
         </label>
         <label className="grid gap-1 text-sm">
           Hero heading
-          <input name="heroHeading" defaultValue={page.heroHeading} className="rounded-xl border border-forest/15 bg-white px-3 py-2" />
+          <input
+            name="heroHeading"
+            defaultValue={page.heroHeading.trim() || heroDefaults?.heading || page.heroHeading}
+            className="rounded-xl border border-forest/15 bg-white px-3 py-2"
+          />
         </label>
         <label className="grid gap-1 text-sm">
           Hero subheading
-          <textarea name="heroSubheading" defaultValue={page.heroSubheading} rows={3} className="rounded-xl border border-forest/15 bg-white px-3 py-2" />
+          <textarea
+            name="heroSubheading"
+            defaultValue={page.heroSubheading.trim() || heroDefaults?.subheading || page.heroSubheading}
+            rows={3}
+            className="rounded-xl border border-forest/15 bg-white px-3 py-2"
+          />
         </label>
         <MediaPicker
           label="Hero image"
@@ -68,7 +88,9 @@ export default async function EditPage({ params }: { params: Promise<{ id: strin
           Hero image alt text
           <input name="heroImageAlt" defaultValue={page.heroImageAlt} className="rounded-xl border border-forest/15 bg-white px-3 py-2" />
         </label>
-        {page.system ? (
+        {template ? (
+          <PageTemplateFields slug={page.slug} content={page.content} />
+        ) : page.system ? (
           <label className="grid gap-1 text-sm">
             Content JSON
             <textarea

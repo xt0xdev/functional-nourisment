@@ -4,15 +4,8 @@ import { buildMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/site/PageHero";
 import { SmartImage } from "@/components/site/SmartImage";
 import { SubscribeForm } from "@/components/site/SubscribeForm";
-import {
-  RETREATS_INTRO,
-  RETREATS_NATURE,
-  RETREATS_NATURE_HEADING,
-  RETREATS_SUB,
-  RETREATS_TITLE,
-  RETREATS_WHAT,
-  RETREATS_WHAT_HEADING,
-} from "@/lib/page-copy";
+import { RETREATS_SUB, RETREATS_TITLE } from "@/lib/page-copy";
+import { resolveHeroText, resolveRetreatsContent } from "@/lib/page-templates";
 import { SITE_IMAGES, isStockOrEmptyImage } from "@/lib/site-images";
 import { eventPublicPath, eventRegisterPath, formatEventWhen } from "@/lib/events";
 
@@ -27,27 +20,29 @@ export async function generateMetadata() {
 
 export default async function RetreatsPage() {
   const [page, retreats] = await Promise.all([getPage("retreats"), getUpcomingRetreats()]);
+  const hero = resolveHeroText(page);
+  const content = resolveRetreatsContent(page?.content);
 
   return (
     <>
       <PageHero
         eyebrow="Wellness"
-        heading={page?.heroHeading || RETREATS_TITLE}
-        subheading={page?.heroSubheading || RETREATS_SUB}
+        heading={hero.heading || RETREATS_TITLE}
+        subheading={hero.subheading || RETREATS_SUB}
         image={isStockOrEmptyImage(page?.heroImage) ? SITE_IMAGES.spiritSoundbath : page!.heroImage}
         imageAlt={page?.heroImageAlt || SITE_IMAGES.spiritSoundbathAlt}
       />
       <section className="mx-auto max-w-5xl px-4 py-16 md:px-6">
         <div className="max-w-3xl space-y-5 text-lg leading-relaxed text-muted">
-          {RETREATS_INTRO.map((paragraph) => (
+          {content.intro.map((paragraph) => (
             <p key={paragraph}>{paragraph}</p>
           ))}
         </div>
 
         <div className="mt-14">
-          <h2 className="font-serif text-4xl text-primary">{RETREATS_WHAT_HEADING}</h2>
+          <h2 className="font-serif text-4xl text-primary">{content.whatHeading}</h2>
           <ul className="mt-6 grid gap-3 md:grid-cols-2">
-            {RETREATS_WHAT.map((item) => (
+            {content.whatItems.map((item) => (
               <li key={item} className="rounded-2xl bg-mist px-5 py-4 text-sm leading-relaxed text-muted">
                 {item}
               </li>
@@ -56,17 +51,17 @@ export default async function RetreatsPage() {
         </div>
 
         <div className="mt-14">
-          <h2 className="font-serif text-4xl text-primary">{RETREATS_NATURE_HEADING}</h2>
+          <h2 className="font-serif text-4xl text-primary">{content.natureHeading}</h2>
           <div className="mt-5 max-w-3xl space-y-5 leading-relaxed text-muted">
-            {RETREATS_NATURE.map((paragraph) => (
+            {content.nature.map((paragraph) => (
               <p key={paragraph}>{paragraph}</p>
             ))}
           </div>
           <div className="mt-8 grid gap-4 md:grid-cols-2">
             <figure className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-mist">
               <SmartImage
-                src={SITE_IMAGES.greeceCircle}
-                alt={SITE_IMAGES.greeceCircleAlt}
+                src={content.natureImage1}
+                alt={content.natureImage1Alt}
                 fill
                 className="object-cover"
                 sizes="(min-width: 768px) 50vw, 100vw"
@@ -74,24 +69,32 @@ export default async function RetreatsPage() {
             </figure>
             <figure className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-mist">
               <SmartImage
-                src={SITE_IMAGES.wellnessCliff}
-                alt={SITE_IMAGES.wellnessCliffAlt}
+                src={content.natureImage2}
+                alt={content.natureImage2Alt}
                 fill
                 className="object-cover"
                 sizes="(min-width: 768px) 50vw, 100vw"
               />
             </figure>
           </div>
+          {content.bottomImage ? (
+            <figure className="relative mt-4 aspect-[21/9] overflow-hidden rounded-3xl bg-mist">
+              <SmartImage
+                src={content.bottomImage}
+                alt={content.bottomImageAlt || "Retreat photo"}
+                fill
+                className="object-cover"
+                sizes="100vw"
+              />
+            </figure>
+          ) : null}
         </div>
 
         <div className="mt-14 rounded-3xl bg-white p-8 shadow-sm">
-          <h2 className="font-serif text-3xl text-primary">Upcoming Retreats</h2>
+          <h2 className="font-serif text-3xl text-primary">{content.upcomingHeading}</h2>
           {retreats.length === 0 ? (
             <>
-              <p className="mt-4 text-muted">
-                Dates are posted on the calendar as they are announced. Join the mailing list to hear
-                about upcoming retreats first.
-              </p>
+              <p className="mt-4 text-muted">{content.upcomingEmpty}</p>
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                 <Link href="/calendar?focus=retreats" className="btn-primary">
                   View Upcoming Retreats
@@ -128,11 +131,8 @@ export default async function RetreatsPage() {
         </div>
 
         <div className="mt-10 rounded-3xl bg-mist p-8">
-          <h2 className="font-serif text-3xl text-primary">Join the Mailing List</h2>
-          <p className="mt-3 text-muted">
-            Sign up for updates on nutrition, wellness, workshops, sound baths, retreats, and upcoming
-            offerings.
-          </p>
+          <h2 className="font-serif text-3xl text-primary">{content.mailingHeading}</h2>
+          <p className="mt-3 text-muted">{content.mailingBody}</p>
           <div className="mt-6 max-w-md">
             <SubscribeForm />
           </div>

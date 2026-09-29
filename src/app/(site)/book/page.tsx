@@ -5,25 +5,8 @@ import { ContactForm } from "@/components/site/ContactForm";
 import { SmartImage } from "@/components/site/SmartImage";
 import { resolveBookBrandImage } from "@/lib/site-images";
 import { DEFAULT_PUBLIC_EMAIL, isLegacyPublicEmail } from "@/lib/site-defaults";
-import {
-  BOOK_BERRY_STREET_LABEL,
-  BOOK_CONNECT_BODY,
-  BOOK_CONNECT_TITLE,
-  BOOK_EYEBROW,
-  BOOK_FORM_INTRO,
-  BOOK_FORM_LEAD,
-  BOOK_FORM_NOTE,
-  BOOK_FORM_TITLE,
-  BOOK_HEADING,
-  BOOK_INQUIRIES_TITLE,
-  BOOK_INSURANCE_BODY,
-  BOOK_INSURANCE_TITLE,
-  BOOK_INTRO,
-  BOOK_LEAD,
-  BOOK_META_DESCRIPTION,
-  BOOK_META_TITLE,
-  BOOK_TAGLINE,
-} from "@/lib/page-copy";
+import { BOOK_META_DESCRIPTION, BOOK_META_TITLE } from "@/lib/page-copy";
+import { resolveBookContent } from "@/lib/page-templates";
 
 export async function generateMetadata() {
   const page = await getPage("book");
@@ -39,6 +22,7 @@ export default async function BookPage() {
   const calendlyUrl = resolveBookingUrl(settings);
   const brandImage = resolveBookBrandImage(page?.heroImage, page?.heroImageAlt);
   const inquiryEmail = isLegacyPublicEmail(settings.email) ? DEFAULT_PUBLIC_EMAIL : settings.email;
+  const content = resolveBookContent(page?.content);
 
   return (
     <section className="bg-background">
@@ -56,43 +40,54 @@ export default async function BookPage() {
       </div>
       <div className="mx-auto grid max-w-6xl items-start gap-12 px-4 py-14 md:grid-cols-2 md:px-6 md:py-16">
         <div>
-          <p className="eyebrow">{BOOK_EYEBROW}</p>
-          <h1 className="mt-3 font-serif text-4xl leading-tight text-primary md:text-6xl">{BOOK_HEADING}</h1>
-          <p className="mt-5 text-lg font-medium leading-relaxed text-primary">{BOOK_LEAD}</p>
-          <p className="mt-4 leading-relaxed text-muted">{BOOK_INTRO}</p>
+          <p className="eyebrow">{content.eyebrow}</p>
+          <h1 className="mt-3 font-serif text-4xl leading-tight text-primary md:text-6xl">{content.heading}</h1>
+          <p className="mt-5 text-lg font-medium leading-relaxed text-primary">{content.lead}</p>
+          <p className="mt-4 leading-relaxed text-muted">{content.intro}</p>
 
-          <h2 className="mt-10 font-serif text-3xl text-primary">{BOOK_CONNECT_TITLE}</h2>
-          <p className="mt-3 leading-relaxed text-muted">{BOOK_CONNECT_BODY}</p>
+          <h2 className="mt-10 font-serif text-3xl text-primary">{content.connectTitle}</h2>
+          <p className="mt-3 leading-relaxed text-muted">{content.connectBody}</p>
 
-          <h2 className="mt-10 font-serif text-3xl text-primary">{BOOK_INSURANCE_TITLE}</h2>
-          <p className="mt-3 leading-relaxed text-muted">{BOOK_INSURANCE_BODY}</p>
+          <h2 className="mt-10 font-serif text-3xl text-primary">{content.insuranceTitle}</h2>
+          <p className="mt-3 leading-relaxed text-muted">{content.insuranceBody}</p>
           <a
             href={settings.berryStreetUrl}
             target="_blank"
             rel="noreferrer"
             className="btn-outline mt-5 no-underline"
           >
-            {BOOK_BERRY_STREET_LABEL}
+            {content.berryStreetLabel}
           </a>
 
-          <h2 className="mt-10 font-serif text-3xl text-primary">{BOOK_INQUIRIES_TITLE}</h2>
+          <h2 className="mt-10 font-serif text-3xl text-primary">{content.inquiriesTitle}</h2>
           <p className="mt-3 leading-relaxed text-muted">
-            For questions about my services, sound bath meditations, wellness events, or collaborations,
-            please email{" "}
-            <a className="underline" href={`mailto:${inquiryEmail}`}>
-              {inquiryEmail}
-            </a>
-            .
+            {content.inquiriesBody.includes(inquiryEmail) ? (
+              <>
+                {content.inquiriesBody.split(inquiryEmail)[0]}
+                <a className="underline" href={`mailto:${inquiryEmail}`}>
+                  {inquiryEmail}
+                </a>
+                {content.inquiriesBody.split(inquiryEmail).slice(1).join(inquiryEmail)}
+              </>
+            ) : (
+              <>
+                {content.inquiriesBody}{" "}
+                <a className="underline" href={`mailto:${inquiryEmail}`}>
+                  {inquiryEmail}
+                </a>
+                .
+              </>
+            )}
           </p>
 
-          <p className="mt-10 font-serif text-2xl italic text-primary">{BOOK_TAGLINE}</p>
+          <p className="mt-10 font-serif text-2xl italic text-primary">{content.tagline}</p>
         </div>
 
         <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-primary/10 md:sticky md:top-28">
-          <h2 className="font-serif text-3xl text-primary">{BOOK_FORM_TITLE}</h2>
-          <p className="mt-3 font-medium text-primary">{BOOK_FORM_LEAD}</p>
-          <p className="mt-3 text-sm leading-relaxed text-muted">{BOOK_FORM_INTRO}</p>
-          <p className="mt-3 mb-6 text-sm leading-relaxed text-muted">{BOOK_FORM_NOTE}</p>
+          <h2 className="font-serif text-3xl text-primary">{content.formTitle}</h2>
+          <p className="mt-3 font-medium text-primary">{content.formLead}</p>
+          <p className="mt-3 text-sm leading-relaxed text-muted">{content.formIntro}</p>
+          <p className="mt-3 mb-6 text-sm leading-relaxed text-muted">{content.formNote}</p>
           <ContactForm variant="discovery" defaultTopic="Nutrition Counseling" redirectTo={calendlyUrl} />
         </div>
       </div>

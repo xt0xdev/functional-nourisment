@@ -1,12 +1,9 @@
 import Image from "next/image";
-import { getPage, getSettings, parseContent } from "@/lib/content";
+import { getPage, getSettings } from "@/lib/content";
 import { buildMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/site/PageHero";
 import { CtaBand } from "@/components/site/CtaBand";
-import { CHILDRENS_BOOK_NOTE } from "@/lib/site-defaults";
 import {
-  ABOUT_CREDENTIAL_COACH,
-  ABOUT_CREDENTIAL_SOUND,
   ABOUT_CREDENTIALS,
   ABOUT_HERO_SUBHEADING,
   AMAZON_BOOK_URL,
@@ -14,6 +11,7 @@ import {
   splitPractitionerHeading,
   withUpdatedSoundCredential,
 } from "@/lib/page-copy";
+import { resolveAboutContent, resolveHeroText } from "@/lib/page-templates";
 import { SITE_IMAGES } from "@/lib/site-images";
 
 export async function generateMetadata() {
@@ -25,14 +23,20 @@ export async function generateMetadata() {
   });
 }
 
+function polishAboutText(paragraph: string) {
+  return normalizeCredentials(
+    withUpdatedSoundCredential(paragraph).replace(
+      /\bCertified Health Coach\b/g,
+      "Certified Integrative Nutrition Health Coach (CINHC)",
+    ),
+  );
+}
+
 export default async function AboutPage() {
   const [page, settings] = await Promise.all([getPage("about"), getSettings()]);
-  const content = parseContent<{ paragraphs: string[] }>(page?.content || "{}", { paragraphs: [] });
+  const hero = resolveHeroText(page);
+  const content = resolveAboutContent(page?.content);
   const { name, credentials } = splitPractitionerHeading(page?.heroHeading || settings.practitionerName);
-  const subheading =
-    page?.heroSubheading?.includes("Certified and NYS licensed")
-      ? page.heroSubheading
-      : ABOUT_HERO_SUBHEADING;
 
   return (
     <>
@@ -40,7 +44,7 @@ export default async function AboutPage() {
         eyebrow="About · Astoria, Queens & NYC"
         heading={name}
         headingSubtitle={credentials || ABOUT_CREDENTIALS}
-        subheading={subheading}
+        subheading={hero.subheading || ABOUT_HERO_SUBHEADING}
         image={
           page?.heroImage ||
           "https://images.unsplash.com/photo-1467453678174-768ec283a940?auto=format&fit=crop&w=1400&q=80"
@@ -58,26 +62,15 @@ export default async function AboutPage() {
         </div>
         <div className="prose-fn">
           {content.paragraphs.map((paragraph) => (
-            <p key={paragraph.slice(0, 40)}>
-              {normalizeCredentials(
-                withUpdatedSoundCredential(paragraph).replace(
-                  /\bCertified Health Coach\b/g,
-                  "Certified Integrative Nutrition Health Coach (CINHC)",
-                ),
-              )}
-            </p>
+            <p key={paragraph.slice(0, 40)}>{polishAboutText(paragraph)}</p>
           ))}
           <h2>Credentials</h2>
           <ul>
-            <li>Master of Science (MS)</li>
-            <li>Certified Nutrition Specialist (CNS)</li>
-            <li>Licensed Nutritionist (LN)</li>
-            <li>Certified Dietitian-Nutritionist, New York (CDN)</li>
-            <li>{ABOUT_CREDENTIAL_COACH}</li>
-            <li>Karuna® and Usui Reiki Master</li>
-            <li>{ABOUT_CREDENTIAL_SOUND}</li>
+            {content.credentials.map((item) => (
+              <li key={item}>{polishAboutText(item)}</li>
+            ))}
           </ul>
-          <p className="mt-8 text-sm leading-relaxed text-muted">{CHILDRENS_BOOK_NOTE}</p>
+          <p className="mt-8 text-sm leading-relaxed text-muted">{content.bookNote}</p>
           <p className="mt-5">
             <a
               href={AMAZON_BOOK_URL}

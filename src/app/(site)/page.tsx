@@ -2,12 +2,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { Brain, HeartPulse, Sparkles } from "lucide-react";
 import { SmartImage } from "@/components/site/SmartImage";
-import { getPage, getSettings, parseContent } from "@/lib/content";
+import { getPage, getSettings } from "@/lib/content";
 import { SITE_IMAGES, isStockOrEmptyImage } from "@/lib/site-images";
 import { buildMetadata, JsonLd, faqPageSchema, practiceFaqs } from "@/lib/seo";
 import { CtaBand } from "@/components/site/CtaBand";
-import { FAQ_HEADING, HERO_EYEBROW, HERO_INTRO, isLegacyHeroIntro } from "@/lib/site-defaults";
-import { PILLAR_BODY, PILLAR_MIND, PILLAR_SPIRIT, resolvePillarCopy } from "@/lib/page-copy";
+import { FAQ_HEADING, HERO_EYEBROW, HERO_HEADING } from "@/lib/site-defaults";
+import { resolveHeroText, resolveHomeContent } from "@/lib/page-templates";
 
 export async function generateMetadata() {
   const page = await getPage("home");
@@ -18,29 +18,16 @@ export async function generateMetadata() {
   });
 }
 
-type HomeContent = {
-  intro: string;
-  mind: string;
-  body: string;
-  spirit: string;
-  quote?: string;
-  practitioner?: string;
-  practitionerMore?: string;
-};
-
 export default async function HomePage() {
   const [page, settings] = await Promise.all([getPage("home"), getSettings()]);
-  const content = parseContent<HomeContent>(page?.content || "{}", {
-    intro: page?.heroSubheading || "",
-    mind: "",
-    body: "",
-    spirit: "",
-  });
+  const hero = resolveHeroText(page);
+  const content = resolveHomeContent(page?.content);
+  const heading = hero.heading || HERO_HEADING;
 
   const pillars = [
-    { href: "/sound-healing", title: "Nourish Mind", text: resolvePillarCopy(content.mind, PILLAR_MIND), icon: Brain },
-    { href: "/nutrition", title: "Nourish Body", text: resolvePillarCopy(content.body, PILLAR_BODY), icon: HeartPulse },
-    { href: "/meditation", title: "Nourish Spirit", text: resolvePillarCopy(content.spirit, PILLAR_SPIRIT), icon: Sparkles },
+    { href: "/sound-healing", title: "Nourish Mind", text: content.mind, icon: Brain },
+    { href: "/nutrition", title: "Nourish Body", text: content.body, icon: HeartPulse },
+    { href: "/meditation", title: "Nourish Spirit", text: content.spirit, icon: Sparkles },
   ];
 
   return (
@@ -52,12 +39,16 @@ export default async function HomePage() {
           <div>
             <p className="eyebrow">{HERO_EYEBROW}</p>
             <h1 className="mt-3 font-serif text-4xl leading-tight text-primary md:text-6xl">
-              Nourishing your <em className="italic pr-[0.22em]">whole self</em>
-              {" "}from the inside out.
+              {heading === HERO_HEADING ? (
+                <>
+                  Nourishing your <em className="italic pr-[0.22em]">whole self</em> from the inside
+                  out.
+                </>
+              ) : (
+                heading
+              )}
             </h1>
-            <p className="mt-5 max-w-xl text-lg text-muted">
-              {isLegacyHeroIntro(content.intro) ? HERO_INTRO : content.intro}
-            </p>
+            <p className="mt-5 max-w-xl text-lg text-muted">{content.intro}</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link className="btn-primary" href="/book">
                 Book a Discovery Call
@@ -82,9 +73,9 @@ export default async function HomePage() {
 
       <section className="bg-mist">
         <div className="mx-auto max-w-6xl px-4 py-16 md:px-6">
-          <p className="eyebrow">A whole-person approach</p>
-            <h2 className="mt-3 font-serif text-4xl text-primary md:text-5xl">Our core pillars</h2>
-          <p className="mt-3 text-muted">A comprehensive approach to your well-being.</p>
+          <p className="eyebrow">{content.pillarsEyebrow}</p>
+          <h2 className="mt-3 font-serif text-4xl text-primary md:text-5xl">{content.pillarsHeading}</h2>
+          <p className="mt-3 text-muted">{content.pillarsSub}</p>
           <div className="mt-10 grid gap-5 md:grid-cols-3">
             {pillars.map((pillar) => (
               <article key={pillar.title} className="rounded-3xl bg-background p-6 shadow-sm">
@@ -110,20 +101,14 @@ export default async function HomePage() {
               className="object-cover object-[center_20%]"
             />
             <p className="absolute bottom-5 left-5 right-5 rounded-2xl bg-white/90 px-4 py-3 font-serif text-lg italic text-navy">
-              “{content.quote || "True nourishment begins with listening to the body."}”
+              “{content.quote}”
             </p>
           </div>
           <div>
-            <p className="eyebrow">Meet your practitioner</p>
-            <h2 className="mt-3 font-serif text-4xl text-primary md:text-5xl">Anna Almiroudis</h2>
-            <p className="mt-5 leading-relaxed text-muted">
-              {content.practitioner ||
-                "As a board certified nutrition specialist, licensed nutritionist, certified dietitian-nutritionist and certified integrative nutrition health coach based in Astoria, Queens, I bridge the gap between clinical science and intuitive wellness for clients across New York City."}
-            </p>
-            <p className="mt-4 leading-relaxed text-muted">
-              {content.practitionerMore ||
-                "My practice is rooted in functional nutrition and medical nutrition therapy, with a whole-person view of health."}
-            </p>
+            <p className="eyebrow">{content.meetEyebrow}</p>
+            <h2 className="mt-3 font-serif text-4xl text-primary md:text-5xl">{content.meetHeading}</h2>
+            <p className="mt-5 leading-relaxed text-muted">{content.practitioner}</p>
+            <p className="mt-4 leading-relaxed text-muted">{content.practitionerMore}</p>
             <Link href="/about" className="mt-6 inline-flex text-teal hover:underline">
               Read more about Anna →
             </Link>
