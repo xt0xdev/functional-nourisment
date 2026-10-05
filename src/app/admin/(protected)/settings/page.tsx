@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { saveSettings } from "../actions";
 import { DEFAULT_NOTIFY_EMAIL, formEmailAdminNote, formEmailConfigured } from "@/lib/notify";
 import { blobAdminNote, hasBlobToken, storageDriver } from "@/lib/storage";
-import { formCaptchaAdminNote, formCaptchaConfigured } from "@/lib/turnstile";
+import { formCaptchaAdminNote, formCaptchaConfigured } from "@/lib/math-captcha";
 
 const fields = [
   ["siteName", "Site name"],

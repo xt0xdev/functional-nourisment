@@ -3,11 +3,10 @@
 import { useMemo, useState } from "react";
 import { CalendlyEmbed } from "@/components/site/CalendlyEmbed";
 import {
-  missingTurnstileMessage,
-  readTurnstileToken,
-  TurnstileField,
-  turnstileRequiredInBrowser,
-} from "@/components/site/TurnstileField";
+  MathCaptchaField,
+  missingCaptchaMessage,
+  readCaptchaAnswer,
+} from "@/components/site/MathCaptchaField";
 import { INQUIRY_INTERESTS, INQUIRY_SOURCES, showsReferredBy, showsSourceOther } from "@/lib/inquiry";
 
 export function ContactForm({
@@ -41,10 +40,9 @@ export function ContactForm({
     event.preventDefault();
     setError("");
     const form = event.currentTarget;
-    if (turnstileRequiredInBrowser() && !readTurnstileToken(form)) {
+    if (!readCaptchaAnswer(form)) {
       setStatus("error");
-      setError(missingTurnstileMessage());
-      setCaptchaReset((value) => value + 1);
+      setError(missingCaptchaMessage());
       return;
     }
     setStatus("sending");
@@ -190,7 +188,7 @@ export function ContactForm({
           Please do not include sensitive medical or health information in this form.
         </span>
       </label>
-      <TurnstileField action="inquiry" theme="light" resetSignal={captchaReset} />
+      <MathCaptchaField action="inquiry" theme="light" resetSignal={captchaReset} />
       <button
         type="submit"
         disabled={status === "sending"}

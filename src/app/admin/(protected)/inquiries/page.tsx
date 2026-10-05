@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { deleteInquiry, markInquiryRead } from "../actions";
 import { formEmailAdminNote, formEmailConfigured } from "@/lib/notify";
-import { formCaptchaAdminNote, formCaptchaConfigured } from "@/lib/turnstile";
+import { formCaptchaAdminNote, formCaptchaConfigured } from "@/lib/math-captcha";
 
 export default async function AdminInquiriesPage() {
   const inquiries = await prisma.inquiry.findMany({ orderBy: { createdAt: "desc" } });

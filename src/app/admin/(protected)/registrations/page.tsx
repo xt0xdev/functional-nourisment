@@ -4,7 +4,7 @@ import { deleteEventRegistration } from "../actions";
 import { formatEventWhen } from "@/lib/events";
 import { parseRegistrationDetails } from "@/lib/registration";
 import { formEmailAdminNote, formEmailConfigured } from "@/lib/notify";
-import { formCaptchaAdminNote, formCaptchaConfigured } from "@/lib/turnstile";
+import { formCaptchaAdminNote, formCaptchaConfigured } from "@/lib/math-captcha";
 
 export default async function AdminRegistrationsPage() {
   const registrations = await prisma.eventRegistration.findMany({

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { notifyFormSubmission } from "@/lib/notify";
-import { rejectInvalidTurnstile, withoutTurnstileFields } from "@/lib/turnstile";
+import { rejectInvalidMathCaptcha, withoutCaptchaFields } from "@/lib/math-captcha";
 
 const schema = z.object({
   name: z.string().min(1).max(120),
@@ -11,10 +11,10 @@ const schema = z.object({
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const blocked = await rejectInvalidTurnstile(request, body, "subscribe");
+  const blocked = rejectInvalidMathCaptcha(body, "subscribe");
   if (blocked) return blocked;
 
-  const parsed = schema.safeParse(withoutTurnstileFields(body));
+  const parsed = schema.safeParse(withoutCaptchaFields(body));
   if (!parsed.success) {
     return NextResponse.json({ error: "Please enter your name and a valid email." }, { status: 400 });
   }

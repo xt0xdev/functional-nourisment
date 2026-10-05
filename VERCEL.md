@@ -20,8 +20,8 @@ Also set in Vercel → Settings → Environment Variables (Production + Preview)
 - `BLOB_READ_WRITE_TOKEN` — from a Vercel Blob store (required for persistent event/page photos)
 - `RESEND_API_KEY` — required for live form emails to Anna at Microsoft 365
 - `FORMS_FROM_EMAIL` — optional override. Default is `Functional Nourishment <forms@functionalnourishment.com>` after the domain is verified in Resend
-- `NEXT_PUBLIC_TURNSTILE_SITE_KEY` — Cloudflare Turnstile site key (public widget). Required on Production + Preview or public forms reject with 400
-- `TURNSTILE_SECRET_KEY` — Cloudflare Turnstile secret (server only). Required on Production + Preview. Never expose this to the browser
+
+Do **not** add `NEXT_PUBLIC_TURNSTILE_SITE_KEY` or `TURNSTILE_SECRET_KEY`. Public forms no longer use Cloudflare Turnstile and are not blocked if those keys are missing.
 
 Never commit secrets. Redeploy after env vars are saved. Build runs `prisma db push` via `vercel-build`.
 
@@ -51,25 +51,18 @@ Microsoft 365 can still put the first messages from a new sending domain in **Ju
 
 If `RESEND_API_KEY` is missing, the form still saves and does **not** 500. The admin shows a note that live email is off.
 
-## Form CAPTCHA (Cloudflare Turnstile)
+## Form CAPTCHA (self-hosted math question)
 
-Spam bots were submitting the public forms. Every public POST that writes to the database or emails Anna now requires a **server-verified** Cloudflare Turnstile token:
+Spam bots were submitting the public forms. Every public POST that writes to the database or emails Anna now requires a **server-verified** math question (for example, “What is 4 + 7?”):
 
 - Contact / discovery inquiry — `/api/inquiries`
 - Mailing list subscribe — `/api/subscribe`
 - Event (workshop) registration — `/api/event-registrations`
 - Retreat registration — `/api/event-registrations`
 
-The widget sits above each submit button. The API routes call Cloudflare `siteverify` and return **400** if the token is missing or invalid. A client-only checkbox is not enough and is not used.
+The labeled number field sits above each submit button. The server issues a signed, time-limited token (`HMAC-SHA256` with `SESSION_SECRET`) and rejects a missing, wrong, expired, or tampered answer. A client-only checkbox is not enough and is not used.
 
-**Mike must set both keys in Vercel (Production + Preview) and redeploy, or live forms will refuse submissions.** Production / Preview fail closed on purpose so spam cannot bypass a missing key.
-
-1. In [Cloudflare Turnstile](https://dash.cloudflare.com/?to=/:account/turnstile), add a widget for `functionalnourishment.com` (and `www`, plus `*.vercel.app` if you want Preview to work).
-2. Copy the **site key** to `NEXT_PUBLIC_TURNSTILE_SITE_KEY`.
-3. Copy the **secret key** to `TURNSTILE_SECRET_KEY`.
-4. Redeploy so the public site key is baked into the client bundle.
-
-Local/dev can skip the widget **only** when `NODE_ENV=development` **and** the keys are unset. If you set the secret locally, verification runs. Do not commit secrets.
+**No Cloudflare Turnstile keys are needed.** Production forms stay open if `NEXT_PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` are unset. `SESSION_SECRET` (already required for admin login) signs the challenge.
 
 SMTP (`SMTP_HOST`, `SMTP_USER`, `SMTP_PASS`) is a fallback only. Prefer Resend.
 

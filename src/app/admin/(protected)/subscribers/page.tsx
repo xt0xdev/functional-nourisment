@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { deleteSubscriber } from "../actions";
 import { formEmailAdminNote, formEmailConfigured } from "@/lib/notify";
-import { formCaptchaAdminNote, formCaptchaConfigured } from "@/lib/turnstile";
+import { formCaptchaAdminNote, formCaptchaConfigured } from "@/lib/math-captcha";
 
 export default async function AdminSubscribersPage() {
   const subscribers = await prisma.subscriber.findMany({ orderBy: { createdAt: "desc" } });

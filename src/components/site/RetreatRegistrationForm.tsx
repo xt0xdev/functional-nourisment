@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import {
-  missingTurnstileMessage,
-  readTurnstileToken,
-  TurnstileField,
-  turnstileRequiredInBrowser,
-} from "@/components/site/TurnstileField";
+  MathCaptchaField,
+  missingCaptchaMessage,
+  readCaptchaAnswer,
+  readCaptchaToken,
+} from "@/components/site/MathCaptchaField";
 import {
   RETREAT_DIETARY_OPTIONS,
   RETREAT_HEAR_ABOUT_OPTIONS,
@@ -42,10 +42,9 @@ export function RetreatRegistrationForm({
       setError("Please complete the required fields and try again, or email Anna directly.");
       return;
     }
-    if (turnstileRequiredInBrowser() && !readTurnstileToken(form)) {
+    if (!readCaptchaAnswer(form)) {
       setStatus("error");
-      setError(missingTurnstileMessage());
-      setCaptchaReset((value) => value + 1);
+      setError(missingCaptchaMessage());
       return;
     }
     setStatus("sending");
@@ -68,7 +67,8 @@ export function RetreatRegistrationForm({
       agreedPolicy: formData.get("agreedPolicy") === "on",
       agreedVoluntary: formData.get("agreedVoluntary") === "on",
       agreedEssentialComms: formData.get("agreedEssentialComms") === "on",
-      turnstileToken: readTurnstileToken(form),
+      captchaToken: readCaptchaToken(form),
+      captchaAnswer: readCaptchaAnswer(form),
     };
 
     const response = await fetch("/api/event-registrations", {
@@ -285,7 +285,7 @@ export function RetreatRegistrationForm({
           Complete your registration and proceed to secure payment to reserve your place.
         </p>
         <div className="mt-6">
-          <TurnstileField action="event-registration" theme="light" resetSignal={captchaReset} />
+          <MathCaptchaField action="event-registration" theme="light" resetSignal={captchaReset} />
         </div>
         <button
           type="submit"

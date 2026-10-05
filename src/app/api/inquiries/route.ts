@@ -3,7 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { INQUIRY_INTERESTS, INQUIRY_SOURCES, showsReferredBy, showsSourceOther } from "@/lib/inquiry";
 import { notifyFormSubmission } from "@/lib/notify";
-import { rejectInvalidTurnstile, withoutTurnstileFields } from "@/lib/turnstile";
+import { rejectInvalidMathCaptcha, withoutCaptchaFields } from "@/lib/math-captcha";
 
 const schema = z
   .object({
@@ -35,10 +35,10 @@ const schema = z
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const blocked = await rejectInvalidTurnstile(request, body, "inquiry");
+  const blocked = rejectInvalidMathCaptcha(body, "inquiry");
   if (blocked) return blocked;
 
-  const parsed = schema.safeParse(withoutTurnstileFields(body));
+  const parsed = schema.safeParse(withoutCaptchaFields(body));
   if (!parsed.success) {
     return NextResponse.json({ error: "Please complete the required fields." }, { status: 400 });
   }

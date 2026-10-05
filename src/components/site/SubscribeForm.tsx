@@ -2,11 +2,10 @@
 
 import { useState } from "react";
 import {
-  missingTurnstileMessage,
-  readTurnstileToken,
-  TurnstileField,
-  turnstileRequiredInBrowser,
-} from "@/components/site/TurnstileField";
+  MathCaptchaField,
+  missingCaptchaMessage,
+  readCaptchaAnswer,
+} from "@/components/site/MathCaptchaField";
 
 export function SubscribeForm({ variant = "page" }: { variant?: "page" | "footer" }) {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error" | "exists">("idle");
@@ -18,10 +17,9 @@ export function SubscribeForm({ variant = "page" }: { variant?: "page" | "footer
     event.preventDefault();
     setError("");
     const form = event.currentTarget;
-    if (turnstileRequiredInBrowser() && !readTurnstileToken(form)) {
+    if (!readCaptchaAnswer(form)) {
       setStatus("error");
-      setError(missingTurnstileMessage());
-      setCaptchaReset((value) => value + 1);
+      setError(missingCaptchaMessage());
       return;
     }
     setStatus("sending");
@@ -68,10 +66,9 @@ export function SubscribeForm({ variant = "page" }: { variant?: "page" | "footer
         Email address
         <input required type="email" name="email" autoComplete="email" className={fieldClass} />
       </label>
-      <TurnstileField
+      <MathCaptchaField
         action="subscribe"
         theme={isFooter ? "dark" : "light"}
-        size={isFooter ? "compact" : "flexible"}
         resetSignal={captchaReset}
       />
       <button
