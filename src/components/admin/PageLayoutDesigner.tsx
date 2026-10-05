@@ -7,10 +7,12 @@ import {
   CANVAS_WIDTH,
   applyWrapPreset,
   createBlankBlock,
+  imageFit,
   measureCanvasHeight,
   nextBlockY,
   type LayoutBlock,
   type LayoutBlockType,
+  type LayoutImageFit,
   type LayoutWrap,
   type PageLayout,
   wrapLabel,
@@ -374,6 +376,7 @@ export function PageLayoutDesigner({
                 value={selected.alt || ""}
                 onChange={(event) => updateBlock(selected.id, { alt: event.target.value })}
                 className="rounded-xl border border-forest/15 px-3 py-2"
+                placeholder="For screen readers only"
               />
             </label>
           ) : (
@@ -397,6 +400,31 @@ export function PageLayoutDesigner({
               Delete block
             </button>
           </div>
+          {selected.type === "image" ? (
+            <>
+              <label className="grid gap-1 text-sm">
+                Caption (optional)
+                <input
+                  value={selected.caption || ""}
+                  onChange={(event) => updateBlock(selected.id, { caption: event.target.value })}
+                  className="rounded-xl border border-forest/15 px-3 py-2"
+                  placeholder="Leave blank — alt text is not a caption"
+                />
+              </label>
+              <label className="grid gap-1 text-sm">
+                Photo fit
+                <select
+                  value={imageFit(selected)}
+                  onChange={(event) => updateBlock(selected.id, { fit: event.target.value as LayoutImageFit })}
+                  className="rounded-xl border border-forest/15 px-3 py-2"
+                >
+                  <option value="contain">Show full photo</option>
+                  <option value="cover">Crop to fill the box</option>
+                  <option value="circle">Circle crop</option>
+                </select>
+              </label>
+            </>
+          ) : null}
         </div>
       ) : (
         <p className="text-sm text-muted">Select a block to set wrap, replace an image, or delete it.</p>
@@ -439,9 +467,16 @@ function CanvasBlock({
     if (!block.src) {
       return <div className="flex h-full items-center justify-center rounded-2xl bg-mist text-sm text-muted">No image yet</div>;
     }
+    const fit = imageFit(block);
+    const imageClass =
+      fit === "circle"
+        ? "h-full w-full rounded-full object-cover"
+        : fit === "cover"
+          ? "h-full w-full rounded-2xl object-cover"
+          : "h-full w-full rounded-2xl object-contain";
     return (
       // eslint-disable-next-line @next/next/no-img-element
-      <img src={block.src} alt={block.alt || ""} className="h-full w-full rounded-2xl object-cover" draggable={false} />
+      <img src={block.src} alt={block.alt || ""} className={imageClass} draggable={false} />
     );
   }
 

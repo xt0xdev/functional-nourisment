@@ -29,6 +29,7 @@ export function SmartImage({ src, alt, fill, className, sizes, priority, width, 
       className={className}
       sizes={sizes}
       priority={priority}
+      style={{ width: "100%", height: "auto" }}
     />
   );
 }

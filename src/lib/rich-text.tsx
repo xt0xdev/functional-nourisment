@@ -6,8 +6,7 @@ export function renderRichText(body: string) {
     if (image) {
       return (
         <figure key={index} className="my-6">
-          <SmartImage src={image[2]} alt={image[1]} className="h-auto w-full rounded-2xl" sizes="(min-width: 768px) 700px, 100vw" />
-          {image[1] ? <figcaption className="mt-2 text-sm text-muted">{image[1]}</figcaption> : null}
+          <SmartImage src={image[2]} alt={image[1]} className="h-auto w-full rounded-2xl object-contain" sizes="(min-width: 768px) 700px, 100vw" />
         </figure>
       );
     }

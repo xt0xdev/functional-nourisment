@@ -21,6 +21,7 @@ export const MIN_BLOCK_HEIGHT = 40;
 
 export type LayoutBlockType = "text" | "heading" | "quote" | "image";
 export type LayoutWrap = "none" | "left" | "right" | "full";
+export type LayoutImageFit = "contain" | "cover" | "circle";
 
 export type LayoutBlock = {
   id: string;
@@ -34,6 +35,8 @@ export type LayoutBlock = {
   html?: string;
   src?: string;
   alt?: string;
+  caption?: string;
+  fit?: LayoutImageFit;
 };
 
 export type PageLayout = {
@@ -45,6 +48,16 @@ export type PageLayout = {
 
 const WRAP_VALUES: LayoutWrap[] = ["none", "left", "right", "full"];
 const TYPE_VALUES: LayoutBlockType[] = ["text", "heading", "quote", "image"];
+const FIT_VALUES: LayoutImageFit[] = ["contain", "cover", "circle"];
+
+export function imageFit(block: Pick<LayoutBlock, "fit">): LayoutImageFit {
+  return FIT_VALUES.includes(block.fit as LayoutImageFit) ? (block.fit as LayoutImageFit) : "contain";
+}
+
+/** Visible caption only — never fall back to alt text. */
+export function imageCaption(block: Pick<LayoutBlock, "caption">) {
+  return typeof block.caption === "string" ? block.caption.trim() : "";
+}
 
 export function newLayoutId() {
   return `b_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36).slice(-4)}`;
@@ -111,6 +124,8 @@ export function normalizeBlock(raw: unknown, index = 0): LayoutBlock | null {
     html: typeof block.html === "string" ? block.html : "",
     src: typeof block.src === "string" ? block.src : "",
     alt: typeof block.alt === "string" ? block.alt : "",
+    caption: typeof block.caption === "string" ? block.caption : "",
+    fit: imageFit({ fit: block.fit as LayoutImageFit }),
   };
 }
 
@@ -241,6 +256,8 @@ class LayoutBuilder {
       wrap,
       src,
       alt,
+      caption: "",
+      fit: "contain",
     });
     if (wrap === "full" || wrap === "none") this.y += h + 20;
     return this;
@@ -473,6 +490,8 @@ export function createBlankBlock(type: LayoutBlockType, y: number): LayoutBlock 
       wrap: "left",
       src: "",
       alt: "",
+      caption: "",
+      fit: "contain",
     };
   }
   if (type === "heading") {

@@ -1,11 +1,32 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import {
   CANVAS_WIDTH,
+  imageCaption,
+  imageFit,
   type LayoutBlock,
   type PageLayout,
   sanitizeLayoutHtml,
 } from "@/lib/page-layout";
 import { SmartImage } from "./SmartImage";
+
+function imageObjectClass(block: LayoutBlock) {
+  const fit = imageFit(block);
+  if (fit === "circle" || fit === "cover") return "object-cover";
+  return "object-contain";
+}
+
+function imageBoxClass(block: LayoutBlock) {
+  const fit = imageFit(block);
+  if (fit === "circle") return "relative aspect-square overflow-hidden rounded-full bg-mist";
+  if (fit === "cover") return "relative overflow-hidden rounded-2xl bg-mist";
+  return "relative rounded-2xl";
+}
+
+function coverBoxStyle(block: LayoutBlock): CSSProperties | undefined {
+  if (imageFit(block) !== "cover") return undefined;
+  const widthPx = Math.max(1, (block.w / 100) * CANVAS_WIDTH);
+  return { aspectRatio: `${widthPx} / ${Math.max(1, block.h)}` };
+}
 
 function BlockHtml({ html, className }: { html?: string; className?: string }) {
   const safe = sanitizeLayoutHtml(html || "");
@@ -38,6 +59,8 @@ function FlowImage({ block }: { block: LayoutBlock }) {
       : block.wrap === "right"
         ? "fn-layout-float-right"
         : "fn-layout-full";
+  const fit = imageFit(block);
+  const caption = imageCaption(block);
   return (
     <figure
       className={floatClass}
@@ -49,18 +72,29 @@ function FlowImage({ block }: { block: LayoutBlock }) {
             : { width }
       }
     >
-      <div className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-mist">
-        {block.src ? (
+      {fit === "contain" ? (
+        block.src ? (
           <SmartImage
             src={block.src}
             alt={block.alt || ""}
-            fill
-            className="object-cover"
+            className="h-auto w-full rounded-2xl object-contain"
             sizes="(min-width: 768px) 50vw, 100vw"
           />
-        ) : null}
-      </div>
-      {block.alt ? <figcaption className="mt-2 text-sm text-muted">{block.alt}</figcaption> : null}
+        ) : null
+      ) : (
+        <div className={imageBoxClass(block)} style={coverBoxStyle(block)}>
+          {block.src ? (
+            <SmartImage
+              src={block.src}
+              alt={block.alt || ""}
+              fill
+              className={imageObjectClass(block)}
+              sizes="(min-width: 768px) 50vw, 100vw"
+            />
+          ) : null}
+        </div>
+      )}
+      {caption ? <figcaption className="mt-2 text-sm text-muted">{caption}</figcaption> : null}
     </figure>
   );
 }
@@ -87,14 +121,21 @@ function FreeBlock({ block, canvasHeight }: { block: LayoutBlock; canvasHeight: 
   };
 
   if (block.type === "image") {
+    const fit = imageFit(block);
+    const frame =
+      fit === "circle"
+        ? "absolute overflow-hidden rounded-full"
+        : fit === "cover"
+          ? "absolute overflow-hidden rounded-2xl"
+          : "absolute overflow-visible rounded-2xl";
     return (
-      <div className="absolute overflow-hidden rounded-3xl" style={style}>
+      <div className={frame} style={style}>
         {block.src ? (
           <SmartImage
             src={block.src}
             alt={block.alt || ""}
             fill
-            className="object-cover"
+            className={imageObjectClass(block)}
             sizes="(min-width: 768px) 50vw, 100vw"
           />
         ) : (

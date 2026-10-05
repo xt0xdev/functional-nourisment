@@ -58,12 +58,13 @@ export default async function AboutPage() {
         layout={layout}
         fallback={
           <section className="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-[1fr_1.2fr] md:px-6">
-            <div className="relative aspect-[3/4] overflow-hidden rounded-3xl">
+            <div className="relative overflow-hidden rounded-3xl">
               <Image
                 src={SITE_IMAGES.practitionerPortrait}
                 alt={SITE_IMAGES.practitionerPortraitAlt}
-                fill
-                className="object-cover object-top"
+                width={1200}
+                height={1500}
+                className="h-auto w-full object-contain"
               />
             </div>
             <div className="prose-fn">
