@@ -15,6 +15,14 @@ import {
   type PageLayout,
   wrapLabel,
 } from "@/lib/page-layout";
+import {
+  applyDrag,
+  percentFromDelta,
+  snapBlock,
+  type ResizeHandle,
+  type SnapGuide,
+  type TransformMode,
+} from "@/lib/page-layout-transform";
 
 type DesignerProps = {
   name?: string;
@@ -28,50 +36,13 @@ type DesignerProps = {
 
 type DragState = {
   id: string;
-  mode: "move" | Handle;
+  mode: TransformMode;
   startX: number;
   startY: number;
   origin: LayoutBlock;
 };
 
-type Handle = "nw" | "n" | "ne" | "e" | "se" | "s" | "sw" | "w";
-
-const HANDLES: Handle[] = ["nw", "n", "ne", "e", "se", "s", "sw", "w"];
-
-function percentFromDelta(dx: number, canvasCssWidth: number) {
-  return (dx / canvasCssWidth) * 100;
-}
-
-function applyDrag(origin: LayoutBlock, mode: DragState["mode"], dxPct: number, dy: number): LayoutBlock {
-  if (mode === "move") {
-    return {
-      ...origin,
-      x: Math.min(100 - origin.w, Math.max(0, origin.x + dxPct)),
-      y: Math.max(0, origin.y + dy),
-    };
-  }
-
-  let { x, y, w, h } = origin;
-  if (mode.includes("e")) w = Math.min(100 - x, Math.max(12, origin.w + dxPct));
-  if (mode.includes("s")) h = Math.max(40, origin.h + dy);
-  if (mode.includes("w")) {
-    const nextW = Math.max(12, origin.w - dxPct);
-    const used = origin.w - nextW;
-    x = Math.min(100 - nextW, Math.max(0, origin.x + used));
-    w = nextW;
-  }
-  if (mode.includes("n")) {
-    const nextH = Math.max(40, origin.h - dy);
-    const used = origin.h - nextH;
-    y = Math.max(0, origin.y + used);
-    h = nextH;
-  }
-  if (origin.wrap === "full") {
-    x = 0;
-    w = 100;
-  }
-  return { ...origin, x, y, w, h };
-}
+const HANDLES: ResizeHandle[] = ["nw", "n", "ne", "e", "se", "s", "sw", "w"];
 
 export function PageLayoutDesigner({
   name = "layout",
@@ -85,11 +56,15 @@ export function PageLayoutDesigner({
   const [layout, setLayout] = useState<PageLayout>(initialLayout);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [interactingId, setInteractingId] = useState<string | null>(null);
+  const [guides, setGuides] = useState<SnapGuide[]>([]);
   const [mode, setMode] = useState<"design" | "preview">("design");
   const [picker, setPicker] = useState<"new" | string | null>(null);
   const [canvasWidth, setCanvasWidth] = useState(CANVAS_WIDTH);
   const canvasRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<DragState | null>(null);
+  const layoutRef = useRef(layout);
+  layoutRef.current = layout;
 
   const selected = layout.blocks.find((block) => block.id === selectedId) || null;
   const scale = canvasWidth / CANVAS_WIDTH;
@@ -137,7 +112,14 @@ export function PageLayoutDesigner({
     setEditingId(null);
   }
 
-  function onPointerDown(event: ReactPointerEvent, id: string, handle?: Handle) {
+  function shiftLayer(direction: "front" | "back") {
+    if (!selected) return;
+    const zs = layout.blocks.map((block) => block.z);
+    const nextZ = direction === "front" ? Math.max(...zs, 0) + 1 : Math.min(...zs, 1) - 1;
+    updateBlock(selected.id, { z: nextZ });
+  }
+
+  function onPointerDown(event: ReactPointerEvent, id: string, handle?: ResizeHandle) {
     if (editingId === id && !handle) return;
     const block = layout.blocks.find((item) => item.id === id);
     if (!block) return;
@@ -145,6 +127,7 @@ export function PageLayoutDesigner({
     event.stopPropagation();
     setSelectedId(id);
     setEditingId(null);
+    setInteractingId(id);
     const drag: DragState = {
       id,
       mode: handle || "move",
@@ -157,9 +140,12 @@ export function PageLayoutDesigner({
     const onMove = (moveEvent: PointerEvent) => {
       const dxPct = percentFromDelta(moveEvent.clientX - drag.startX, canvasWidth);
       const dy = (moveEvent.clientY - drag.startY) / scale;
-      const nextBlock = applyDrag(drag.origin, drag.mode, dxPct, dy);
+      const draft = applyDrag(drag.origin, drag.mode, dxPct, dy);
+      const others = layoutRef.current.blocks.filter((item) => item.id !== id);
+      const snapped = snapBlock(draft, drag.mode, others, Math.max(layoutRef.current.canvasHeight, canvasHeight));
+      setGuides(snapped.guides);
       setLayout((current) => {
-        const blocks = current.blocks.map((item) => (item.id === id ? nextBlock : item));
+        const blocks = current.blocks.map((item) => (item.id === id ? snapped.block : item));
         return {
           ...current,
           enabled: true,
@@ -170,6 +156,8 @@ export function PageLayoutDesigner({
     };
     const onUp = () => {
       dragRef.current = null;
+      setInteractingId(null);
+      setGuides([]);
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerup", onUp);
     };
@@ -193,7 +181,7 @@ export function PageLayoutDesigner({
           <p className="mt-1 max-w-2xl text-sm text-muted">
             Drag text and images in the body area. Header, navigation, hero, and footer stay locked to the
             site template. Wrap left or right so published text flows around a photo. On phones, blocks
-            stack in top-to-bottom order.
+            stack in top-to-bottom order. Nearby edges and centers snap while you drag.
           </p>
         </div>
         <label className="flex items-center gap-2 rounded-full bg-white px-3 py-2 text-sm">
@@ -282,7 +270,7 @@ export function PageLayoutDesigner({
           ) : (
             <div
               ref={canvasRef}
-              className="fn-layout-canvas mx-auto max-w-[960px] overflow-hidden rounded-2xl bg-background"
+              className="fn-layout-canvas mx-auto max-w-[960px] overflow-visible rounded-2xl bg-background"
               style={{ height: canvasHeight * scale, minHeight: 360 }}
               onClick={() => {
                 setSelectedId(null);
@@ -291,16 +279,21 @@ export function PageLayoutDesigner({
             >
               {layout.blocks.map((block) => {
                 const active = block.id === selectedId;
+                const interacting = block.id === interactingId;
+                const buried = Boolean(interactingId && !interacting);
                 return (
                   <div
                     key={block.id}
-                    className={`absolute cursor-move ${active ? "z-20 ring-2 ring-teal" : "hover:ring-1 hover:ring-teal/40"}`}
+                    className={`absolute ${active ? "cursor-move ring-2 ring-teal" : "cursor-move hover:ring-1 hover:ring-teal/40"}`}
                     style={{
                       left: `${block.x}%`,
                       top: block.y * scale,
                       width: `${block.w}%`,
                       height: block.h * scale,
-                      zIndex: active ? 20 : block.z,
+                      zIndex: interacting ? 1000 : active ? 800 : block.z,
+                      minWidth: 0,
+                      overflow: "visible",
+                      pointerEvents: buried ? "none" : "auto",
                     }}
                     onClick={(event) => {
                       event.stopPropagation();
@@ -312,9 +305,15 @@ export function PageLayoutDesigner({
                     }}
                     onPointerDown={(event) => onPointerDown(event, block.id)}
                   >
-                    <CanvasBlock block={block} editing={editingId === block.id} onHtml={(html) => updateBlock(block.id, { html })} />
+                    <div className={`fn-layout-block-content${editingId === block.id ? " is-editing" : ""}`}>
+                      <CanvasBlock
+                        block={block}
+                        editing={editingId === block.id}
+                        onHtml={(html) => updateBlock(block.id, { html })}
+                      />
+                    </div>
                     {block.type === "image" ? (
-                      <span className="absolute left-2 top-2 rounded-full bg-white/90 px-2 py-0.5 text-[10px] uppercase tracking-wide text-forest">
+                      <span className="pointer-events-none absolute left-2 top-2 rounded-full bg-white/90 px-2 py-0.5 text-[10px] uppercase tracking-wide text-forest">
                         {wrapLabel(block.wrap)}
                       </span>
                     ) : null}
@@ -332,6 +331,17 @@ export function PageLayoutDesigner({
                   </div>
                 );
               })}
+              {guides.map((guide, index) => (
+                <div
+                  key={`${guide.axis}-${guide.at}-${index}`}
+                  className="fn-layout-guide pointer-events-none"
+                  style={
+                    guide.axis === "x"
+                      ? { left: `${guide.at}%`, top: 0, width: 1, height: "100%" }
+                      : { top: guide.at * scale, left: 0, height: 1, width: "100%" }
+                  }
+                />
+              ))}
             </div>
           )}
         </div>
@@ -367,7 +377,9 @@ export function PageLayoutDesigner({
               />
             </label>
           ) : (
-            <p className="self-end text-sm text-muted">Double-click the box to edit text.</p>
+            <p className="self-end text-sm text-muted">
+              Double-click the box to edit text. Drag the edge handles to shrink or grow after any resize.
+            </p>
           )}
           <div className="flex flex-wrap items-end gap-2">
             {selected.type === "image" ? (
@@ -375,6 +387,12 @@ export function PageLayoutDesigner({
                 Change image
               </button>
             ) : null}
+            <button type="button" className="rounded-full bg-mist px-4 py-2 text-sm text-forest" onClick={() => shiftLayer("front")}>
+              Bring forward
+            </button>
+            <button type="button" className="rounded-full bg-mist px-4 py-2 text-sm text-forest" onClick={() => shiftLayer("back")}>
+              Send back
+            </button>
             <button type="button" className="rounded-full bg-clay/10 px-4 py-2 text-sm text-forest" onClick={removeSelected}>
               Delete block
             </button>
@@ -429,14 +447,14 @@ function CanvasBlock({
 
   const className =
     block.type === "heading"
-      ? "h-full overflow-auto font-serif text-3xl text-primary"
+      ? "h-full min-w-0 overflow-hidden font-serif text-3xl text-primary"
       : block.type === "quote"
-        ? "h-full overflow-auto border-l-4 border-teal pl-4 font-serif text-2xl italic text-primary"
-        : "prose-fn h-full max-w-none overflow-auto";
+        ? "h-full min-w-0 overflow-hidden border-l-4 border-teal pl-4 font-serif text-2xl italic text-primary"
+        : "prose-fn h-full min-w-0 max-w-none overflow-hidden";
 
   return (
     <div
-      className={`${className} ${editing ? "cursor-text rounded-md bg-white/80 outline outline-teal" : ""}`}
+      className={`${className} ${editing ? "cursor-text overflow-auto rounded-md bg-white/80 outline outline-teal" : ""}`}
       contentEditable={editing}
       suppressContentEditableWarning
       onBlur={(event) => onHtml(event.currentTarget.innerHTML)}

@@ -16,6 +16,8 @@ import {
 
 export const LAYOUT_VERSION = 1;
 export const CANVAS_WIDTH = 960;
+export const MIN_BLOCK_WIDTH_PCT = 8;
+export const MIN_BLOCK_HEIGHT = 40;
 
 export type LayoutBlockType = "text" | "heading" | "quote" | "image";
 export type LayoutWrap = "none" | "left" | "right" | "full";
@@ -102,8 +104,8 @@ export function normalizeBlock(raw: unknown, index = 0): LayoutBlock | null {
     type,
     x: clamp(asNumber(block.x, 0), 0, 100),
     y: Math.max(0, asNumber(block.y, index * 80)),
-    w: clamp(asNumber(block.w, type === "image" ? 40 : 100), 8, 100),
-    h: Math.max(36, asNumber(block.h, type === "image" ? 240 : 80)),
+    w: clamp(asNumber(block.w, type === "image" ? 40 : 100), MIN_BLOCK_WIDTH_PCT, 100),
+    h: Math.max(MIN_BLOCK_HEIGHT, asNumber(block.h, type === "image" ? 240 : 80)),
     z: asNumber(block.z, index + 1),
     wrap,
     html: typeof block.html === "string" ? block.html : "",
