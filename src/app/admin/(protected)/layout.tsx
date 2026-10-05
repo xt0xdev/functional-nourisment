@@ -1,6 +1,8 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth";
+import { AdminToasts } from "@/components/admin/AdminToasts";
 import { LogoutButton } from "./logout-button";
 
 const nav = [
@@ -40,6 +42,9 @@ export default async function ProtectedAdminLayout({ children }: { children: Rea
         </nav>
       </aside>
       <div className="flex-1 p-4 md:p-8">{children}</div>
+      <Suspense fallback={null}>
+        <AdminToasts />
+      </Suspense>
     </div>
   );
 }

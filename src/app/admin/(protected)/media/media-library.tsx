@@ -5,6 +5,7 @@ import { upload } from "@vercel/blob/client";
 import type { MediaDTO } from "@/lib/media";
 import { ALLOWED_IMAGE_TYPE_SET, MAX_UPLOAD_BYTES } from "@/lib/media-constants";
 import { formatBytes } from "@/lib/format";
+import { showAdminToast } from "@/components/admin/AdminToasts";
 
 type MediaLibraryProps = {
   initialItems: MediaDTO[];
@@ -104,8 +105,11 @@ export function MediaLibrary({
       const item = json.item as MediaDTO;
       setItems((current) => current.map((row) => (row.id === item.id ? item : row)));
       setEditing(null);
+      showAdminToast("Saved.");
     } catch (err) {
-      setError((err as Error).message);
+      const message = (err as Error).message || "Could not save.";
+      setError(message);
+      showAdminToast(message, "error");
     } finally {
       setBusy(false);
     }
