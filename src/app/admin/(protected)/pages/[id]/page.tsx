@@ -101,18 +101,32 @@ export default async function EditPage({ params }: { params: Promise<{ id: strin
         />
 
         {template ? (
-          <details className="rounded-2xl bg-white p-5">
-            <summary className="cursor-pointer font-serif text-2xl text-forest">
-              Template sections
-            </summary>
-            <p className="mt-2 text-sm text-muted">
-              These labeled fields still power cards, forms, and listings that are not freeform body
-              blocks. They stay available if you turn the visual layout off.
-            </p>
-            <div className="mt-4">
-              <PageTemplateFields slug={page.slug} content={page.content} />
+          page.slug === "about" ? (
+            <div className="rounded-2xl bg-white p-5">
+              <h2 className="font-serif text-2xl text-forest">About copy & Amazon button</h2>
+              <p className="mt-2 text-sm text-muted">
+                Edit the biography here, and set whether the Buy on Amazon button is shown, its label,
+                and its URL. When the visual layout is on, add or drag a button block on the canvas to
+                place it. These fields still control the template button if you turn the layout off.
+              </p>
+              <div className="mt-4">
+                <PageTemplateFields slug={page.slug} content={page.content} />
+              </div>
             </div>
-          </details>
+          ) : (
+            <details className="rounded-2xl bg-white p-5">
+              <summary className="cursor-pointer font-serif text-2xl text-forest">
+                Template sections
+              </summary>
+              <p className="mt-2 text-sm text-muted">
+                These labeled fields still power cards, forms, and listings that are not freeform body
+                blocks. They stay available if you turn the visual layout off.
+              </p>
+              <div className="mt-4">
+                <PageTemplateFields slug={page.slug} content={page.content} />
+              </div>
+            </details>
+          )
         ) : (
           <input type="hidden" name="content" value={page.content} />
         )}

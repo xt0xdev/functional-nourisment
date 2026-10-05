@@ -21,6 +21,23 @@ export function PageTemplateFields({ slug, content }: { slug: string; content: s
           {section.help ? <p className="text-sm text-muted">{section.help}</p> : null}
 
           {(section.fields || []).map((field) => {
+            if (field.kind === "checkbox") {
+              return (
+                <label key={field.key} className="flex items-start gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    name={`sec_${field.key}`}
+                    defaultChecked={values.fields[field.key] !== "off"}
+                    className="mt-1"
+                  />
+                  <span>
+                    {field.label}
+                    {field.help ? <span className="mt-1 block text-xs text-muted">{field.help}</span> : null}
+                  </span>
+                </label>
+              );
+            }
+
             if (field.kind === "image") {
               return (
                 <div key={field.key} className="grid gap-3">

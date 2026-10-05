@@ -6,12 +6,16 @@ import { LayoutDocument } from "@/components/site/PageLayoutBody";
 import {
   CANVAS_WIDTH,
   applyWrapPreset,
+  buttonStyle,
   createBlankBlock,
   imageFit,
+  layoutButtonClass,
+  layoutButtonLabel,
   measureCanvasHeight,
   nextBlockY,
   type LayoutBlock,
   type LayoutBlockType,
+  type LayoutButtonStyle,
   type LayoutImageFit,
   type LayoutWrap,
   type PageLayout,
@@ -104,7 +108,7 @@ export function PageLayoutDesigner({
     commit({ ...layout, blocks: [...layout.blocks, block] });
     setSelectedId(block.id);
     if (type === "image") setPicker(block.id);
-    if (type !== "image") setEditingId(block.id);
+    if (type !== "image" && type !== "button") setEditingId(block.id);
   }
 
   function removeSelected() {
@@ -181,9 +185,9 @@ export function PageLayoutDesigner({
         <div>
           <h2 className="font-serif text-2xl text-forest">Page body designer</h2>
           <p className="mt-1 max-w-2xl text-sm text-muted">
-            Drag text and images in the body area. Header, navigation, hero, and footer stay locked to the
-            site template. Wrap left or right so published text flows around a photo. On phones, blocks
-            stack in top-to-bottom order. Nearby edges and centers snap while you drag.
+            Drag text, images, and buttons in the body area. Header, navigation, hero, and footer stay
+            locked to the site template. Wrap left or right so published text flows around a photo. On
+            phones, blocks stack in top-to-bottom order. Nearby edges and centers snap while you drag.
           </p>
         </div>
         <label className="flex items-center gap-2 rounded-full bg-white px-3 py-2 text-sm">
@@ -220,6 +224,9 @@ export function PageLayoutDesigner({
         </button>
         <button type="button" className="rounded-full bg-forest px-4 py-2 text-sm text-cream" onClick={() => addBlock("image")}>
           Add image
+        </button>
+        <button type="button" className="rounded-full bg-forest px-4 py-2 text-sm text-cream" onClick={() => addBlock("button")}>
+          Add button
         </button>
         <button
           type="button"
@@ -303,7 +310,7 @@ export function PageLayoutDesigner({
                     }}
                     onDoubleClick={(event) => {
                       event.stopPropagation();
-                      if (block.type !== "image") setEditingId(block.id);
+                      if (block.type !== "image" && block.type !== "button") setEditingId(block.id);
                     }}
                     onPointerDown={(event) => onPointerDown(event, block.id)}
                   >
@@ -379,6 +386,16 @@ export function PageLayoutDesigner({
                 placeholder="For screen readers only"
               />
             </label>
+          ) : selected.type === "button" ? (
+            <label className="grid gap-1 text-sm">
+              Button label
+              <input
+                value={selected.label || ""}
+                onChange={(event) => updateBlock(selected.id, { label: event.target.value })}
+                className="rounded-xl border border-forest/15 px-3 py-2"
+                placeholder="Buy on Amazon"
+              />
+            </label>
           ) : (
             <p className="self-end text-sm text-muted">
               Double-click the box to edit text. Drag the edge handles to shrink or grow after any resize.
@@ -425,9 +442,34 @@ export function PageLayoutDesigner({
               </label>
             </>
           ) : null}
+          {selected.type === "button" ? (
+            <>
+              <label className="grid gap-1 text-sm">
+                Button URL
+                <input
+                  value={selected.href || ""}
+                  onChange={(event) => updateBlock(selected.id, { href: event.target.value })}
+                  className="rounded-xl border border-forest/15 px-3 py-2"
+                  placeholder="https://www.amazon.com/…"
+                />
+              </label>
+              <label className="grid gap-1 text-sm">
+                Button style
+                <select
+                  value={buttonStyle(selected)}
+                  onChange={(event) => updateBlock(selected.id, { style: event.target.value as LayoutButtonStyle })}
+                  className="rounded-xl border border-forest/15 px-3 py-2"
+                >
+                  <option value="outline">Outline</option>
+                  <option value="primary">Filled</option>
+                  <option value="link">Text link</option>
+                </select>
+              </label>
+            </>
+          ) : null}
         </div>
       ) : (
-        <p className="text-sm text-muted">Select a block to set wrap, replace an image, or delete it.</p>
+        <p className="text-sm text-muted">Select a block to set wrap, edit a button, replace an image, or delete it.</p>
       )}
 
       {picker ? (
@@ -463,6 +505,15 @@ function CanvasBlock({
   editing: boolean;
   onHtml: (html: string) => void;
 }) {
+  if (block.type === "button") {
+    const label = layoutButtonLabel(block) || "Button";
+    return (
+      <div className="pointer-events-none flex h-full items-start">
+        <span className={layoutButtonClass(buttonStyle(block))}>{label}</span>
+      </div>
+    );
+  }
+
   if (block.type === "image") {
     if (!block.src) {
       return <div className="flex h-full items-center justify-center rounded-2xl bg-mist text-sm text-muted">No image yet</div>;

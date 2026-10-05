@@ -19,9 +19,10 @@ export const CANVAS_WIDTH = 960;
 export const MIN_BLOCK_WIDTH_PCT = 8;
 export const MIN_BLOCK_HEIGHT = 40;
 
-export type LayoutBlockType = "text" | "heading" | "quote" | "image";
+export type LayoutBlockType = "text" | "heading" | "quote" | "image" | "button";
 export type LayoutWrap = "none" | "left" | "right" | "full";
 export type LayoutImageFit = "contain" | "cover" | "circle";
+export type LayoutButtonStyle = "outline" | "primary" | "link";
 
 export type LayoutBlock = {
   id: string;
@@ -37,6 +38,9 @@ export type LayoutBlock = {
   alt?: string;
   caption?: string;
   fit?: LayoutImageFit;
+  label?: string;
+  href?: string;
+  style?: LayoutButtonStyle;
 };
 
 export type PageLayout = {
@@ -44,11 +48,13 @@ export type PageLayout = {
   enabled: boolean;
   canvasHeight: number;
   blocks: LayoutBlock[];
+  seededButton?: boolean;
 };
 
 const WRAP_VALUES: LayoutWrap[] = ["none", "left", "right", "full"];
-const TYPE_VALUES: LayoutBlockType[] = ["text", "heading", "quote", "image"];
+const TYPE_VALUES: LayoutBlockType[] = ["text", "heading", "quote", "image", "button"];
 const FIT_VALUES: LayoutImageFit[] = ["contain", "cover", "circle"];
+const BUTTON_STYLE_VALUES: LayoutButtonStyle[] = ["outline", "primary", "link"];
 
 export function imageFit(block: Pick<LayoutBlock, "fit">): LayoutImageFit {
   return FIT_VALUES.includes(block.fit as LayoutImageFit) ? (block.fit as LayoutImageFit) : "contain";
@@ -57,6 +63,41 @@ export function imageFit(block: Pick<LayoutBlock, "fit">): LayoutImageFit {
 /** Visible caption only — never fall back to alt text. */
 export function imageCaption(block: Pick<LayoutBlock, "caption">) {
   return typeof block.caption === "string" ? block.caption.trim() : "";
+}
+
+export function buttonStyle(block: Pick<LayoutBlock, "style"> | LayoutButtonStyle | undefined): LayoutButtonStyle {
+  const value = typeof block === "string" || !block ? block : block.style;
+  return BUTTON_STYLE_VALUES.includes(value as LayoutButtonStyle) ? (value as LayoutButtonStyle) : "outline";
+}
+
+export function sanitizeLayoutHref(href?: string) {
+  const trimmed = (href || "").trim();
+  if (!trimmed) return "";
+  if (/^(javascript|data|vbscript):/i.test(trimmed)) return "";
+  return trimmed;
+}
+
+export function buttonLinkProps(href?: string) {
+  const safe = sanitizeLayoutHref(href);
+  if (/^https?:\/\//i.test(safe)) {
+    return { href: safe, target: "_blank" as const, rel: "noreferrer" };
+  }
+  return { href: safe };
+}
+
+export function layoutButtonClass(style?: LayoutButtonStyle | string) {
+  const resolved = buttonStyle(style as LayoutButtonStyle);
+  if (resolved === "primary") return "btn-primary no-underline";
+  if (resolved === "link") return "text-teal underline-offset-4 hover:underline";
+  return "btn-outline no-underline";
+}
+
+export function layoutButtonLabel(block: Pick<LayoutBlock, "label">) {
+  return typeof block.label === "string" ? block.label.trim() : "";
+}
+
+export function isButtonBlock(block: Pick<LayoutBlock, "type">) {
+  return block.type === "button";
 }
 
 export function newLayoutId() {
@@ -126,6 +167,9 @@ export function normalizeBlock(raw: unknown, index = 0): LayoutBlock | null {
     alt: typeof block.alt === "string" ? block.alt : "",
     caption: typeof block.caption === "string" ? block.caption : "",
     fit: imageFit({ fit: block.fit as LayoutImageFit }),
+    label: typeof block.label === "string" ? block.label : "",
+    href: typeof block.href === "string" ? block.href : "",
+    style: buttonStyle({ style: block.style as LayoutButtonStyle }),
   };
 }
 
@@ -140,6 +184,7 @@ export function normalizeLayout(raw: unknown): PageLayout | null {
     enabled: value.enabled !== false && blocks.length > 0,
     canvasHeight: Math.max(240, asNumber(value.canvasHeight, 640)),
     blocks,
+    seededButton: value.seededButton === true,
   };
 }
 
@@ -263,12 +308,30 @@ class LayoutBuilder {
     return this;
   }
 
+  button(label: string, href: string, style: LayoutButtonStyle = "outline", x = 0, w = 36, h = 64) {
+    if (!label.trim() || !sanitizeLayoutHref(href)) return this;
+    pushBlock(this.blocks, {
+      type: "button",
+      x,
+      y: this.y,
+      w,
+      h,
+      wrap: "full",
+      label: label.trim(),
+      href: sanitizeLayoutHref(href),
+      style,
+    });
+    this.y += h + 16;
+    return this;
+  }
+
   finish(enabled = false): PageLayout {
     return {
       version: LAYOUT_VERSION,
       enabled,
       canvasHeight: measureCanvasHeight(this.blocks),
       blocks: this.blocks,
+      seededButton: this.blocks.some(isButtonBlock),
     };
   }
 }
@@ -314,6 +377,9 @@ export function prefillLayout(slug: string, raw?: string | null): PageLayout {
       builder.heading("Credentials");
       builder.html(listHtml(content.credentials), 220);
       builder.text(content.bookNote, "full", 0, 100, 90);
+      if (content.showAmazonButton) {
+        builder.button(content.amazonButtonLabel, content.amazonButtonUrl);
+      }
       return builder.finish();
     }
     case "nutrition": {
@@ -444,8 +510,34 @@ export function prefillLayout(slug: string, raw?: string | null): PageLayout {
 
 export function resolveEditorLayout(slug: string, raw?: string | null): PageLayout {
   const stored = getStoredLayout(raw);
-  if (stored && stored.blocks.length) return stored;
+  if (stored && stored.blocks.length) {
+    return slug === "about" ? ensureAboutAmazonButton(stored, raw) : stored;
+  }
   return prefillLayout(slug, raw);
+}
+
+export function ensureAboutAmazonButton(layout: PageLayout, raw?: string | null): PageLayout {
+  if (layout.blocks.some(isButtonBlock)) return { ...layout, seededButton: true };
+  if (layout.seededButton) return layout;
+  const content = resolveAboutContent(raw);
+  if (!content.showAmazonButton) return { ...layout, seededButton: true };
+  const button: LayoutBlock = {
+    ...createBlankBlock("button", nextBlockY(layout.blocks)),
+    label: content.amazonButtonLabel,
+    href: content.amazonButtonUrl,
+    style: "outline",
+    wrap: "full",
+    x: 0,
+    w: 36,
+    h: 64,
+  };
+  const blocks = [...layout.blocks, button];
+  return {
+    ...layout,
+    seededButton: true,
+    blocks,
+    canvasHeight: measureCanvasHeight(blocks, layout.canvasHeight),
+  };
 }
 
 export function mergeLayoutIntoContent(existingRaw: string, layout: PageLayout | null, nextTemplate?: Record<string, unknown>) {
@@ -478,6 +570,21 @@ export function preserveLayout<T extends Record<string, unknown>>(existing: Reco
 }
 
 export function createBlankBlock(type: LayoutBlockType, y: number): LayoutBlock {
+  if (type === "button") {
+    return {
+      id: newLayoutId(),
+      type,
+      x: 0,
+      y,
+      w: 36,
+      h: 64,
+      z: 1,
+      wrap: "full",
+      label: "Button",
+      href: "",
+      style: "outline",
+    };
+  }
   if (type === "image") {
     return {
       id: newLayoutId(),

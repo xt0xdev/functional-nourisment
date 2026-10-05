@@ -77,6 +77,8 @@ export function withUpdatedSoundCredential(paragraph: string) {
 export const AMAZON_BOOK_URL =
   "https://www.amazon.com/Plant-Superheroes-Adventures-Citrus-Cousins/dp/B0G668ZRQ7";
 
+export const AMAZON_BOOK_LABEL = "Buy on Amazon";
+
 export const NUTRITION_HERO =
   "Your body is the foundation of your well-being. Through nourishment, movement, rest, and personalized nutrition, we can support the systems that help you feel energized, resilient, and well from the inside out.";
 

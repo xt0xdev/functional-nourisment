@@ -1,13 +1,50 @@
 import type { CSSProperties, ReactNode } from "react";
 import {
   CANVAS_WIDTH,
+  buttonLinkProps,
+  buttonStyle,
   imageCaption,
   imageFit,
+  layoutButtonClass,
+  layoutButtonLabel,
+  sanitizeLayoutHref,
   type LayoutBlock,
+  type LayoutButtonStyle,
   type PageLayout,
   sanitizeLayoutHtml,
 } from "@/lib/page-layout";
 import { SmartImage } from "./SmartImage";
+
+export function LayoutLinkButton({
+  label,
+  href,
+  style = "outline",
+  className = "",
+}: {
+  label: string;
+  href: string;
+  style?: LayoutButtonStyle;
+  className?: string;
+}) {
+  const text = label.trim();
+  const safe = sanitizeLayoutHref(href);
+  if (!text || !safe) return null;
+  return (
+    <a {...buttonLinkProps(safe)} className={`${layoutButtonClass(style)} ${className}`.trim()}>
+      {text}
+    </a>
+  );
+}
+
+function BlockButton({ block }: { block: LayoutBlock }) {
+  return (
+    <LayoutLinkButton
+      label={layoutButtonLabel(block)}
+      href={block.href || ""}
+      style={buttonStyle(block)}
+    />
+  );
+}
 
 function imageObjectClass(block: LayoutBlock) {
   const fit = imageFit(block);
@@ -101,6 +138,16 @@ function FlowImage({ block }: { block: LayoutBlock }) {
 
 function FlowBlock({ block }: { block: LayoutBlock }) {
   if (block.type === "image") return <FlowImage block={block} />;
+  if (block.type === "button") {
+    if (block.wrap === "none") {
+      return (
+        <div style={{ width: `${Math.min(100, Math.max(20, block.w))}%`, marginLeft: `${block.x}%` }}>
+          <BlockButton block={block} />
+        </div>
+      );
+    }
+    return <BlockButton block={block} />;
+  }
   if (block.wrap === "none") {
     return (
       <div style={{ width: `${Math.min(100, Math.max(20, block.w))}%`, marginLeft: `${block.x}%` }}>
@@ -119,6 +166,14 @@ function FreeBlock({ block, canvasHeight }: { block: LayoutBlock; canvasHeight: 
     height: `${(block.h / canvasHeight) * 100}%`,
     zIndex: block.z,
   };
+
+  if (block.type === "button") {
+    return (
+      <div className="absolute flex items-start overflow-visible" style={style}>
+        <BlockButton block={block} />
+      </div>
+    );
+  }
 
   if (block.type === "image") {
     const fit = imageFit(block);

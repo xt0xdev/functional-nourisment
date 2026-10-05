@@ -6,14 +6,13 @@ import { CtaBand } from "@/components/site/CtaBand";
 import {
   ABOUT_CREDENTIALS,
   ABOUT_HERO_SUBHEADING,
-  AMAZON_BOOK_URL,
   normalizeCredentials,
   splitPractitionerHeading,
   withUpdatedSoundCredential,
 } from "@/lib/page-copy";
 import { resolveAboutContent, resolveHeroText } from "@/lib/page-templates";
-import { getStoredLayout } from "@/lib/page-layout";
-import { PageBodyOrLayout } from "@/components/site/PageLayoutBody";
+import { ensureAboutAmazonButton, getStoredLayout } from "@/lib/page-layout";
+import { LayoutLinkButton, PageBodyOrLayout } from "@/components/site/PageLayoutBody";
 import { SITE_IMAGES } from "@/lib/site-images";
 
 export async function generateMetadata() {
@@ -38,7 +37,8 @@ export default async function AboutPage() {
   const [page, settings] = await Promise.all([getPage("about"), getSettings()]);
   const hero = resolveHeroText(page);
   const content = resolveAboutContent(page?.content);
-  const layout = getStoredLayout(page?.content);
+  const storedLayout = getStoredLayout(page?.content);
+  const layout = storedLayout ? ensureAboutAmazonButton(storedLayout, page?.content) : null;
   const { name, credentials } = splitPractitionerHeading(page?.heroHeading || settings.practitionerName);
 
   return (
@@ -78,27 +78,15 @@ export default async function AboutPage() {
                 ))}
               </ul>
               <p className="mt-8 text-sm leading-relaxed text-muted">{content.bookNote}</p>
-              <p className="mt-5">
-                <a
-                  href={AMAZON_BOOK_URL}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="btn-outline"
-                >
-                  Buy on Amazon
-                </a>
-              </p>
+              {content.showAmazonButton ? (
+                <p className="mt-5">
+                  <LayoutLinkButton label={content.amazonButtonLabel} href={content.amazonButtonUrl} />
+                </p>
+              ) : null}
             </div>
           </section>
         }
       />
-      {layout?.enabled ? (
-        <section className="mx-auto max-w-6xl px-4 pb-8 md:px-6">
-          <a href={AMAZON_BOOK_URL} target="_blank" rel="noreferrer" className="btn-outline">
-            Buy on Amazon
-          </a>
-        </section>
-      ) : null}
       <CtaBand berryStreetUrl={settings.berryStreetUrl} bookingUrl={settings.bookingUrl} />
     </>
   );

@@ -3,6 +3,8 @@ import {
   ABOUT_HERO_SUBHEADING,
   ABOUT_NAME,
   ABOUT_PARAGRAPHS,
+  AMAZON_BOOK_LABEL,
+  AMAZON_BOOK_URL,
   BOOK_BERRY_STREET_LABEL,
   BOOK_CONNECT_BODY,
   BOOK_CONNECT_TITLE,
@@ -120,7 +122,7 @@ import {
 import { CHILDRENS_BOOK_NOTE, HERO_HEADING, HERO_INTRO, isLegacyHeroIntro } from "./site-defaults";
 import { SITE_IMAGES } from "./site-images";
 
-export type FieldKind = "text" | "textarea" | "list" | "paragraphs" | "image";
+export type FieldKind = "text" | "textarea" | "list" | "paragraphs" | "image" | "checkbox";
 
 export type TemplateField = {
   key: string;
@@ -199,6 +201,13 @@ export function pickText(value: unknown, fallback: string, legacy: readonly stri
   if (!text) return fallback;
   if (legacy.some((item) => text === item || text.includes(item))) return fallback;
   return text;
+}
+
+export function pickBoolean(value: unknown, fallback: boolean) {
+  if (typeof value === "boolean") return value;
+  if (value === "on" || value === "true" || value === "1") return true;
+  if (value === "off" || value === "false" || value === "0") return false;
+  return fallback;
 }
 
 export function pickList(value: unknown, fallback: readonly string[], legacy: readonly string[] = []) {
@@ -331,6 +340,9 @@ export function aboutContentDefaults() {
     paragraphs: [...ABOUT_PARAGRAPHS],
     credentials: [...ABOUT_CREDENTIAL_ITEMS],
     bookNote: CHILDRENS_BOOK_NOTE,
+    showAmazonButton: true,
+    amazonButtonLabel: AMAZON_BOOK_LABEL,
+    amazonButtonUrl: AMAZON_BOOK_URL,
   };
 }
 
@@ -530,7 +542,7 @@ export const PAGE_TEMPLATES: Record<string, PageTemplate> = {
   },
   about: {
     slug: "about",
-    description: "These fields match the published About page biography, credentials, and book note.",
+    description: "These fields match the published About page biography, credentials, book note, and Amazon button.",
     sections: [
       {
         heading: "About Anna",
@@ -545,6 +557,25 @@ export const PAGE_TEMPLATES: Record<string, PageTemplate> = {
             help: "One credential per line.",
           },
           { key: "bookNote", label: "Children's book note", kind: "textarea", rows: 3 },
+        ],
+      },
+      {
+        heading: "Buy on Amazon button",
+        help: "When the visual layout is off, this is the template button under the book note. When the layout is on, place a button block in the page body designer — these fields prefill that block so the live button does not disappear.",
+        fields: [
+          {
+            key: "showAmazonButton",
+            label: "Show Buy on Amazon button",
+            kind: "checkbox",
+            help: "Uncheck to hide the template button. To hide it on a designed layout, delete the button block on the canvas.",
+          },
+          { key: "amazonButtonLabel", label: "Button label", kind: "text" },
+          {
+            key: "amazonButtonUrl",
+            label: "Button URL",
+            kind: "text",
+            help: "Defaults to the Plant Superheroes Amazon listing.",
+          },
         ],
       },
     ],
@@ -884,6 +915,9 @@ export function getPageTemplate(slug: string) {
 }
 
 function encodeFieldValue(kind: FieldKind, value: unknown) {
+  if (kind === "checkbox") {
+    return pickBoolean(value, true) ? "on" : "off";
+  }
   if (kind === "list" || kind === "paragraphs") {
     const items = Array.isArray(value)
       ? value.map((item) => String(item).trim()).filter(Boolean)
@@ -896,6 +930,9 @@ function encodeFieldValue(kind: FieldKind, value: unknown) {
 }
 
 function decodeFieldValue(kind: FieldKind, raw: string) {
+  if (kind === "checkbox") {
+    return raw === "on";
+  }
   if (kind === "list") {
     return raw.split(/\n+/).map((item) => item.trim()).filter(Boolean);
   }
@@ -975,6 +1012,8 @@ export function contentFromFormData(slug: string, formData: FormData, existingRa
       if (field.kind === "image") {
         next[field.key] = String(formData.get(`sec_${field.key}`) || "").trim();
         next[`${field.key}Alt`] = String(formData.get(`sec_${field.key}Alt`) || "").trim();
+      } else if (field.kind === "checkbox") {
+        next[field.key] = formData.get(`sec_${field.key}`) === "on";
       } else {
         next[field.key] = decodeFieldValue(field.kind, String(formData.get(`sec_${field.key}`) || ""));
       }
@@ -1044,6 +1083,9 @@ export function resolveAboutContent(raw?: string | null) {
     paragraphs: pickParagraphs(content.paragraphs, ABOUT_PARAGRAPHS),
     credentials: pickList(content.credentials, ABOUT_CREDENTIAL_ITEMS),
     bookNote: pickText(content.bookNote, CHILDRENS_BOOK_NOTE),
+    showAmazonButton: pickBoolean(content.showAmazonButton, true),
+    amazonButtonLabel: pickText(content.amazonButtonLabel, AMAZON_BOOK_LABEL),
+    amazonButtonUrl: pickText(content.amazonButtonUrl, AMAZON_BOOK_URL),
   };
 }
 
