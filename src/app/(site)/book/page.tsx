@@ -7,6 +7,8 @@ import { resolveBookBrandImage } from "@/lib/site-images";
 import { DEFAULT_PUBLIC_EMAIL, isLegacyPublicEmail } from "@/lib/site-defaults";
 import { BOOK_META_DESCRIPTION, BOOK_META_TITLE } from "@/lib/page-copy";
 import { resolveBookContent } from "@/lib/page-templates";
+import { getStoredLayout } from "@/lib/page-layout";
+import { PageBodyOrLayout } from "@/components/site/PageLayoutBody";
 
 export async function generateMetadata() {
   const page = await getPage("book");
@@ -23,6 +25,7 @@ export default async function BookPage() {
   const brandImage = resolveBookBrandImage(page?.heroImage, page?.heroImageAlt);
   const inquiryEmail = isLegacyPublicEmail(settings.email) ? DEFAULT_PUBLIC_EMAIL : settings.email;
   const content = resolveBookContent(page?.content);
+  const layout = getStoredLayout(page?.content);
 
   return (
     <section className="bg-background">
@@ -39,6 +42,10 @@ export default async function BookPage() {
         </div>
       </div>
       <div className="mx-auto grid max-w-6xl items-start gap-12 px-4 py-14 md:grid-cols-2 md:px-6 md:py-16">
+        <PageBodyOrLayout
+          layout={layout}
+          bare
+          fallback={
         <div>
           <p className="eyebrow">{content.eyebrow}</p>
           <h1 className="mt-3 font-serif text-4xl leading-tight text-primary md:text-6xl">{content.heading}</h1>
@@ -82,6 +89,8 @@ export default async function BookPage() {
 
           <p className="mt-10 font-serif text-2xl italic text-primary">{content.tagline}</p>
         </div>
+          }
+        />
 
         <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-primary/10 md:sticky md:top-28">
           <h2 className="font-serif text-3xl text-primary">{content.formTitle}</h2>

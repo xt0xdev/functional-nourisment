@@ -188,6 +188,7 @@ export function fillMissingContent(
 ) {
   const next = { ...existing };
   for (const [key, value] of Object.entries(defaults)) {
+    if (key === "layout") continue;
     if (isEmptyValue(next[key])) next[key] = value;
   }
   return next;
@@ -960,6 +961,15 @@ export function contentFromFormData(slug: string, formData: FormData, existingRa
   }
 
   const next: Record<string, unknown> = { ...existing };
+  const layoutRaw = formData.get("layout");
+  if (typeof layoutRaw === "string" && layoutRaw.trim()) {
+    try {
+      const parsed = JSON.parse(layoutRaw) as unknown;
+      if (parsed && typeof parsed === "object") next.layout = parsed;
+    } catch {
+      /* keep existing layout */
+    }
+  }
   for (const section of template.sections) {
     for (const field of section.fields || []) {
       if (field.kind === "image") {

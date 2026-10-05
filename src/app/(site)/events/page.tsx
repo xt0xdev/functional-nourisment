@@ -7,6 +7,8 @@ import { SmartImage } from "@/components/site/SmartImage";
 import { EventPayButtons } from "@/components/site/EventPayButtons";
 import { eventPublicPath, eventRegisterPath, isRetreatEvent } from "@/lib/events";
 import { resolveEventsContent, resolveHeroText } from "@/lib/page-templates";
+import { getStoredLayout } from "@/lib/page-layout";
+import { PageBodyOrLayout } from "@/components/site/PageLayoutBody";
 
 export async function generateMetadata() {
   const page = await getPage("events");
@@ -21,6 +23,7 @@ export default async function EventsPage() {
   const [page, events, settings] = await Promise.all([getPage("events"), getEvents(), getSettings()]);
   const hero = resolveHeroText(page);
   const content = resolveEventsContent(page?.content);
+  const layout = getStoredLayout(page?.content);
 
   return (
     <>
@@ -35,7 +38,11 @@ export default async function EventsPage() {
         imageAlt={page?.heroImageAlt || "Calm horizon for sound bath and wellness events in Astoria, Queens"}
       />
       <section className="mx-auto max-w-3xl px-4 py-16 md:px-6">
-        {content.intro ? <p className="mb-8 text-lg leading-relaxed text-muted">{content.intro}</p> : null}
+        <PageBodyOrLayout
+          layout={layout}
+          bare
+          fallback={content.intro ? <p className="mb-8 text-lg leading-relaxed text-muted">{content.intro}</p> : null}
+        />
         <div className="space-y-5">
           {events.map((event) => {
             const href = eventPublicPath(event);

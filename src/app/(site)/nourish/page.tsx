@@ -5,6 +5,8 @@ import { PageHero } from "@/components/site/PageHero";
 import { SmartImage } from "@/components/site/SmartImage";
 import { NOURISH_DESCRIPTION, NOURISH_HERO_LINE, NOURISH_TITLE } from "@/lib/page-copy";
 import { resolveHeroText, resolveNourishContent } from "@/lib/page-templates";
+import { getStoredLayout } from "@/lib/page-layout";
+import { PageBodyOrLayout } from "@/components/site/PageLayoutBody";
 import { SITE_IMAGES, isStockOrEmptyImage } from "@/lib/site-images";
 
 function postHref(kind: string, slug: string) {
@@ -28,6 +30,7 @@ export default async function NourishPage() {
   ]);
   const hero = resolveHeroText(page);
   const content = resolveNourishContent(page?.content);
+  const layout = getStoredLayout(page?.content);
 
   return (
     <>
@@ -39,7 +42,11 @@ export default async function NourishPage() {
         imageAlt={page?.heroImageAlt || SITE_IMAGES.bodyBowlAlt}
       />
       <section className="mx-auto max-w-5xl px-4 py-16 md:px-6">
-        <p className="max-w-3xl text-lg leading-relaxed text-muted">{content.description}</p>
+        <PageBodyOrLayout
+          layout={layout}
+          bare
+          fallback={<p className="max-w-3xl text-lg leading-relaxed text-muted">{content.description}</p>}
+        />
 
         <section id="journal" className="mt-16 scroll-mt-28">
           <p className="eyebrow">Journal</p>

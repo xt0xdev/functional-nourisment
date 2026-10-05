@@ -6,6 +6,8 @@ import { SmartImage } from "@/components/site/SmartImage";
 import { SubscribeForm } from "@/components/site/SubscribeForm";
 import { RETREATS_SUB, RETREATS_TITLE } from "@/lib/page-copy";
 import { resolveHeroText, resolveRetreatsContent } from "@/lib/page-templates";
+import { getStoredLayout } from "@/lib/page-layout";
+import { PageBodyOrLayout } from "@/components/site/PageLayoutBody";
 import { SITE_IMAGES, isStockOrEmptyImage } from "@/lib/site-images";
 import { eventPublicPath, eventRegisterPath, formatEventWhen } from "@/lib/events";
 
@@ -22,6 +24,7 @@ export default async function RetreatsPage() {
   const [page, retreats] = await Promise.all([getPage("retreats"), getUpcomingRetreats()]);
   const hero = resolveHeroText(page);
   const content = resolveRetreatsContent(page?.content);
+  const layout = getStoredLayout(page?.content);
 
   return (
     <>
@@ -32,7 +35,10 @@ export default async function RetreatsPage() {
         image={isStockOrEmptyImage(page?.heroImage) ? SITE_IMAGES.spiritSoundbath : page!.heroImage}
         imageAlt={page?.heroImageAlt || SITE_IMAGES.spiritSoundbathAlt}
       />
-      <section className="mx-auto max-w-5xl px-4 py-16 md:px-6">
+      <PageBodyOrLayout
+        layout={layout}
+        fallback={
+          <section className="mx-auto max-w-5xl px-4 pt-16 md:px-6">
         <div className="max-w-3xl space-y-5 text-lg leading-relaxed text-muted">
           {content.intro.map((paragraph) => (
             <p key={paragraph}>{paragraph}</p>
@@ -89,6 +95,10 @@ export default async function RetreatsPage() {
             </figure>
           ) : null}
         </div>
+          </section>
+        }
+      />
+      <section className="mx-auto max-w-5xl px-4 py-16 md:px-6">
 
         <div className="mt-14 rounded-3xl bg-white p-8 shadow-sm">
           <h2 className="font-serif text-3xl text-primary">{content.upcomingHeading}</h2>

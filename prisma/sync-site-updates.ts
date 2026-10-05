@@ -64,6 +64,7 @@ import {
   parsePageJson,
   retreatsContentDefaults,
 } from "../src/lib/page-templates";
+import { preserveLayout } from "../src/lib/page-layout";
 
 const prisma = new PrismaClient();
 
@@ -144,10 +145,14 @@ async function mergePage(
 ) {
   const page = await prisma.page.findUnique({ where: { slug } });
   if (!page) return;
-  const content = fillMissingContent(parseJson(page.content), {
-    ...defaultContentFor(slug),
-    ...(data.content || {}),
-  });
+  const existingContent = parseJson(page.content);
+  const content = preserveLayout(
+    existingContent,
+    fillMissingContent(existingContent, {
+      ...defaultContentFor(slug),
+      ...(data.content || {}),
+    }),
+  );
   await prisma.page.update({
     where: { slug },
     data: {
@@ -185,12 +190,15 @@ async function main() {
       data: {
         heroSubheading: isLegacyIntro(home.heroSubheading) ? HOME_INTRO : home.heroSubheading,
         content: JSON.stringify(
-          fillMissingContent(
-            {
-              ...content,
-              intro: isLegacyIntro(intro) ? HOME_INTRO : intro,
-            },
-            defaultContentFor("home"),
+          preserveLayout(
+            content,
+            fillMissingContent(
+              {
+                ...content,
+                intro: isLegacyIntro(intro) ? HOME_INTRO : intro,
+              },
+              defaultContentFor("home"),
+            ),
           ),
         ),
       },
@@ -215,7 +223,7 @@ async function main() {
       data: {
         heroHeading: ABOUT_NAME,
         heroSubheading: ABOUT_HERO_SUBHEADING,
-        content: JSON.stringify({ ...content, paragraphs }),
+        content: JSON.stringify(preserveLayout(content, { ...content, paragraphs })),
       },
     });
   }
@@ -321,12 +329,15 @@ async function main() {
       where: { slug: "retreats" },
       data: {
         content: JSON.stringify(
-          fillMissingContent(
-            {
-              ...content,
-              ...(legacyIntro ? { intro: [...RETREATS_INTRO] } : {}),
-            },
-            retreatsDefaults,
+          preserveLayout(
+            content,
+            fillMissingContent(
+              {
+                ...content,
+                ...(legacyIntro ? { intro: [...RETREATS_INTRO] } : {}),
+              },
+              retreatsDefaults,
+            ),
           ),
         ),
       },
@@ -386,7 +397,10 @@ async function main() {
         system: true,
         published: true,
         content: JSON.stringify(
-          fillMissingContent(parseJson(collaborative.content), defaultContentFor("collaborative-care")),
+          preserveLayout(
+            parseJson(collaborative.content),
+            fillMissingContent(parseJson(collaborative.content), defaultContentFor("collaborative-care")),
+          ),
         ),
       },
     });
@@ -549,7 +563,10 @@ async function main() {
         heroHeading: calendarPage.heroHeading || CALENDAR_TITLE,
         heroSubheading: calendarPage.heroSubheading || CALENDAR_DESCRIPTION,
         content: JSON.stringify(
-          fillMissingContent(parseJson(calendarPage.content), defaultContentFor("calendar")),
+          preserveLayout(
+            parseJson(calendarPage.content),
+            fillMissingContent(parseJson(calendarPage.content), defaultContentFor("calendar")),
+          ),
         ),
       },
     });

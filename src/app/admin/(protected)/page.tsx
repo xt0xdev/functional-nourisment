@@ -24,7 +24,9 @@ export default async function AdminHomePage() {
   return (
     <div>
       <h1 className="font-serif text-4xl text-forest">Dashboard</h1>
-      <p className="mt-2 text-muted">Edit site copy, upload photos, and manage events from one place.</p>
+      <p className="mt-2 text-muted">
+        Edit site copy, design page bodies, upload photos, and manage events from one place.
+      </p>
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((card) => (
           <Link key={card.label} href={card.href} className="rounded-2xl bg-white p-5 shadow-sm">

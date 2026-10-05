@@ -7,6 +7,8 @@ import { SmartImage } from "@/components/site/SmartImage";
 import { SITE_IMAGES, isStockOrEmptyImage } from "@/lib/site-images";
 import { SPIRIT_HERO } from "@/lib/page-copy";
 import { resolveHeroText, resolveMeditationContent } from "@/lib/page-templates";
+import { getStoredLayout } from "@/lib/page-layout";
+import { PageBodyOrLayout } from "@/components/site/PageLayoutBody";
 
 export async function generateMetadata() {
   const page = await getPage("meditation");
@@ -21,6 +23,7 @@ export default async function MeditationPage() {
   const [page, settings] = await Promise.all([getPage("meditation"), getSettings()]);
   const hero = resolveHeroText(page);
   const content = resolveMeditationContent(page?.content);
+  const layout = getStoredLayout(page?.content);
 
   return (
     <>
@@ -32,6 +35,10 @@ export default async function MeditationPage() {
         imageAlt={page?.heroImageAlt || SITE_IMAGES.spiritSoundbathAlt}
       />
 
+      <PageBodyOrLayout
+        layout={layout}
+        fallback={
+          <>
       <section className="bg-mist">
         <div className="mx-auto max-w-6xl px-4 py-16 md:px-6">
           <p className="eyebrow">{content.gatherEyebrow}</p>
@@ -98,6 +105,21 @@ export default async function MeditationPage() {
           </div>
         </div>
       </section>
+          </>
+        }
+      />
+      {layout?.enabled ? (
+        <section className="mx-auto max-w-6xl px-4 pb-12 md:px-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <Link href="/experiences" className="btn-primary">
+              Explore Upcoming Workshops & Retreats
+            </Link>
+            <Link href="/calendar" className="btn-outline">
+              View Upcoming Dates
+            </Link>
+          </div>
+        </section>
+      ) : null}
       <CtaBand berryStreetUrl={settings.berryStreetUrl} bookingUrl={settings.bookingUrl} />
     </>
   );

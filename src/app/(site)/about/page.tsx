@@ -12,6 +12,8 @@ import {
   withUpdatedSoundCredential,
 } from "@/lib/page-copy";
 import { resolveAboutContent, resolveHeroText } from "@/lib/page-templates";
+import { getStoredLayout } from "@/lib/page-layout";
+import { PageBodyOrLayout } from "@/components/site/PageLayoutBody";
 import { SITE_IMAGES } from "@/lib/site-images";
 
 export async function generateMetadata() {
@@ -36,6 +38,7 @@ export default async function AboutPage() {
   const [page, settings] = await Promise.all([getPage("about"), getSettings()]);
   const hero = resolveHeroText(page);
   const content = resolveAboutContent(page?.content);
+  const layout = getStoredLayout(page?.content);
   const { name, credentials } = splitPractitionerHeading(page?.heroHeading || settings.practitionerName);
 
   return (
@@ -51,38 +54,50 @@ export default async function AboutPage() {
         }
         imageAlt={page?.heroImageAlt || "Tea and greens at Functional Nourishment, a nutrition practice in Astoria, Queens"}
       />
-      <section className="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-[1fr_1.2fr] md:px-6">
-        <div className="relative aspect-[3/4] overflow-hidden rounded-3xl">
-          <Image
-            src={SITE_IMAGES.practitionerPortrait}
-            alt={SITE_IMAGES.practitionerPortraitAlt}
-            fill
-            className="object-cover object-top"
-          />
-        </div>
-        <div className="prose-fn">
-          {content.paragraphs.map((paragraph) => (
-            <p key={paragraph.slice(0, 40)}>{polishAboutText(paragraph)}</p>
-          ))}
-          <h2>Credentials</h2>
-          <ul>
-            {content.credentials.map((item) => (
-              <li key={item}>{polishAboutText(item)}</li>
-            ))}
-          </ul>
-          <p className="mt-8 text-sm leading-relaxed text-muted">{content.bookNote}</p>
-          <p className="mt-5">
-            <a
-              href={AMAZON_BOOK_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="btn-outline"
-            >
-              Buy on Amazon
-            </a>
-          </p>
-        </div>
-      </section>
+      <PageBodyOrLayout
+        layout={layout}
+        fallback={
+          <section className="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-[1fr_1.2fr] md:px-6">
+            <div className="relative aspect-[3/4] overflow-hidden rounded-3xl">
+              <Image
+                src={SITE_IMAGES.practitionerPortrait}
+                alt={SITE_IMAGES.practitionerPortraitAlt}
+                fill
+                className="object-cover object-top"
+              />
+            </div>
+            <div className="prose-fn">
+              {content.paragraphs.map((paragraph) => (
+                <p key={paragraph.slice(0, 40)}>{polishAboutText(paragraph)}</p>
+              ))}
+              <h2>Credentials</h2>
+              <ul>
+                {content.credentials.map((item) => (
+                  <li key={item}>{polishAboutText(item)}</li>
+                ))}
+              </ul>
+              <p className="mt-8 text-sm leading-relaxed text-muted">{content.bookNote}</p>
+              <p className="mt-5">
+                <a
+                  href={AMAZON_BOOK_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn-outline"
+                >
+                  Buy on Amazon
+                </a>
+              </p>
+            </div>
+          </section>
+        }
+      />
+      {layout?.enabled ? (
+        <section className="mx-auto max-w-6xl px-4 pb-8 md:px-6">
+          <a href={AMAZON_BOOK_URL} target="_blank" rel="noreferrer" className="btn-outline">
+            Buy on Amazon
+          </a>
+        </section>
+      ) : null}
       <CtaBand berryStreetUrl={settings.berryStreetUrl} bookingUrl={settings.bookingUrl} />
     </>
   );

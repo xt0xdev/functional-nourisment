@@ -5,6 +5,8 @@ import { buildMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/site/PageHero";
 import { CtaBand } from "@/components/site/CtaBand";
 import { renderRichText } from "@/lib/rich-text";
+import { getStoredLayout } from "@/lib/page-layout";
+import { PageBodyOrLayout } from "@/components/site/PageLayoutBody";
 
 function renderBody(content: string) {
   try {
@@ -47,7 +49,10 @@ export default async function DynamicPage({ params }: { params: Promise<{ slug: 
         image={page.heroImage || undefined}
         imageAlt={page.heroImageAlt || page.title}
       />
-      <section className="prose-fn mx-auto px-4 py-12 md:px-6">{renderBody(page.content)}</section>
+      <PageBodyOrLayout
+        layout={getStoredLayout(page.content)}
+        fallback={<section className="prose-fn mx-auto px-4 py-12 md:px-6">{renderBody(page.content)}</section>}
+      />
       <CtaBand berryStreetUrl={settings.berryStreetUrl} bookingUrl={settings.bookingUrl} />
     </>
   );

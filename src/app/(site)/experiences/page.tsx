@@ -5,6 +5,8 @@ import { PageHero } from "@/components/site/PageHero";
 import { SmartImage } from "@/components/site/SmartImage";
 import { EXPERIENCES_SUB, EXPERIENCES_TITLE } from "@/lib/page-copy";
 import { resolveExperiencesContent, resolveHeroText } from "@/lib/page-templates";
+import { getStoredLayout } from "@/lib/page-layout";
+import { PageBodyOrLayout } from "@/components/site/PageLayoutBody";
 import { SITE_IMAGES, WELLNESS_GALLERY, isStockOrEmptyImage } from "@/lib/site-images";
 
 export async function generateMetadata() {
@@ -20,6 +22,7 @@ export default async function ExperiencesPage() {
   const page = await getPage("experiences");
   const hero = resolveHeroText(page);
   const content = resolveExperiencesContent(page?.content);
+  const layout = getStoredLayout(page?.content);
 
   return (
     <>
@@ -30,7 +33,10 @@ export default async function ExperiencesPage() {
         image={isStockOrEmptyImage(page?.heroImage) ? SITE_IMAGES.wellnessYoga : page!.heroImage}
         imageAlt={page?.heroImageAlt || SITE_IMAGES.wellnessYogaAlt}
       />
-      <section className="mx-auto max-w-5xl px-4 py-16 md:px-6">
+      <PageBodyOrLayout
+        layout={layout}
+        fallback={
+          <section className="mx-auto max-w-5xl px-4 pt-16 md:px-6">
         <p className="max-w-3xl text-lg leading-relaxed text-muted">{content.intro}</p>
         <p className="mt-4 max-w-3xl text-lg leading-relaxed text-muted">{content.introMore}</p>
         <p className="mt-8">
@@ -55,6 +61,10 @@ export default async function ExperiencesPage() {
             Inquire About a Private or Group Experience
           </Link>
         </div>
+          </section>
+        }
+      />
+      <section className="mx-auto max-w-5xl px-4 py-16 md:px-6">
 
         <div className="mt-14">
           <p className="eyebrow">{content.galleryEyebrow}</p>

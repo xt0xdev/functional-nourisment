@@ -46,14 +46,22 @@ export async function saveSettings(formData: FormData) {
 
 export async function savePage(formData: FormData) {
   await guard();
-  const { contentFromFormData, publicPathForSlug } = await import("@/lib/page-templates");
+  const { contentFromFormData, publicPathForSlug, parsePageJson } = await import("@/lib/page-templates");
+  const { layoutFromFormData } = await import("@/lib/page-layout");
   const id = String(formData.get("id") || "");
   const existing = id ? await prisma.page.findUnique({ where: { id } }) : null;
   const slug = String(formData.get("slug") || existing?.slug || "");
   const templateMode = String(formData.get("contentMode") || "") === "template";
-  const content = templateMode
+  const layout = layoutFromFormData(formData);
+  let content = templateMode
     ? contentFromFormData(slug, formData, existing?.content || "")
     : String(formData.get("content") || existing?.content || "");
+  if (!templateMode && layout) {
+    const raw = content.trim();
+    const parsed = raw.startsWith("{") ? parsePageJson(raw) : { body: raw };
+    parsed.layout = layout;
+    content = JSON.stringify(parsed);
+  }
   const data = {
     title: String(formData.get("title") || ""),
     slug,

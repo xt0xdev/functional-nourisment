@@ -11,7 +11,8 @@ export default async function AdminPagesPage() {
         <div>
           <h1 className="font-serif text-4xl text-forest">Pages</h1>
           <p className="mt-2 text-sm text-muted">
-            Edit the same sections that appear on the published site. Images come from the media library.
+            Open a page to design the body: drag, drop, and resize text and images. Header, hero, and
+            footer stay on the site template. Images come from the media library.
           </p>
         </div>
       </div>
@@ -46,7 +47,7 @@ export default async function AdminPagesPage() {
               <span className="text-moss">{page.published ? "Published" : "Draft"}</span>
               {page.system ? <span className="text-muted">Built-in</span> : null}
               <Link href={`/admin/pages/${page.id}`} className="text-moss">
-                Edit
+                Design
               </Link>
               {!page.system ? (
                 <form action={deletePage}>

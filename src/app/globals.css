@@ -122,3 +122,54 @@ body {
   outline: 2px solid var(--color-teal);
   outline-offset: 3px;
 }
+
+.fn-layout-flow {
+  overflow: auto;
+}
+
+.fn-layout-float-left {
+  float: left;
+  margin: 0 1.5rem 1rem 0;
+  max-width: 48%;
+  shape-outside: margin-box;
+}
+
+.fn-layout-float-right {
+  float: right;
+  margin: 0 0 1rem 1.5rem;
+  max-width: 48%;
+  shape-outside: margin-box;
+}
+
+.fn-layout-full {
+  clear: both;
+  width: 100%;
+  margin: 0 0 1.25rem;
+}
+
+.fn-layout-canvas {
+  position: relative;
+  background-image:
+    linear-gradient(to right, rgba(12, 35, 64, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(12, 35, 64, 0.05) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.fn-layout-handle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 2px solid var(--color-teal);
+  z-index: 3;
+}
+
+.fn-layout-handle-nw { top: -5px; left: -5px; cursor: nwse-resize; }
+.fn-layout-handle-n { top: -5px; left: calc(50% - 5px); cursor: ns-resize; }
+.fn-layout-handle-ne { top: -5px; right: -5px; cursor: nesw-resize; }
+.fn-layout-handle-e { top: calc(50% - 5px); right: -5px; cursor: ew-resize; }
+.fn-layout-handle-se { bottom: -5px; right: -5px; cursor: nwse-resize; }
+.fn-layout-handle-s { bottom: -5px; left: calc(50% - 5px); cursor: ns-resize; }
+.fn-layout-handle-sw { bottom: -5px; left: -5px; cursor: nesw-resize; }
+.fn-layout-handle-w { top: calc(50% - 5px); left: -5px; cursor: ew-resize; }

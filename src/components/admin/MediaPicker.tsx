@@ -17,6 +17,8 @@ type MediaPickerProps = {
   multiple?: boolean;
   help?: string;
   asField?: boolean;
+  defaultOpen?: boolean;
+  hideTrigger?: boolean;
   onSelect?: (item: PickerItem) => void;
 };
 
@@ -53,10 +55,12 @@ export function MediaPicker({
   multiple = false,
   help,
   asField = true,
+  defaultOpen = false,
+  hideTrigger = false,
   onSelect,
 }: MediaPickerProps) {
   const inputId = useId();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(defaultOpen);
   const [library, setLibrary] = useState<LibraryState | null>(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -200,17 +204,19 @@ export function MediaPicker({
 
   return (
     <div className="grid gap-2">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-sm font-medium text-forest">{label}</p>
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
-          className="rounded-full bg-forest px-3 py-1.5 text-xs text-cream"
-        >
-          {multiple ? "Add from library" : "Choose from library"}
-        </button>
-      </div>
-      {help ? <p className="text-xs text-muted">{help}</p> : null}
+      {hideTrigger ? null : (
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <p className="text-sm font-medium text-forest">{label}</p>
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            className="rounded-full bg-forest px-3 py-1.5 text-xs text-cream"
+          >
+            {multiple ? "Add from library" : "Choose from library"}
+          </button>
+        </div>
+      )}
+      {hideTrigger || !help ? null : <p className="text-xs text-muted">{help}</p>}
 
       {asField && name && !multiple ? (
         <>

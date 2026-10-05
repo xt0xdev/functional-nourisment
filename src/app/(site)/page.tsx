@@ -8,6 +8,8 @@ import { buildMetadata, JsonLd, faqPageSchema, practiceFaqs } from "@/lib/seo";
 import { CtaBand } from "@/components/site/CtaBand";
 import { FAQ_HEADING, HERO_EYEBROW, HERO_HEADING } from "@/lib/site-defaults";
 import { resolveHeroText, resolveHomeContent } from "@/lib/page-templates";
+import { getStoredLayout } from "@/lib/page-layout";
+import { PageBodyOrLayout } from "@/components/site/PageLayoutBody";
 
 export async function generateMetadata() {
   const page = await getPage("home");
@@ -22,6 +24,7 @@ export default async function HomePage() {
   const [page, settings] = await Promise.all([getPage("home"), getSettings()]);
   const hero = resolveHeroText(page);
   const content = resolveHomeContent(page?.content);
+  const layout = getStoredLayout(page?.content);
   const heading = hero.heading || HERO_HEADING;
 
   const pillars = [
@@ -71,6 +74,10 @@ export default async function HomePage() {
         </div>
       </section>
 
+      <PageBodyOrLayout
+        layout={layout}
+        fallback={
+          <>
       <section className="bg-mist">
         <div className="mx-auto max-w-6xl px-4 py-16 md:px-6">
           <p className="eyebrow">{content.pillarsEyebrow}</p>
@@ -115,6 +122,9 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+          </>
+        }
+      />
 
       <section className="bg-background">
         <div className="mx-auto max-w-6xl px-4 py-16 md:px-6">

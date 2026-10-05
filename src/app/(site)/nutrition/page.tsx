@@ -7,6 +7,8 @@ import { areaIcons } from "@/components/site/SupportIcons";
 import { isStockOrEmptyImage } from "@/lib/site-images";
 import { NUTRITION_HERO, NUTRITION_IMAGE, NUTRITION_IMAGE_ALT } from "@/lib/page-copy";
 import { resolveHeroText, resolveNutritionContent } from "@/lib/page-templates";
+import { getStoredLayout } from "@/lib/page-layout";
+import { PageBodyOrLayout } from "@/components/site/PageLayoutBody";
 
 export async function generateMetadata() {
   const page = await getPage("nutrition");
@@ -21,6 +23,7 @@ export default async function NutritionPage() {
   const [page, settings] = await Promise.all([getPage("nutrition"), getSettings()]);
   const hero = resolveHeroText(page);
   const content = resolveNutritionContent(page?.content);
+  const layout = getStoredLayout(page?.content);
 
   return (
     <>
@@ -31,27 +34,32 @@ export default async function NutritionPage() {
         image={isStockOrEmptyImage(page?.heroImage) ? NUTRITION_IMAGE : page!.heroImage}
         imageAlt={page?.heroImageAlt || NUTRITION_IMAGE_ALT}
       />
-      <section className="bg-background">
-        <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 md:grid-cols-2 md:px-6">
-          <div className="relative aspect-[4/5] overflow-hidden rounded-3xl bg-mist">
-            <SmartImage
-              src={content.cookingImage}
-              alt={content.cookingImageAlt}
-              fill
-              className="object-cover object-top"
-              sizes="(min-width: 768px) 50vw, 100vw"
-            />
-          </div>
-          <div>
-            <h2 className="font-serif text-4xl text-primary md:text-5xl">{content.heading}</h2>
-            <p className="mt-6 leading-relaxed text-muted">{content.intro}</p>
-            <p className="mt-5 text-lg font-semibold leading-relaxed text-primary">{content.notAlone}</p>
-            <p className="mt-5 leading-relaxed text-muted">{content.approach}</p>
-            <p className="mt-5 leading-relaxed text-muted">{content.foodFirst}</p>
-            <p className="mt-5 leading-relaxed text-muted">{content.goal}</p>
-          </div>
-        </div>
-      </section>
+      <PageBodyOrLayout
+        layout={layout}
+        fallback={
+          <section className="bg-background">
+            <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 md:grid-cols-2 md:px-6">
+              <div className="relative aspect-[4/5] overflow-hidden rounded-3xl bg-mist">
+                <SmartImage
+                  src={content.cookingImage}
+                  alt={content.cookingImageAlt}
+                  fill
+                  className="object-cover object-top"
+                  sizes="(min-width: 768px) 50vw, 100vw"
+                />
+              </div>
+              <div>
+                <h2 className="font-serif text-4xl text-primary md:text-5xl">{content.heading}</h2>
+                <p className="mt-6 leading-relaxed text-muted">{content.intro}</p>
+                <p className="mt-5 text-lg font-semibold leading-relaxed text-primary">{content.notAlone}</p>
+                <p className="mt-5 leading-relaxed text-muted">{content.approach}</p>
+                <p className="mt-5 leading-relaxed text-muted">{content.foodFirst}</p>
+                <p className="mt-5 leading-relaxed text-muted">{content.goal}</p>
+              </div>
+            </div>
+          </section>
+        }
+      />
 
       <section className="bg-mist">
         <div className="mx-auto max-w-6xl px-4 py-16 md:px-6">
