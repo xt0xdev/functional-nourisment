@@ -15,7 +15,7 @@ export default async function AdminEventsPage() {
         <div>
           <h1 className="font-serif text-4xl text-forest">Events</h1>
           <p className="mt-2 text-sm text-muted">
-            Add a cover photo and gallery when you post an event. Photos live in the media library, not in the database.
+            Add a cover photo, then open an event to design the body with multiple pictures. Photos live in the media library, not in the database.
           </p>
         </div>
         <form action={createEvent}>

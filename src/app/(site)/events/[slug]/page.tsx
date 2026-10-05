@@ -4,11 +4,11 @@ import { getEvent, getEvents, getSettings } from "@/lib/content";
 import { buildMetadata, JsonLd } from "@/lib/seo";
 import { PageHero } from "@/components/site/PageHero";
 import { CtaBand } from "@/components/site/CtaBand";
-import { SmartImage } from "@/components/site/SmartImage";
-import { renderRichText } from "@/lib/rich-text";
 import { siteUrl } from "@/lib/content";
 import { EventPayButtons } from "@/components/site/EventPayButtons";
+import { EventPageBody } from "@/components/site/EventPageBody";
 import { eventRegisterPath, isRetreatEvent } from "@/lib/events";
+import { hasEnabledEventLayout } from "@/lib/page-layout";
 
 export async function generateStaticParams() {
   const events = await getEvents();
@@ -36,7 +36,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
   }
 
   const path = `/events/${event.slug || event.id}`;
-  const gallery = event.images.filter((item) => item.media.id !== event.coverImageId);
+  const designed = hasEnabledEventLayout(event.layout);
 
   return (
     <>
@@ -65,45 +65,33 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
         image={event.coverImage?.url}
         imageAlt={event.coverImage?.alt || event.title}
       />
-      <article className="prose-fn mx-auto px-4 py-16 md:px-6">
-        {event.startsAt ? (
-          <p className="text-sm text-clay">
-            {new Date(event.startsAt).toLocaleString("en-US", { timeZone: "America/New_York" })}
-            {event.endsAt
-              ? ` – ${new Date(event.endsAt).toLocaleString("en-US", { timeZone: "America/New_York" })}`
-              : ""}
-          </p>
-        ) : null}
-        {renderRichText(event.description)}
-        <div className="mt-6 flex flex-wrap items-center gap-3">
-          <Link href={eventRegisterPath(event)} className="btn-primary">
-            Register
-          </Link>
-          <EventPayButtons event={event} settings={settings} compact />
+      <article className="py-16">
+        <div className="prose-fn mx-auto px-4 md:px-6">
+          {event.startsAt ? (
+            <p className="text-sm text-clay">
+              {new Date(event.startsAt).toLocaleString("en-US", { timeZone: "America/New_York" })}
+              {event.endsAt
+                ? ` – ${new Date(event.endsAt).toLocaleString("en-US", { timeZone: "America/New_York" })}`
+                : ""}
+            </p>
+          ) : null}
         </div>
-        {gallery.length > 0 ? (
-          <div className="mt-10 grid gap-4 sm:grid-cols-2">
-            {gallery.map((item) => (
-              <figure key={item.id} className="overflow-hidden rounded-2xl">
-                <div className="relative aspect-[4/3]">
-                  <SmartImage
-                    src={item.media.url}
-                    alt={item.media.alt || event.title}
-                    fill
-                    className="object-cover"
-                    sizes="(min-width: 768px) 50vw, 100vw"
-                  />
-                </div>
-                {item.media.caption ? <figcaption className="mt-2 text-sm text-muted">{item.media.caption}</figcaption> : null}
-              </figure>
-            ))}
+        <div className={designed ? "mx-auto mt-8 max-w-6xl px-4 md:px-6" : "prose-fn mx-auto mt-6 px-4 md:px-6"}>
+          <EventPageBody event={event} />
+        </div>
+        <div className="prose-fn mx-auto mt-6 px-4 md:px-6">
+          <div className="flex flex-wrap items-center gap-3">
+            <Link href={eventRegisterPath(event)} className="btn-primary">
+              Register
+            </Link>
+            <EventPayButtons event={event} settings={settings} compact />
           </div>
-        ) : null}
-        <p className="mt-10">
-          <Link href="/events" className="text-sm text-moss">
-            ← All events
-          </Link>
-        </p>
+          <p className="mt-10">
+            <Link href="/events" className="text-sm text-moss">
+              ← All events
+            </Link>
+          </p>
+        </div>
       </article>
       <CtaBand berryStreetUrl={settings.berryStreetUrl} bookingUrl={settings.bookingUrl} />
     </>

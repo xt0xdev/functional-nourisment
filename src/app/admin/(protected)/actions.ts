@@ -224,6 +224,9 @@ export async function saveEvent(formData: FormData) {
     const coverImageId = String(formData.get("coverImageId") || "").trim() || null;
     const galleryIds = formData.getAll("galleryIds").map(String).filter(Boolean);
     const slug = await uniqueEventSlug(requestedSlug || title || "event", id || undefined);
+    const { layoutFromFormData } = await import("@/lib/page-layout");
+    const layout = layoutFromFormData(formData);
+    const existing = id ? await prisma.event.findUnique({ where: { id }, select: { layout: true } }) : null;
 
     const data = {
       title,
@@ -239,6 +242,7 @@ export async function saveEvent(formData: FormData) {
       paypalUrl: String(formData.get("paypalUrl") || "").trim(),
       kind: (await import("@/lib/events")).normalizeEventKind(String(formData.get("kind") || "workshop")),
       itinerary: String(formData.get("itinerary") || ""),
+      layout: layout ? JSON.stringify(layout) : existing?.layout ?? null,
     };
 
     const event = id

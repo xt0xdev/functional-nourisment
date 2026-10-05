@@ -82,6 +82,8 @@ model Event {
   title          String
   description    String
   itinerary      String              @default("")
+  /// Freeform body layout JSON (PageLayout). Image src values are Blob URLs, not bytes.
+  layout         String?
   kind           String              @default("workshop")
   startsAt       DateTime?
   endsAt         DateTime?

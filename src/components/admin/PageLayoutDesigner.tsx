@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
 import { MediaPicker } from "./MediaPicker";
 import { LayoutDocument } from "@/components/site/PageLayoutBody";
 import {
@@ -38,6 +38,12 @@ type DesignerProps = {
   heroSubheading: string;
   heroImage?: string;
   wasPublishedLayout: boolean;
+  title?: string;
+  help?: string;
+  bodyLabel?: string;
+  enabledLabel?: string;
+  lockedAfterHero?: ReactNode;
+  lockedAfterBody?: ReactNode;
 };
 
 type DragState = {
@@ -58,6 +64,12 @@ export function PageLayoutDesigner({
   heroSubheading,
   heroImage,
   wasPublishedLayout,
+  title = "Page body designer",
+  help = "Drag text, images, and buttons in the body area. Header, navigation, hero, and footer stay locked to the site template. Wrap left or right so published text flows around a photo. On phones, blocks stack in top-to-bottom order. Nearby edges and centers snap while you drag.",
+  bodyLabel = "Editable page body",
+  enabledLabel = "Use this layout on the live page",
+  lockedAfterHero,
+  lockedAfterBody,
 }: DesignerProps) {
   const [layout, setLayout] = useState<PageLayout>(initialLayout);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -183,12 +195,8 @@ export function PageLayoutDesigner({
       <input type="hidden" name={name} value={payload} />
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="font-serif text-2xl text-forest">Page body designer</h2>
-          <p className="mt-1 max-w-2xl text-sm text-muted">
-            Drag text, images, and buttons in the body area. Header, navigation, hero, and footer stay
-            locked to the site template. Wrap left or right so published text flows around a photo. On
-            phones, blocks stack in top-to-bottom order. Nearby edges and centers snap while you drag.
-          </p>
+          <h2 className="font-serif text-2xl text-forest">{title}</h2>
+          <p className="mt-1 max-w-2xl text-sm text-muted">{help}</p>
         </div>
         <label className="flex items-center gap-2 rounded-full bg-white px-3 py-2 text-sm">
           <input
@@ -196,13 +204,13 @@ export function PageLayoutDesigner({
             checked={layout.enabled}
             onChange={(event) => commit({ ...layout, enabled: event.target.checked })}
           />
-          Use this layout on the live page
+          {enabledLabel}
         </label>
       </div>
 
       {!layout.enabled ? (
         <p className="rounded-2xl bg-mist px-4 py-3 text-sm text-muted">
-          The live page still uses the current template body. Change the layout or turn on “Use this layout”
+          The live page still uses the current template body. Change the layout or turn on “{enabledLabel}”
           {wasPublishedLayout ? "" : " — this canvas is prefilled from the published copy so it is not blank"}.
         </p>
       ) : (
@@ -269,9 +277,10 @@ export function PageLayoutDesigner({
             </div>
           )}
         </div>
+        {lockedAfterHero}
 
         <div className="border-y border-dashed border-forest/20 bg-white px-3 py-3 md:px-5">
-          <p className="mb-2 text-[10px] uppercase tracking-[0.2em] text-teal">Editable page body</p>
+          <p className="mb-2 text-[10px] uppercase tracking-[0.2em] text-teal">{bodyLabel}</p>
           {mode === "preview" ? (
             <div className="rounded-2xl bg-background p-4">
               <LayoutDocument layout={layout} />
@@ -354,6 +363,7 @@ export function PageLayoutDesigner({
             </div>
           )}
         </div>
+        {lockedAfterBody}
 
         <div className="pointer-events-none select-none bg-forest px-5 py-4 text-cream">
           <p className="text-[10px] uppercase tracking-[0.2em] text-cream/60">Site template · locked</p>

@@ -4,9 +4,9 @@ import { getEvent, getSettings, getUpcomingRetreats, siteUrl } from "@/lib/conte
 import { buildMetadata, JsonLd } from "@/lib/seo";
 import { PageHero } from "@/components/site/PageHero";
 import { CtaBand } from "@/components/site/CtaBand";
-import { SmartImage } from "@/components/site/SmartImage";
-import { renderRichText } from "@/lib/rich-text";
+import { EventPageBody } from "@/components/site/EventPageBody";
 import { eventRegisterPath, formatEventWhen, isRetreatEvent } from "@/lib/events";
+import { hasEnabledEventLayout } from "@/lib/page-layout";
 
 export async function generateStaticParams() {
   const retreats = await getUpcomingRetreats();
@@ -35,8 +35,7 @@ export default async function RetreatDetailPage({ params }: { params: Promise<{ 
 
   const path = `/retreats/${event.slug || event.id}`;
   const registerHref = eventRegisterPath(event);
-  const gallery = event.images.filter((item) => item.media.id !== event.coverImageId);
-  const itinerary = event.itinerary?.trim();
+  const designed = hasEnabledEventLayout(event.layout);
 
   return (
     <>
@@ -65,55 +64,35 @@ export default async function RetreatDetailPage({ params }: { params: Promise<{ 
         image={event.coverImage?.url}
         imageAlt={event.coverImage?.alt || event.title}
       />
-      <article className="mx-auto max-w-3xl px-4 py-16 md:px-6">
-        <p className="text-sm text-teal">{formatEventWhen(event.startsAt, event.endsAt)}</p>
-        <div className="prose-fn mt-6 max-w-none">{renderRichText(event.description)}</div>
-        {itinerary ? (
-          <section className="mt-12">
-            <h2 className="font-serif text-3xl text-primary">Itinerary</h2>
-            <div className="prose-fn mt-4 max-w-none">{renderRichText(itinerary)}</div>
-          </section>
-        ) : null}
-        {gallery.length > 0 ? (
-          <div className="mt-10 grid gap-4 sm:grid-cols-2">
-            {gallery.map((item) => (
-              <figure key={item.id} className="overflow-hidden rounded-2xl">
-                <div className="relative aspect-[4/3]">
-                  <SmartImage
-                    src={item.media.url}
-                    alt={item.media.alt || event.title}
-                    fill
-                    className="object-cover"
-                    sizes="(min-width: 768px) 50vw, 100vw"
-                  />
-                </div>
-                {item.media.caption ? (
-                  <figcaption className="mt-2 text-sm text-muted">{item.media.caption}</figcaption>
-                ) : null}
-              </figure>
-            ))}
-          </div>
-        ) : null}
-        <div className="mt-12 rounded-3xl bg-mist p-8">
-          <h2 className="font-serif text-3xl text-primary">Reserve your place</h2>
-          <p className="mt-3 leading-relaxed text-muted">
-            Review the retreat details above, then complete registration. Payment is completed
-            securely through Stripe.
-          </p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Link href={registerHref} className="btn-primary">
-              Register
-            </Link>
-            <Link href="/event-policy" className="btn-outline">
-              Cancellation policy
-            </Link>
-          </div>
+      <article className="py-16">
+        <div className="mx-auto max-w-3xl px-4 md:px-6">
+          <p className="text-sm text-teal">{formatEventWhen(event.startsAt, event.endsAt)}</p>
         </div>
-        <p className="mt-10">
-          <Link href="/retreats" className="text-sm text-moss">
-            ← All retreats
-          </Link>
-        </p>
+        <div className={designed ? "mx-auto mt-8 max-w-6xl px-4 md:px-6" : "mx-auto mt-6 max-w-3xl px-4 md:px-6"}>
+          <EventPageBody event={event} showItinerary />
+        </div>
+        <div className="mx-auto mt-12 max-w-3xl px-4 md:px-6">
+          <div className="rounded-3xl bg-mist p-8">
+            <h2 className="font-serif text-3xl text-primary">Reserve your place</h2>
+            <p className="mt-3 leading-relaxed text-muted">
+              Review the retreat details above, then complete registration. Payment is completed
+              securely through Stripe.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link href={registerHref} className="btn-primary">
+                Register
+              </Link>
+              <Link href="/event-policy" className="btn-outline">
+                Cancellation policy
+              </Link>
+            </div>
+          </div>
+          <p className="mt-10">
+            <Link href="/retreats" className="text-sm text-moss">
+              ← All retreats
+            </Link>
+          </p>
+        </div>
       </article>
       <CtaBand berryStreetUrl={settings.berryStreetUrl} bookingUrl={settings.bookingUrl} />
     </>

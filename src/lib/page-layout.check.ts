@@ -2,12 +2,16 @@ import { AMAZON_BOOK_LABEL, AMAZON_BOOK_URL } from "./page-copy";
 import {
   buttonStyle,
   ensureAboutAmazonButton,
+  getEventLayout,
+  hasEnabledEventLayout,
   imageCaption,
   imageFit,
   layoutButtonLabel,
   normalizeBlock,
   normalizeLayout,
+  prefillEventLayout,
   prefillLayout,
+  resolveEventEditorLayout,
   sanitizeLayoutHref,
 } from "./page-layout";
 
@@ -96,5 +100,39 @@ assert(!afterDelete.blocks.some((block) => block.type === "button"), "deleting t
 
 const hidden = ensureAboutAmazonButton(legacyAbout!, JSON.stringify({ showAmazonButton: false }));
 assert(!hidden.blocks.some((block) => block.type === "button"), "admin hide skips the template Amazon button");
+
+const eventPrefill = prefillEventLayout({
+  description: "A weekend of rest in Astoria.\n\nBring a journal.",
+  itinerary: "## Saturday\n\nArrive and settle.",
+  coverUrl: "https://blob.example/cover.jpg",
+  coverAlt: "Cover photo",
+  gallery: [
+    { url: "https://blob.example/one.jpg", alt: "Garden" },
+    { url: "https://blob.example/cover.jpg", alt: "Duplicate cover" },
+    { url: "https://blob.example/two.jpg", alt: "Kitchen" },
+  ],
+});
+assert(eventPrefill.blocks.some((block) => block.type === "image" && block.src === "https://blob.example/cover.jpg"), "event prefill includes the cover photo");
+assert(eventPrefill.blocks.filter((block) => block.type === "image").length === 3, "event prefill adds unique gallery photos around existing copy");
+assert(eventPrefill.blocks.some((block) => (block.html || "").includes("weekend of rest")), "event prefill keeps the current description");
+assert(eventPrefill.blocks.some((block) => block.type === "heading" && (block.html || "").includes("Itinerary")), "retreat itinerary is prefilled as a heading");
+assert(!eventPrefill.enabled, "prefilled event layouts stay off until Anna designs them");
+
+const storedEvent = JSON.stringify({
+  version: 1,
+  enabled: true,
+  canvasHeight: 700,
+  blocks: [
+    { type: "image", src: "https://blob.example/a.jpg", alt: "One", wrap: "left", w: 40, h: 240 },
+    { type: "image", src: "https://blob.example/b.jpg", alt: "Two", wrap: "right", w: 40, h: 240 },
+    { type: "text", html: "<p>Designed copy</p>", wrap: "full" },
+  ],
+});
+assert(hasEnabledEventLayout(storedEvent), "saved event layouts render when enabled");
+assert(getEventLayout(storedEvent)?.blocks.length === 3, "event layout JSON persists multiple image blocks");
+const resolvedStored = resolveEventEditorLayout(storedEvent, { description: "ignored" });
+assert(resolvedStored.blocks.some((block) => (block.html || "").includes("Designed copy")), "saved event layouts win over prefill");
+assert(!hasEnabledEventLayout(null), "events without layout JSON keep the current description fallback");
+assert(!hasEnabledEventLayout("{}"), "empty objects are not live event layouts");
 
 console.log("page-layout caption/fit/button checks passed");

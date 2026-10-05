@@ -336,8 +336,11 @@ class LayoutBuilder {
   }
 }
 
-function layoutFromPlainContent(raw?: string | null) {
-  const builder = new LayoutBuilder();
+function appendPlainContent(
+  builder: LayoutBuilder,
+  raw?: string | null,
+  box?: { x?: number; w?: number },
+) {
   const parsed = parsePageJson(raw);
   const body =
     typeof parsed.body === "string"
@@ -347,8 +350,10 @@ function layoutFromPlainContent(raw?: string | null) {
         : raw?.trim().startsWith("{")
           ? ""
           : raw || "";
-  if (!body.trim()) return builder.finish();
+  if (!body.trim()) return;
 
+  const x = box?.x ?? 0;
+  const w = box?.w ?? 100;
   for (const part of body.split(/\n\n+/)) {
     const block = part.trim();
     if (!block) continue;
@@ -358,12 +363,78 @@ function layoutFromPlainContent(raw?: string | null) {
       continue;
     }
     if (block.startsWith("## ")) {
-      builder.heading(block.replace(/^##\s+/, ""));
+      builder.heading(block.replace(/^##\s+/, ""), x, w);
       continue;
     }
-    builder.text(block, "full", 0, 100, Math.max(90, Math.min(220, 40 + block.length / 3)));
+    builder.text(block, "full", x, w, Math.max(90, Math.min(220, 40 + block.length / 3)));
   }
+}
+
+function layoutFromPlainContent(raw?: string | null) {
+  const builder = new LayoutBuilder();
+  appendPlainContent(builder, raw);
   return builder.finish();
+}
+
+export type EventLayoutSource = {
+  description?: string | null;
+  itinerary?: string | null;
+  coverUrl?: string | null;
+  coverAlt?: string | null;
+  gallery?: { url: string; alt?: string | null }[];
+};
+
+export function getEventLayout(raw?: string | null): PageLayout | null {
+  return parseLayoutFromUnknown(raw);
+}
+
+export function hasEnabledEventLayout(raw?: string | null) {
+  const layout = getEventLayout(raw);
+  return Boolean(layout?.enabled && layout.blocks.length);
+}
+
+/** Prefill an event canvas from current copy, cover, and gallery Blob URLs. */
+export function prefillEventLayout(source: EventLayoutSource = {}): PageLayout {
+  const builder = new LayoutBuilder();
+  const coverUrl = (source.coverUrl || "").trim();
+  const coverAlt = source.coverAlt || "Event photo";
+  const coverH = 320;
+
+  if (coverUrl) {
+    builder.image(coverUrl, coverAlt, "left", 40, coverH);
+  }
+
+  const besideCover = coverUrl ? { x: 44, w: 56 } : undefined;
+  const afterCoverY = coverUrl ? builder.y + coverH + 20 : builder.y;
+  appendPlainContent(builder, source.description, besideCover);
+  if (coverUrl) builder.y = Math.max(builder.y, afterCoverY);
+
+  if (source.itinerary?.trim()) {
+    builder.heading("Itinerary");
+    appendPlainContent(builder, source.itinerary);
+  }
+
+  const seen = new Set(coverUrl ? [coverUrl] : []);
+  for (const [index, item] of (source.gallery || []).entries()) {
+    const url = (item.url || "").trim();
+    if (!url || seen.has(url)) continue;
+    seen.add(url);
+    const wrap = index % 2 === 0 ? "left" : "right";
+    builder.image(url, item.alt || "Event photo", wrap, 48, 260);
+    if (wrap === "right") builder.y += 280;
+  }
+
+  if (!builder.blocks.length) {
+    builder.text("Write your event details here, then add photos around the copy.", "full", 0, 100, 110);
+  }
+
+  return builder.finish();
+}
+
+export function resolveEventEditorLayout(storedRaw: string | null | undefined, source: EventLayoutSource): PageLayout {
+  const stored = getEventLayout(storedRaw);
+  if (stored && stored.blocks.length) return stored;
+  return prefillEventLayout(source);
 }
 
 export function prefillLayout(slug: string, raw?: string | null): PageLayout {
