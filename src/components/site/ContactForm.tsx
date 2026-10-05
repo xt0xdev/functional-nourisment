@@ -2,6 +2,12 @@
 
 import { useMemo, useState } from "react";
 import { CalendlyEmbed } from "@/components/site/CalendlyEmbed";
+import {
+  missingTurnstileMessage,
+  readTurnstileToken,
+  TurnstileField,
+  turnstileRequiredInBrowser,
+} from "@/components/site/TurnstileField";
 import { INQUIRY_INTERESTS, INQUIRY_SOURCES, showsReferredBy, showsSourceOther } from "@/lib/inquiry";
 
 export function ContactForm({
@@ -24,6 +30,8 @@ export function ContactForm({
       ? "Nutrition Counseling"
       : "General Inquiry";
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [error, setError] = useState("");
+  const [captchaReset, setCaptchaReset] = useState(0);
   const [source, setSource] = useState("");
   const [interest, setInterest] = useState(isDiscovery ? "Nutrition Counseling" : initialInterest);
   const needsReferral = useMemo(() => showsReferredBy(source), [source]);
@@ -31,8 +39,15 @@ export function ContactForm({
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setStatus("sending");
+    setError("");
     const form = event.currentTarget;
+    if (turnstileRequiredInBrowser() && !readTurnstileToken(form)) {
+      setStatus("error");
+      setError(missingTurnstileMessage());
+      setCaptchaReset((value) => value + 1);
+      return;
+    }
+    setStatus("sending");
     const data = Object.fromEntries(new FormData(form).entries());
     const response = await fetch("/api/inquiries", {
       method: "POST",
@@ -48,8 +63,12 @@ export function ContactForm({
       form.reset();
       setSource("");
       setInterest(isDiscovery ? "Nutrition Counseling" : initialInterest);
+      setCaptchaReset((value) => value + 1);
     } else {
+      const payload = (await response.json().catch(() => null)) as { error?: string } | null;
       setStatus("error");
+      setError(payload?.error || "Something went wrong. Please email directly instead.");
+      setCaptchaReset((value) => value + 1);
     }
   }
 
@@ -171,6 +190,7 @@ export function ContactForm({
           Please do not include sensitive medical or health information in this form.
         </span>
       </label>
+      <TurnstileField action="inquiry" theme="light" resetSignal={captchaReset} />
       <button
         type="submit"
         disabled={status === "sending"}
@@ -179,7 +199,7 @@ export function ContactForm({
         {status === "sending" ? "Sending…" : "Send Inquiry"}
       </button>
       {status === "error" ? (
-        <p className="text-sm text-clay">Something went wrong. Please email directly instead.</p>
+        <p className="text-sm text-clay">{error || "Something went wrong. Please email directly instead."}</p>
       ) : null}
     </form>
   );

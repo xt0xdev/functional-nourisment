@@ -8,6 +8,7 @@ import {
 } from "@/lib/registration";
 import { resolveStripeUrl } from "@/lib/site-defaults";
 import { notifyFormSubmission } from "@/lib/notify";
+import { rejectInvalidTurnstile, withoutTurnstileFields } from "@/lib/turnstile";
 
 const workshopSchema = z.object({
   eventId: z.string().min(1),
@@ -45,7 +46,11 @@ const retreatSchema = z.object({
 const schema = z.discriminatedUnion("formKind", [workshopSchema, retreatSchema]);
 
 export async function POST(request: Request) {
-  const parsed = schema.safeParse(await request.json());
+  const body = await request.json();
+  const blocked = await rejectInvalidTurnstile(request, body, "event-registration");
+  if (blocked) return blocked;
+
+  const parsed = schema.safeParse(withoutTurnstileFields(body));
   if (!parsed.success) {
     return NextResponse.json({ error: "Please complete the required fields." }, { status: 400 });
   }

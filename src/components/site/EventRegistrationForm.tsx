@@ -2,6 +2,12 @@
 
 import { useState } from "react";
 import {
+  missingTurnstileMessage,
+  readTurnstileToken,
+  TurnstileField,
+  turnstileRequiredInBrowser,
+} from "@/components/site/TurnstileField";
+import {
   EVENT_REGISTRATION_REQUIRED_NOTE,
   EVENT_REGISTRATION_SUBMIT,
 } from "@/lib/page-copy";
@@ -19,10 +25,10 @@ export function EventRegistrationForm({
 }) {
   const [status, setStatus] = useState<"idle" | "sending" | "error">("idle");
   const [error, setError] = useState("");
+  const [captchaReset, setCaptchaReset] = useState(0);
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setStatus("sending");
     setError("");
     const form = event.currentTarget;
     const formData = new FormData(form);
@@ -32,6 +38,13 @@ export function EventRegistrationForm({
       setError("Please agree to the cancellation and refund policy to continue.");
       return;
     }
+    if (turnstileRequiredInBrowser() && !readTurnstileToken(form)) {
+      setStatus("error");
+      setError(missingTurnstileMessage());
+      setCaptchaReset((value) => value + 1);
+      return;
+    }
+    setStatus("sending");
 
     const response = await fetch("/api/event-registrations", {
       method: "POST",
@@ -45,12 +58,15 @@ export function EventRegistrationForm({
         notes: String(formData.get("notes") || ""),
         mailingOptIn: formData.get("mailingOptIn") === "on",
         agreedPolicy: true,
+        turnstileToken: readTurnstileToken(form),
       }),
     });
 
     if (!response.ok) {
+      const payload = (await response.json().catch(() => null)) as { error?: string } | null;
       setStatus("error");
-      setError("Please complete the required fields and try again.");
+      setError(payload?.error || "Please complete the required fields and try again.");
+      setCaptchaReset((value) => value + 1);
       return;
     }
 
@@ -129,6 +145,7 @@ export function EventRegistrationForm({
         <input type="checkbox" name="mailingOptIn" className="mt-1" />
         <span>I would like to receive updates about future events and wellness experiences.</span>
       </label>
+      <TurnstileField action="event-registration" theme="light" resetSignal={captchaReset} />
       <button type="submit" disabled={status === "sending"} className="btn-primary mt-2 disabled:opacity-60">
         {status === "sending" ? "Saving…" : EVENT_REGISTRATION_SUBMIT}
       </button>

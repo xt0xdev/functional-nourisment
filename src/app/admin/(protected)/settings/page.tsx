@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { saveSettings } from "../actions";
 import { DEFAULT_NOTIFY_EMAIL, formEmailAdminNote, formEmailConfigured } from "@/lib/notify";
 import { blobAdminNote, hasBlobToken, storageDriver } from "@/lib/storage";
+import { formCaptchaAdminNote, formCaptchaConfigured } from "@/lib/turnstile";
 
 const fields = [
   ["siteName", "Site name"],
@@ -37,6 +38,7 @@ export default async function SettingsPage() {
   const settings = Object.fromEntries(rows.map((row) => [row.key, row.value]));
   const driver = storageDriver();
   const emailReady = formEmailConfigured();
+  const captchaReady = formCaptchaConfigured();
 
   return (
     <div>
@@ -45,6 +47,10 @@ export default async function SettingsPage() {
         <div className={`rounded-2xl bg-white p-4 text-sm ${emailReady ? "text-muted" : "text-clay"}`}>
           <p className="font-medium text-forest">Form emails</p>
           <p className="mt-1">{formEmailAdminNote()}</p>
+        </div>
+        <div className={`rounded-2xl bg-white p-4 text-sm ${captchaReady ? "text-muted" : "text-clay"}`}>
+          <p className="font-medium text-forest">Form CAPTCHA</p>
+          <p className="mt-1">{formCaptchaAdminNote()}</p>
         </div>
         <div className={`rounded-2xl bg-white p-4 text-sm ${hasBlobToken() ? "text-muted" : "text-clay"}`}>
           <p className="font-medium text-forest">Media uploads</p>

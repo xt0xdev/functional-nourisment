@@ -4,6 +4,7 @@ import { deleteEventRegistration } from "../actions";
 import { formatEventWhen } from "@/lib/events";
 import { parseRegistrationDetails } from "@/lib/registration";
 import { formEmailAdminNote, formEmailConfigured } from "@/lib/notify";
+import { formCaptchaAdminNote, formCaptchaConfigured } from "@/lib/turnstile";
 
 export default async function AdminRegistrationsPage() {
   const registrations = await prisma.eventRegistration.findMany({
@@ -11,6 +12,7 @@ export default async function AdminRegistrationsPage() {
     include: { event: true },
   });
   const emailReady = formEmailConfigured();
+  const captchaReady = formCaptchaConfigured();
 
   return (
     <div>
@@ -20,6 +22,7 @@ export default async function AdminRegistrationsPage() {
         appear under Subscribers.
       </p>
       <p className={`mt-2 max-w-3xl text-sm ${emailReady ? "text-muted" : "text-clay"}`}>{formEmailAdminNote()}</p>
+      <p className={`mt-2 max-w-3xl text-sm ${captchaReady ? "text-muted" : "text-clay"}`}>{formCaptchaAdminNote()}</p>
       <div className="mt-6 overflow-x-auto rounded-2xl bg-white">
         <div className="hidden min-w-[920px] grid-cols-[1.1fr_1fr_140px_1.2fr_1.4fr_90px_auto] gap-4 border-b border-forest/10 px-4 py-3 text-xs uppercase tracking-wide text-muted md:grid">
           <span>Name</span>

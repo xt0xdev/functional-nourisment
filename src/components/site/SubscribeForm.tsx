@@ -1,15 +1,30 @@
 "use client";
 
 import { useState } from "react";
+import {
+  missingTurnstileMessage,
+  readTurnstileToken,
+  TurnstileField,
+  turnstileRequiredInBrowser,
+} from "@/components/site/TurnstileField";
 
 export function SubscribeForm({ variant = "page" }: { variant?: "page" | "footer" }) {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error" | "exists">("idle");
+  const [error, setError] = useState("");
+  const [captchaReset, setCaptchaReset] = useState(0);
   const isFooter = variant === "footer";
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setStatus("sending");
+    setError("");
     const form = event.currentTarget;
+    if (turnstileRequiredInBrowser() && !readTurnstileToken(form)) {
+      setStatus("error");
+      setError(missingTurnstileMessage());
+      setCaptchaReset((value) => value + 1);
+      return;
+    }
+    setStatus("sending");
     const data = Object.fromEntries(new FormData(form).entries());
     const response = await fetch("/api/subscribe", {
       method: "POST",
@@ -20,9 +35,13 @@ export function SubscribeForm({ variant = "page" }: { variant?: "page" | "footer
       const payload = (await response.json()) as { alreadySubscribed?: boolean };
       setStatus(payload.alreadySubscribed ? "exists" : "sent");
       form.reset();
+      setCaptchaReset((value) => value + 1);
       return;
     }
+    const payload = (await response.json().catch(() => null)) as { error?: string } | null;
     setStatus("error");
+    setError(payload?.error || "Something went wrong. Please try again or email Anna directly.");
+    setCaptchaReset((value) => value + 1);
   }
 
   const fieldClass = isFooter
@@ -49,6 +68,12 @@ export function SubscribeForm({ variant = "page" }: { variant?: "page" | "footer
         Email address
         <input required type="email" name="email" autoComplete="email" className={fieldClass} />
       </label>
+      <TurnstileField
+        action="subscribe"
+        theme={isFooter ? "dark" : "light"}
+        size={isFooter ? "compact" : "flexible"}
+        resetSignal={captchaReset}
+      />
       <button
         type="submit"
         disabled={status === "sending"}
@@ -62,7 +87,7 @@ export function SubscribeForm({ variant = "page" }: { variant?: "page" | "footer
       </button>
       {status === "error" ? (
         <p className={isFooter ? "text-sm text-accent" : "text-sm text-clay"}>
-          Something went wrong. Please try again or email Anna directly.
+          {error || "Something went wrong. Please try again or email Anna directly."}
         </p>
       ) : null}
     </form>

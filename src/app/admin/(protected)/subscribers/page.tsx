@@ -1,10 +1,12 @@
 import { prisma } from "@/lib/prisma";
 import { deleteSubscriber } from "../actions";
 import { formEmailAdminNote, formEmailConfigured } from "@/lib/notify";
+import { formCaptchaAdminNote, formCaptchaConfigured } from "@/lib/turnstile";
 
 export default async function AdminSubscribersPage() {
   const subscribers = await prisma.subscriber.findMany({ orderBy: { createdAt: "desc" } });
   const emailReady = formEmailConfigured();
+  const captchaReady = formCaptchaConfigured();
 
   return (
     <div>
@@ -14,6 +16,7 @@ export default async function AdminSubscribersPage() {
         connection is required.
       </p>
       <p className={`mt-2 max-w-3xl text-sm ${emailReady ? "text-muted" : "text-clay"}`}>{formEmailAdminNote()}</p>
+      <p className={`mt-2 max-w-3xl text-sm ${captchaReady ? "text-muted" : "text-clay"}`}>{formCaptchaAdminNote()}</p>
       <div className="mt-6 overflow-hidden rounded-2xl bg-white">
         {subscribers.length === 0 ? <p className="p-5 text-sm text-muted">No subscribers yet.</p> : null}
         {subscribers.map((subscriber) => (

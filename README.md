@@ -70,4 +70,5 @@ See **[VERCEL.md](./VERCEL.md)** for the full checklist. Summary:
 3. Confirm `DATABASE_URL` and `DATABASE_URL_UNPOOLED` are set, plus `SESSION_SECRET`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, and `NEXT_PUBLIC_SITE_URL`.
 4. Add a **Vercel Blob** store and set `BLOB_READ_WRITE_TOKEN` so uploaded event photos persist. Without it, production uploads return a clear error instead of writing `/var/task/public`.
 5. Add `RESEND_API_KEY` so contact, discovery, mailing-list, and registration forms email Anna at Microsoft 365. Optional: `FORMS_FROM_EMAIL` after the sending domain is verified. A new domain can land in Outlook Junk at first — allow `forms@functionalnourishment.com` there.
-6. Redeploy. Production schema is applied on build; seed once if the site is empty.
+6. Add Cloudflare Turnstile keys so public forms reject spam: `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY`. **Required on Vercel production** — form POSTs fail closed (400) until both are set.
+7. Redeploy. Production schema is applied on build; seed once if the site is empty.

@@ -2,6 +2,12 @@
 
 import { useState } from "react";
 import {
+  missingTurnstileMessage,
+  readTurnstileToken,
+  TurnstileField,
+  turnstileRequiredInBrowser,
+} from "@/components/site/TurnstileField";
+import {
   RETREAT_DIETARY_OPTIONS,
   RETREAT_HEAR_ABOUT_OPTIONS,
 } from "@/lib/registration";
@@ -20,19 +26,29 @@ export function RetreatRegistrationForm({
   stripeUrl,
 }: RetreatRegistrationFormProps) {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [error, setError] = useState("");
   const [otherDietary, setOtherDietary] = useState(false);
+  const [captchaReset, setCaptchaReset] = useState(0);
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setStatus("sending");
+    setError("");
     const form = event.currentTarget;
     const formData = new FormData(form);
     const dietaryPreferences = formData.getAll("dietaryPreferences").map(String);
     const heardAbout = formData.getAll("heardAbout").map(String);
     if (!dietaryPreferences.length || !heardAbout.length) {
       setStatus("error");
+      setError("Please complete the required fields and try again, or email Anna directly.");
       return;
     }
+    if (turnstileRequiredInBrowser() && !readTurnstileToken(form)) {
+      setStatus("error");
+      setError(missingTurnstileMessage());
+      setCaptchaReset((value) => value + 1);
+      return;
+    }
+    setStatus("sending");
     const payload = {
       eventId,
       formKind: "retreat" as const,
@@ -52,6 +68,7 @@ export function RetreatRegistrationForm({
       agreedPolicy: formData.get("agreedPolicy") === "on",
       agreedVoluntary: formData.get("agreedVoluntary") === "on",
       agreedEssentialComms: formData.get("agreedEssentialComms") === "on",
+      turnstileToken: readTurnstileToken(form),
     };
 
     const response = await fetch("/api/event-registrations", {
@@ -61,7 +78,10 @@ export function RetreatRegistrationForm({
     });
 
     if (!response.ok) {
+      const result = (await response.json().catch(() => null)) as { error?: string } | null;
       setStatus("error");
+      setError(result?.error || "Something went wrong. Please complete the required fields and try again, or email Anna directly.");
+      setCaptchaReset((value) => value + 1);
       return;
     }
 
@@ -264,6 +284,9 @@ export function RetreatRegistrationForm({
         <p className="mt-3 leading-relaxed text-muted">
           Complete your registration and proceed to secure payment to reserve your place.
         </p>
+        <div className="mt-6">
+          <TurnstileField action="event-registration" theme="light" resetSignal={captchaReset} />
+        </div>
         <button
           type="submit"
           disabled={status === "sending"}
@@ -274,8 +297,8 @@ export function RetreatRegistrationForm({
         <p className="mt-4 text-sm text-muted">* Required fields</p>
         {status === "error" ? (
           <p className="mt-3 text-sm text-clay">
-            Something went wrong. Please complete the required fields and try again, or email Anna
-            directly.
+            {error ||
+              "Something went wrong. Please complete the required fields and try again, or email Anna directly."}
           </p>
         ) : null}
       </section>
