@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { finishAdminSave } from "@/lib/admin-flash";
 import { requireAdmin } from "@/lib/auth";
+import { syncMenuVisibilityByHref } from "@/lib/menu";
 import { normalizeNotifyEmail } from "@/lib/notify";
 
 async function guard() {
@@ -148,6 +149,7 @@ export async function saveMenuItem(formData: FormData) {
     };
     if (id) await prisma.menuItem.update({ where: { id }, data });
     else await prisma.menuItem.create({ data });
+    await syncMenuVisibilityByHref(data.href, data.visible, id || null);
     revalidatePath("/", "layout");
     revalidatePath("/admin/menu");
   });

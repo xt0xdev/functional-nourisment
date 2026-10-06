@@ -31,7 +31,6 @@ async function ensureItem(
         label: data.label,
         href: data.href,
         sortOrder: data.sortOrder,
-        visible: data.visible ?? true,
         openInNew: data.openInNew ?? false,
         groupName: data.groupName ?? existing.groupName,
         parentId: data.parentId === undefined ? existing.parentId : data.parentId,
@@ -167,7 +166,7 @@ export async function syncLatestNavigation(prisma: PrismaClient) {
   } else {
     await prisma.menuItem.update({
       where: { id: nourish.id },
-      data: { href: "/nourish", sortOrder: 40, visible: false },
+      data: { href: "/nourish", sortOrder: 40 },
     });
   }
   await ensureItem(

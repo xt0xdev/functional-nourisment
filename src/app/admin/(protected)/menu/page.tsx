@@ -14,6 +14,7 @@ export default async function AdminMenuPage() {
         Use style <strong>cta</strong> for the teal booking button and <strong>ghost</strong> for Client Portal.
         Leave href blank on a parent used only as a dropdown label. Book a Discovery Call / Book Now
         links always go to the inquiry form at /book. Calendly appears only after a successful submit.
+        Unchecking <strong>Visible</strong> hides that URL in the header, footer, and location chips — you only need to toggle it once.
       </p>
 
       <form action={saveMenuItem} className="mt-6 grid gap-3 rounded-2xl border border-dashed border-forest/20 bg-white p-5">

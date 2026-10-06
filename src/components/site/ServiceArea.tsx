@@ -1,12 +1,17 @@
 import Link from "next/link";
 import { locationLinks } from "@/lib/locations";
+import { getHiddenPublicHrefs } from "@/lib/menu";
+import { filterPublicLinks } from "@/lib/menu-visibility";
 import { SERVICE_AREA_BODY, SERVICE_AREA_EYEBROW, SERVICE_AREA_HEADING } from "@/lib/site-defaults";
 
-export function ServiceArea({
+export async function ServiceArea({
   intro = SERVICE_AREA_BODY,
 }: {
   intro?: string;
 }) {
+  const hidden = await getHiddenPublicHrefs();
+  const chips = filterPublicLinks(locationLinks, hidden);
+
   return (
     <section className="bg-mist">
       <div className="mx-auto max-w-6xl px-4 py-14 md:px-6">
@@ -14,7 +19,7 @@ export function ServiceArea({
         <h2 className="mt-3 font-serif text-3xl text-primary md:text-4xl">{SERVICE_AREA_HEADING}</h2>
         <p className="mt-4 max-w-2xl text-muted">{intro}</p>
         <ul className="mt-8 flex flex-wrap gap-3">
-          {locationLinks.map((location) => (
+          {chips.map((location) => (
             <li key={location.href}>
               <Link
                 href={location.href}

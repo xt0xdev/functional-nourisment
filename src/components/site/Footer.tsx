@@ -4,8 +4,9 @@ import { Logo } from "@/components/Logo";
 import { SubscribeForm } from "@/components/site/SubscribeForm";
 import { applyBookingUrl, resolveBookingUrl } from "@/lib/booking";
 import { locationLinks } from "@/lib/locations";
-import type { getFooterMenu } from "@/lib/menu";
+import type { FooterMenu } from "@/lib/menu";
 import { AMAZON_BOOK_URL } from "@/lib/page-copy";
+import { resolveServingLinks } from "@/lib/menu-visibility";
 import {
   CHILDRENS_BOOK_NOTE,
   INSTAGRAM_HANDLE,
@@ -22,27 +23,27 @@ const staticServing = locationLinks.map((location) => ({
 
 export function Footer({
   settings,
-  groups,
+  menu,
 }: {
   settings: Record<string, string>;
-  groups: Awaited<ReturnType<typeof getFooterMenu>>;
+  menu: FooterMenu;
 }) {
   const bookingUrl = resolveBookingUrl(settings);
   const instagramUrl = resolveInstagramUrl(settings.instagram);
-  const resolvedGroups = groups.map((group) => ({
+  const hidden = new Set(menu.hiddenHrefs);
+  const resolvedGroups = menu.groups.map((group) => ({
     ...group,
     links: group.links.map((item) => applyBookingUrl(item, bookingUrl)),
   }));
   const servingGroup = resolvedGroups.find((group) => group.name.toLowerCase() === "serving");
   const menuGroups = resolvedGroups.filter((group) => group.name.toLowerCase() !== "serving");
-  const servingLinks = [
-    ...(servingGroup && servingGroup.links.length > 0
-      ? servingGroup.links.map((item) => ({ href: item.href, label: item.label }))
-      : staticServing),
-  ];
-  if (!servingLinks.some((item) => item.href === "/locations/new-york-state")) {
-    servingLinks.push({ href: "/locations/new-york-state", label: "New York State Telehealth" });
-  }
+  const servingLinks = resolveServingLinks(
+    servingGroup?.links.map((item) => ({ href: item.href, label: item.label })),
+    staticServing,
+    hidden,
+    menu.hasServingMenu,
+    { href: "/locations/new-york-state", label: "New York State Telehealth" },
+  );
 
   return (
     <footer className="bg-deep text-white">

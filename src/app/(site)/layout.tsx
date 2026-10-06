@@ -8,7 +8,7 @@ import { getFooterMenu, getHeaderMenu } from "@/lib/menu";
 import { JsonLd, practiceSchema } from "@/lib/seo";
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
-  const [settings, menu, footerGroups] = await Promise.all([
+  const [settings, menu, footerMenu] = await Promise.all([
     getSettings(),
     getHeaderMenu(),
     getFooterMenu(),
@@ -19,7 +19,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <JsonLd data={practiceSchema(settings)} />
       <Header menu={menu} bookingUrl={resolveBookingUrl(settings)} />
       <main>{children}</main>
-      <Footer settings={settings} groups={footerGroups} />
+      <Footer settings={settings} menu={footerMenu} />
     </>
   );
 }

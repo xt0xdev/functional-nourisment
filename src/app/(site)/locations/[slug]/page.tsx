@@ -2,6 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getLocation, locations } from "@/lib/locations";
 import { getSettings } from "@/lib/content";
+import { getHiddenPublicHrefs } from "@/lib/menu";
+import { isPubliclyVisibleHref } from "@/lib/menu-visibility";
 import { breadcrumbSchema, buildMetadata, faqPageSchema, JsonLd } from "@/lib/seo";
 import { PageHero } from "@/components/site/PageHero";
 import { CtaBand } from "@/components/site/CtaBand";
@@ -36,7 +38,10 @@ export default async function LocationPage({ params }: { params: Promise<{ slug:
   const { slug } = await params;
   const location = getLocation(slug);
   if (!location) notFound();
-  const settings = await getSettings();
+  const [settings, hidden] = await Promise.all([getSettings(), getHiddenPublicHrefs()]);
+  const relatedLocations = locations.filter(
+    (item) => item.slug !== location.slug && isPubliclyVisibleHref(`/locations/${item.slug}`, hidden),
+  );
 
   return (
     <>
@@ -100,11 +105,10 @@ export default async function LocationPage({ params }: { params: Promise<{ slug:
             </div>
           </div>
         ) : null}
-        <p className="mt-12 text-sm text-muted">
-          Explore related pages:{" "}
-          {locations
-            .filter((item) => item.slug !== location.slug)
-            .map((item, index) => (
+        {relatedLocations.length ? (
+          <p className="mt-12 text-sm text-muted">
+            Explore related pages:{" "}
+            {relatedLocations.map((item, index) => (
               <span key={item.slug}>
                 {index > 0 ? " · " : ""}
                 <Link href={`/locations/${item.slug}`} className="text-teal hover:underline">
@@ -112,8 +116,9 @@ export default async function LocationPage({ params }: { params: Promise<{ slug:
                 </Link>
               </span>
             ))}
-          .
-        </p>
+            .
+          </p>
+        ) : null}
       </section>
       <CtaBand
         berryStreetUrl={settings.berryStreetUrl}
