@@ -10,6 +10,7 @@ import {
 import { resolveCollaborativeContent, resolveHeroText } from "@/lib/page-templates";
 import { getStoredLayout } from "@/lib/page-layout";
 import { PageBodyOrLayout } from "@/components/site/PageLayoutBody";
+import { WellnessPartnerCard } from "@/components/site/WellnessPartnerCard";
 import { SITE_IMAGES, isStockOrEmptyImage } from "@/lib/site-images";
 
 export async function generateMetadata() {
@@ -48,26 +49,15 @@ export default async function CollaborativeCarePage() {
           </section>
         }
       />
-      <section className="mx-auto max-w-5xl px-4 pb-16 md:px-6">
-        <article className="mt-12 max-w-3xl rounded-3xl bg-mist p-8 shadow-sm ring-1 ring-primary/10">
-          <p className="eyebrow">Wellness partner</p>
-          <h2 className="mt-3 font-serif text-3xl text-primary">{content.partnerName}</h2>
-          <p className="mt-2 font-medium text-primary">{content.partnerDetail}</p>
-          {content.partnerBody.map((paragraph) => (
-            <p key={paragraph.slice(0, 48)} className="mt-4 leading-relaxed text-muted">
-              {paragraph}
-            </p>
-          ))}
-          <a
-            href={content.partnerUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="btn-primary mt-6"
-          >
-            {content.partnerLabel}
-          </a>
-        </article>
-      </section>
+      {content.partners.length ? (
+        <section className="mx-auto max-w-5xl px-4 pb-16 md:px-6">
+          <div className="mt-12 grid gap-8">
+            {content.partners.map((partner) => (
+              <WellnessPartnerCard key={partner.id} partner={partner} />
+            ))}
+          </div>
+        </section>
+      ) : null}
       <CtaBand berryStreetUrl={settings.berryStreetUrl} bookingUrl={settings.bookingUrl} />
     </>
   );

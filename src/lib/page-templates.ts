@@ -121,6 +121,7 @@ import {
 } from "./page-copy";
 import { CHILDRENS_BOOK_NOTE, HERO_HEADING, HERO_INTRO, isLegacyHeroIntro } from "./site-defaults";
 import { SITE_IMAGES } from "./site-images";
+import { partnersFromFormData, resolveWellnessPartners } from "./wellness-partners";
 
 export type FieldKind = "text" | "textarea" | "list" | "paragraphs" | "image" | "checkbox";
 
@@ -881,7 +882,8 @@ export const PAGE_TEMPLATES: Record<string, PageTemplate> = {
   },
   "collaborative-care": {
     slug: "collaborative-care",
-    description: "These fields match the published Collaborative Care page and partner card.",
+    description:
+      "These fields match the published Collaborative Care intro. Wellness partner cards are managed in the Wellness partners section below.",
     sections: [
       {
         heading: "Collaborative Care intro",
@@ -894,16 +896,6 @@ export const PAGE_TEMPLATES: Record<string, PageTemplate> = {
             rows: 6,
             help: "Separate paragraphs with a blank line.",
           },
-        ],
-      },
-      {
-        heading: "Wellness partner",
-        fields: [
-          { key: "partnerName", label: "Partner name", kind: "text" },
-          { key: "partnerDetail", label: "Partner detail line", kind: "text" },
-          { key: "partnerBody", label: "Partner paragraphs", kind: "paragraphs", rows: 6 },
-          { key: "partnerLabel", label: "Button label", kind: "text" },
-          { key: "partnerUrl", label: "Button URL", kind: "text" },
         ],
       },
     ],
@@ -1030,6 +1022,10 @@ export function contentFromFormData(slug: string, formData: FormData, existingRa
       }
       next[group.key] = items;
     }
+  }
+  if (slug === "collaborative-care") {
+    const partners = partnersFromFormData(formData);
+    if (partners) next.partners = partners;
   }
   return JSON.stringify(next);
 }
@@ -1165,14 +1161,17 @@ export function resolveExperiencesContent(raw?: string | null) {
 export function resolveCollaborativeContent(raw?: string | null) {
   const content = resolveStoredContent("collaborative-care", raw);
   const body = pickParagraphs(content.body, COLLABORATIVE_CARE_PARAGRAPHS);
+  const partners = resolveWellnessPartners(raw);
+  const first = partners[0];
   return {
     eyebrow: pickText(content.eyebrow, COLLABORATIVE_CARE_EYEBROW),
     paragraphs: body,
-    partnerName: pickText(content.partnerName, COLLABORATIVE_CARE_PARTNER_NAME),
-    partnerDetail: pickText(content.partnerDetail, COLLABORATIVE_CARE_PARTNER_DETAIL),
-    partnerBody: pickParagraphs(content.partnerBody, COLLABORATIVE_CARE_PARTNER_BODY),
-    partnerLabel: pickText(content.partnerLabel, COLLABORATIVE_CARE_PARTNER_LABEL),
-    partnerUrl: pickText(content.partnerUrl, COLLABORATIVE_CARE_PARTNER_URL),
+    partners,
+    partnerName: first?.name || pickText(content.partnerName, COLLABORATIVE_CARE_PARTNER_NAME),
+    partnerDetail: first?.detail || pickText(content.partnerDetail, COLLABORATIVE_CARE_PARTNER_DETAIL),
+    partnerBody: first?.body || pickParagraphs(content.partnerBody, COLLABORATIVE_CARE_PARTNER_BODY),
+    partnerLabel: first?.label || pickText(content.partnerLabel, COLLABORATIVE_CARE_PARTNER_LABEL),
+    partnerUrl: first?.url || pickText(content.partnerUrl, COLLABORATIVE_CARE_PARTNER_URL),
   };
 }
 

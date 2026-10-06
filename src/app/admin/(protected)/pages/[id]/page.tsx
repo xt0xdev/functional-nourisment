@@ -5,8 +5,10 @@ import { savePage } from "../../actions";
 import { MediaPicker } from "@/components/admin/MediaPicker";
 import { PageTemplateFields } from "@/components/admin/PageTemplateFields";
 import { PageLayoutDesigner } from "@/components/admin/PageLayoutDesigner";
+import { WellnessPartnersEditor } from "@/components/admin/WellnessPartnersEditor";
 import { HERO_DEFAULTS, getPageTemplate } from "@/lib/page-templates";
 import { getStoredLayout, resolveEditorLayout } from "@/lib/page-layout";
+import { resolveWellnessPartners } from "@/lib/wellness-partners";
 
 export default async function EditPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -32,7 +34,9 @@ export default async function EditPage({ params }: { params: Promise<{ id: strin
         Hero, header, and footer stay on the site template. Use the body designer to place text and
         images, wrap copy around photos, and drag or resize blocks.{" "}
         {template
-          ? "Card grids, forms, calendars, and listings under Template sections stay as designed widgets."
+          ? page.slug === "collaborative-care"
+            ? "Intro copy stays editable below. Wellness partner cards are managed in the Wellness partners section and always appear on the public page, including when the body designer is on."
+            : "Card grids, forms, calendars, and listings under Template sections stay as designed widgets."
           : `Public URL: /${page.slug}. Add this URL to the menu under Navigation.`}
       </p>
       <form action={savePage} className="mt-6 grid gap-6">
@@ -113,6 +117,13 @@ export default async function EditPage({ params }: { params: Promise<{ id: strin
                 <PageTemplateFields slug={page.slug} content={page.content} />
               </div>
             </div>
+          ) : page.slug === "collaborative-care" ? (
+            <>
+              <div className="rounded-2xl bg-white p-5">
+                <PageTemplateFields slug={page.slug} content={page.content} />
+              </div>
+              <WellnessPartnersEditor partners={resolveWellnessPartners(page.content)} />
+            </>
           ) : (
             <details className="rounded-2xl bg-white p-5">
               <summary className="cursor-pointer font-serif text-2xl text-forest">
