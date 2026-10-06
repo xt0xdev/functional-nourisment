@@ -54,6 +54,7 @@ import {
   PRACTITIONER_CREDIT,
   isLegacyPublicEmail,
 } from "../src/lib/site-defaults";
+import { FOOTER_SETTING_DEFAULTS } from "../src/lib/footer-copy";
 import { inferEventKind } from "../src/lib/events";
 import { SITE_IMAGES, isPractitionerImage, isStockOrEmptyImage } from "../src/lib/site-images";
 import { STARTER_JOURNAL, STARTER_RECIPES } from "../src/lib/starter-content";
@@ -166,7 +167,20 @@ async function mergePage(
 async function main() {
   const rows = await prisma.setting.findMany({
     where: {
-      key: { in: ["bookingUrl", "instagram", "footerBlurb", "footerText", "siteUrl", "stripeUrl", "paypalUrl", "notifyEmail", "email"] },
+      key: {
+        in: [
+          "bookingUrl",
+          "instagram",
+          "footerBlurb",
+          "footerText",
+          ...Object.keys(FOOTER_SETTING_DEFAULTS),
+          "siteUrl",
+          "stripeUrl",
+          "paypalUrl",
+          "notifyEmail",
+          "email",
+        ],
+      },
     },
   });
   const current = Object.fromEntries(rows.map((row) => [row.key, row.value]));
@@ -175,6 +189,10 @@ async function main() {
   await upsertSetting("instagram", INSTAGRAM, isLegacyInstagram(current.instagram));
   await upsertSetting("footerBlurb", FOOTER_BLURB, isLegacyFooter(current.footerBlurb));
   await upsertSetting("footerText", PRACTITIONER_CREDIT, isLegacyFooterText(current.footerText));
+  for (const [key, value] of Object.entries(FOOTER_SETTING_DEFAULTS)) {
+    if (key === "footerBlurb" || key === "footerText") continue;
+    await upsertSetting(key, value, !current[key]?.trim());
+  }
   await upsertSetting("siteUrl", DEFAULT_SITE_URL, isLegacySiteUrl(current.siteUrl));
   await upsertSetting("stripeUrl", STRIPE, !current.stripeUrl?.trim());
   await upsertSetting("paypalUrl", PAYPAL, !current.paypalUrl?.trim());

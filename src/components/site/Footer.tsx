@@ -5,16 +5,10 @@ import { SubscribeForm } from "@/components/site/SubscribeForm";
 import { applyBookingUrl, resolveBookingUrl } from "@/lib/booking";
 import { locationLinks } from "@/lib/locations";
 import type { FooterMenu } from "@/lib/menu";
+import { resolveFooterCopy } from "@/lib/footer-copy";
 import { AMAZON_BOOK_URL } from "@/lib/page-copy";
 import { resolveServingLinks } from "@/lib/menu-visibility";
-import {
-  CHILDRENS_BOOK_NOTE,
-  INSTAGRAM_HANDLE,
-  MAILING_LIST_BLURB,
-  PRACTITIONER_CREDIT,
-  resolveFooterBlurb,
-  resolveInstagramUrl,
-} from "@/lib/site-defaults";
+import { INSTAGRAM_HANDLE, resolveInstagramUrl } from "@/lib/site-defaults";
 
 const staticServing = locationLinks.map((location) => ({
   href: location.href,
@@ -30,6 +24,7 @@ export function Footer({
 }) {
   const bookingUrl = resolveBookingUrl(settings);
   const instagramUrl = resolveInstagramUrl(settings.instagram);
+  const copy = resolveFooterCopy(settings);
   const hidden = new Set(menu.hiddenHrefs);
   const resolvedGroups = menu.groups.map((group) => ({
     ...group,
@@ -54,13 +49,9 @@ export function Footer({
             <p className="font-serif text-2xl">
               Functional <em className="italic">Nourishment</em>
             </p>
-            <p className="text-sm leading-relaxed text-white/70">
-              Nourishing your whole self from the inside out.
-            </p>
+            <p className="text-sm leading-relaxed text-white/70">{copy.tagline}</p>
           </div>
-          <p className="mt-4 text-sm leading-relaxed text-white/75">
-            {resolveFooterBlurb(settings.footerBlurb)}
-          </p>
+          <p className="mt-4 text-sm leading-relaxed text-white/75">{copy.blurb}</p>
           <p className="mt-4 text-sm text-white/70">{settings.address || "Astoria, NY 11105"}</p>
           <a
             href={instagramUrl}
@@ -77,7 +68,7 @@ export function Footer({
             rel="noreferrer"
             className="mt-4 block text-xs leading-relaxed text-white/70 underline decoration-white/30 underline-offset-4 hover:text-white"
           >
-            {CHILDRENS_BOOK_NOTE}
+            {copy.childrensBookNote}
           </a>
         </div>
         {menuGroups.map((group) => (
@@ -101,7 +92,7 @@ export function Footer({
           </div>
         ))}
         <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-accent">Serving</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-accent">{copy.servingHeading}</p>
           <ul className="mt-4 space-y-2 text-sm text-white/85">
             {servingLinks.map((item) => (
               <li key={item.href}>
@@ -112,8 +103,8 @@ export function Footer({
             ))}
           </ul>
           <div className="mt-8">
-            <p className="text-xs uppercase tracking-[0.2em] text-accent">Mailing list</p>
-            <p className="mt-3 text-sm text-white/70">{MAILING_LIST_BLURB}</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-accent">{copy.mailingListHeading}</p>
+            <p className="mt-3 text-sm text-white/70">{copy.mailingListBlurb}</p>
             <div className="mt-4">
               <SubscribeForm variant="footer" />
             </div>
@@ -121,7 +112,7 @@ export function Footer({
         </div>
       </div>
       <div className="border-t border-white/10 px-4 py-4 text-center text-xs text-white/55">
-        {settings.footerText || PRACTITIONER_CREDIT} · © {new Date().getFullYear()} Functional Nourishment. All rights reserved. ·{" "}
+        {copy.creditLine} · © {new Date().getFullYear()} {copy.copyright} ·{" "}
         <Link href="/privacy" className="hover:text-white">
           Privacy
         </Link>
@@ -129,7 +120,7 @@ export function Footer({
         <Link href="/event-policy" className="hover:text-white">
           Event policy
         </Link>
-        <p className="mt-2">{PRACTITIONER_CREDIT}</p>
+        <p className="mt-2">{copy.practitionerCredit}</p>
       </div>
     </footer>
   );

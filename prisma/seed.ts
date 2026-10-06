@@ -42,7 +42,8 @@ import {
   SPIRIT_RETREATS_LEAD,
   SQUARESPACE_EXPERIENCES,
 } from "../src/lib/page-copy";
-import { DEFAULT_NOTIFY_EMAIL, DEFAULT_SITE_URL, FOOTER_BLURB, PRACTITIONER_CREDIT } from "../src/lib/site-defaults";
+import { FOOTER_SETTING_DEFAULTS } from "../src/lib/footer-copy";
+import { DEFAULT_NOTIFY_EMAIL, DEFAULT_SITE_URL } from "../src/lib/site-defaults";
 import { STARTER_JOURNAL, STARTER_RECIPES } from "../src/lib/starter-content";
 import { retreatsContentDefaults } from "../src/lib/page-templates";
 
@@ -75,8 +76,7 @@ const settings: Record<string, string> = {
   npi: "1326877432",
   languages: "English, Greek",
   siteUrl: DEFAULT_SITE_URL,
-  footerText: PRACTITIONER_CREDIT,
-  footerBlurb: FOOTER_BLURB,
+  ...FOOTER_SETTING_DEFAULTS,
   clientPortalUrl: "https://client.practicebetter.io/#/signin",
   bookingUrl: "https://calendly.com/functionalnourishment-krbc/new-meeting",
 };

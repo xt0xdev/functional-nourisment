@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { saveSettings } from "../actions";
+import { FOOTER_TEXT_FIELDS, footerFieldValue } from "@/lib/footer-copy";
 import { DEFAULT_NOTIFY_EMAIL, formEmailAdminNote, formEmailConfigured } from "@/lib/notify";
 import { blobAdminNote, hasBlobToken, storageDriver } from "@/lib/storage";
 import { formCaptchaAdminNote, formCaptchaConfigured } from "@/lib/math-captcha";
@@ -27,8 +28,6 @@ const fields = [
   ["npi", "NPI"],
   ["languages", "Languages"],
   ["siteUrl", "Public site URL"],
-  ["footerText", "Footer text"],
-  ["footerBlurb", "Footer description"],
   ["clientPortalUrl", "Client portal URL"],
   ["bookingUrl", "Book a Discovery Call URL"],
 ];
@@ -61,7 +60,7 @@ export default async function SettingsPage() {
         {fields.map(([key, label]) => (
           <label key={key} className="grid gap-1 text-sm">
             {label}
-            {key === "insurance" || key === "tagline" || key === "bookingNote" || key === "serviceArea" || key === "footerBlurb" ? (
+            {key === "insurance" || key === "tagline" || key === "bookingNote" || key === "serviceArea" ? (
               <textarea
                 name={key}
                 defaultValue={settings[key] || ""}
@@ -101,6 +100,34 @@ export default async function SettingsPage() {
             ) : null}
           </label>
         ))}
+        <fieldset className="grid gap-4 rounded-2xl bg-white p-5">
+          <legend className="font-serif text-2xl text-forest">Footer</legend>
+          <p className="text-sm text-muted">
+            These fields change the words in the public footer. Address and Instagram URL are above.
+            Serving and mailing-list columns stay in place even if you clear a heading. Footer link
+            lists stay in Admin → Menu.
+          </p>
+          {FOOTER_TEXT_FIELDS.map((field) => (
+            <label key={field.key} className="grid gap-1 text-sm">
+              {field.label}
+              {field.rows > 1 ? (
+                <textarea
+                  name={field.key}
+                  defaultValue={footerFieldValue(settings, field.key)}
+                  rows={field.rows}
+                  className="rounded-xl border border-forest/15 bg-white px-3 py-2"
+                />
+              ) : (
+                <input
+                  name={field.key}
+                  defaultValue={footerFieldValue(settings, field.key)}
+                  className="rounded-xl border border-forest/15 bg-white px-3 py-2"
+                />
+              )}
+              <p className="text-xs text-muted">{field.hint}</p>
+            </label>
+          ))}
+        </fieldset>
         <button className="mt-2 w-fit rounded-full bg-forest px-6 py-3 text-cream">Save settings</button>
       </form>
     </div>
