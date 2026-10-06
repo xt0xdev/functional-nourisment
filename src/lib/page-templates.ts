@@ -121,6 +121,7 @@ import {
 } from "./page-copy";
 import { CHILDRENS_BOOK_NOTE, HERO_HEADING, HERO_INTRO, isLegacyHeroIntro } from "./site-defaults";
 import { SITE_IMAGES } from "./site-images";
+import { galleryFromFormData, resolveExperiencesGallery } from "./experiences-gallery";
 import { partnersFromFormData, resolveWellnessPartners } from "./wellness-partners";
 
 export type FieldKind = "text" | "textarea" | "list" | "paragraphs" | "image" | "checkbox";
@@ -700,7 +701,8 @@ export const PAGE_TEMPLATES: Record<string, PageTemplate> = {
   },
   experiences: {
     slug: "experiences",
-    description: "These fields match the published Workshops & Experiences page.",
+    description:
+      "These fields match the published Workshops & Experiences page. The bottom photo strip is managed in the Workshop gallery section.",
     sections: [
       {
         heading: "Workshops intro",
@@ -725,6 +727,7 @@ export const PAGE_TEMPLATES: Record<string, PageTemplate> = {
       },
       {
         heading: "Group experiences & gallery",
+        help: "Gallery photos are added, replaced, and reordered in Workshop gallery below. These fields only edit the strip heading and nearby cards.",
         fields: [
           { key: "groupHeading", label: "Group heading", kind: "text" },
           { key: "groupBody", label: "Group paragraph", kind: "textarea", rows: 4 },
@@ -1027,6 +1030,10 @@ export function contentFromFormData(slug: string, formData: FormData, existingRa
     const partners = partnersFromFormData(formData);
     if (partners) next.partners = partners;
   }
+  if (slug === "experiences") {
+    const gallery = galleryFromFormData(formData);
+    if (gallery) next.gallery = gallery;
+  }
   return JSON.stringify(next);
 }
 
@@ -1153,6 +1160,7 @@ export function resolveExperiencesContent(raw?: string | null) {
     groupBody: pickText(content.groupBody, EXPERIENCES_GROUP_BODY),
     galleryEyebrow: pickText(content.galleryEyebrow, EXPERIENCES_GALLERY_EYEBROW),
     galleryHeading: pickText(content.galleryHeading, EXPERIENCES_GALLERY_HEADING),
+    gallery: resolveExperiencesGallery(raw),
     datesHeading: pickText(content.datesHeading, EXPERIENCES_DATES_HEADING),
     retreatsHeading: pickText(content.retreatsHeading, EXPERIENCES_RETREATS_HEADING),
   };

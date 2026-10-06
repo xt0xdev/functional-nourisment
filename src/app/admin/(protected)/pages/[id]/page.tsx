@@ -5,8 +5,10 @@ import { savePage } from "../../actions";
 import { MediaPicker } from "@/components/admin/MediaPicker";
 import { PageTemplateFields } from "@/components/admin/PageTemplateFields";
 import { PageLayoutDesigner } from "@/components/admin/PageLayoutDesigner";
+import { ExperiencesGalleryEditor } from "@/components/admin/ExperiencesGalleryEditor";
 import { WellnessPartnersEditor } from "@/components/admin/WellnessPartnersEditor";
-import { HERO_DEFAULTS, getPageTemplate } from "@/lib/page-templates";
+import { ExperiencesGallery } from "@/components/site/ExperiencesGallery";
+import { HERO_DEFAULTS, getPageTemplate, resolveExperiencesContent } from "@/lib/page-templates";
 import { getStoredLayout, resolveEditorLayout } from "@/lib/page-layout";
 import { resolveWellnessPartners } from "@/lib/wellness-partners";
 
@@ -21,6 +23,7 @@ export default async function EditPage({ params }: { params: Promise<{ id: strin
   const editorLayout = resolveEditorLayout(page.slug, page.content);
   const heroHeading = page.heroHeading.trim() || heroDefaults?.heading || page.heroHeading;
   const heroSubheading = page.heroSubheading.trim() || heroDefaults?.subheading || page.heroSubheading;
+  const experiencesContent = page.slug === "experiences" ? resolveExperiencesContent(page.content) : null;
 
   return (
     <div>
@@ -34,9 +37,11 @@ export default async function EditPage({ params }: { params: Promise<{ id: strin
         Hero, header, and footer stay on the site template. Use the body designer to place text and
         images, wrap copy around photos, and drag or resize blocks.{" "}
         {template
-          ? page.slug === "collaborative-care"
-            ? "Intro copy stays editable below. Wellness partner cards are managed in the Wellness partners section and always appear on the public page, including when the body designer is on."
-            : "Card grids, forms, calendars, and listings under Template sections stay as designed widgets."
+          ? page.slug === "experiences"
+            ? "Intro and experience cards stay in Template sections. The bottom workshop gallery is managed below and always appears on the public page, including when the body designer is on."
+            : page.slug === "collaborative-care"
+              ? "Intro copy stays editable below. Wellness partner cards are managed in the Wellness partners section and always appear on the public page, including when the body designer is on."
+              : "Card grids, forms, calendars, and listings under Template sections stay as designed widgets."
           : `Public URL: /${page.slug}. Add this URL to the menu under Navigation.`}
       </p>
       <form action={savePage} className="mt-6 grid gap-6">
@@ -102,6 +107,24 @@ export default async function EditPage({ params }: { params: Promise<{ id: strin
           heroSubheading={heroSubheading}
           heroImage={page.heroImage}
           wasPublishedLayout={Boolean(storedLayout?.enabled && storedLayout.blocks.length)}
+          lockedAfterBody={
+            experiencesContent ? (
+              <div className="border-t border-dashed border-teal/30 bg-teal/[0.04] px-5 py-4">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-teal">Workshop gallery · locked</p>
+                <p className="mt-1 text-xs text-muted">
+                  Always shown on the public page. Edit photos in Workshop gallery below.
+                </p>
+                <div className="mt-3">
+                  <ExperiencesGallery
+                    eyebrow={experiencesContent.galleryEyebrow}
+                    heading={experiencesContent.galleryHeading}
+                    items={experiencesContent.gallery}
+                    compact
+                  />
+                </div>
+              </div>
+            ) : undefined
+          }
         />
 
         {template ? (
@@ -117,6 +140,22 @@ export default async function EditPage({ params }: { params: Promise<{ id: strin
                 <PageTemplateFields slug={page.slug} content={page.content} />
               </div>
             </div>
+          ) : page.slug === "experiences" ? (
+            <>
+              <ExperiencesGalleryEditor items={experiencesContent?.gallery || []} />
+              <details className="rounded-2xl bg-white p-5">
+                <summary className="cursor-pointer font-serif text-2xl text-forest">
+                  Template sections
+                </summary>
+                <p className="mt-2 text-sm text-muted">
+                  These labeled fields still power intro copy, experience cards, and the gallery
+                  heading. They stay available if you turn the visual layout off.
+                </p>
+                <div className="mt-4">
+                  <PageTemplateFields slug={page.slug} content={page.content} />
+                </div>
+              </details>
+            </>
           ) : page.slug === "collaborative-care" ? (
             <>
               <div className="rounded-2xl bg-white p-5">

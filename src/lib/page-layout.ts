@@ -533,6 +533,7 @@ export function prefillLayout(slug: string, raw?: string | null): PageLayout {
       });
       builder.heading(content.groupHeading);
       builder.text(content.groupBody);
+      // Workshop gallery stays a locked template widget fed by the CMS list.
       return builder.finish();
     }
     case "collaborative-care": {

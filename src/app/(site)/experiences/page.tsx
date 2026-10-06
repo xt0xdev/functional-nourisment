@@ -2,12 +2,12 @@ import Link from "next/link";
 import { getPage } from "@/lib/content";
 import { buildMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/site/PageHero";
-import { SmartImage } from "@/components/site/SmartImage";
+import { ExperiencesGallery } from "@/components/site/ExperiencesGallery";
 import { EXPERIENCES_SUB, EXPERIENCES_TITLE } from "@/lib/page-copy";
 import { resolveExperiencesContent, resolveHeroText } from "@/lib/page-templates";
 import { getStoredLayout } from "@/lib/page-layout";
 import { PageBodyOrLayout } from "@/components/site/PageLayoutBody";
-import { SITE_IMAGES, WELLNESS_GALLERY, isStockOrEmptyImage } from "@/lib/site-images";
+import { SITE_IMAGES, isStockOrEmptyImage } from "@/lib/site-images";
 
 export async function generateMetadata() {
   const page = await getPage("experiences");
@@ -65,18 +65,15 @@ export default async function ExperiencesPage() {
         }
       />
       <section className="mx-auto max-w-5xl px-4 py-16 md:px-6">
-
-        <div className="mt-14">
-          <p className="eyebrow">{content.galleryEyebrow}</p>
-          <h2 className="mt-3 font-serif text-3xl text-primary">{content.galleryHeading}</h2>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {WELLNESS_GALLERY.map((photo) => (
-              <figure key={photo.src} className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-mist">
-                <SmartImage src={photo.src} alt={photo.alt} fill className="object-cover" sizes="(min-width: 1024px) 33vw, 50vw" />
-              </figure>
-            ))}
+        {content.gallery.length ? (
+          <div className="mt-14">
+            <ExperiencesGallery
+              eyebrow={content.galleryEyebrow}
+              heading={content.galleryHeading}
+              items={content.gallery}
+            />
           </div>
-        </div>
+        ) : null}
 
         <div className="mt-14 grid gap-6 md:grid-cols-2">
           <article className="rounded-3xl bg-white p-8 shadow-sm">
