@@ -634,7 +634,7 @@ export const PAGE_TEMPLATES: Record<string, PageTemplate> = {
             key: "areas",
             label: "Support areas",
             itemLabel: "Area",
-            help: "Icon keys: heart, droplet, weight, gut (medical cross), bowl (single apple), lotus. Gut, nutrient, and well-being titles always use those three icons on the public page.",
+            help: "Icon keys: heart, droplet, weight, gut (stomach), bowl (single apple), lotus. Gut, nutrient, and well-being titles always use those three icons on the public page.",
             fields: [
               { key: "title", label: "Title", kind: "text" },
               { key: "detail", label: "Detail", kind: "textarea", rows: 2 },
