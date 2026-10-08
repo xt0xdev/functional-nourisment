@@ -117,6 +117,7 @@ import {
   SPIRIT_RETREATS_GREECE,
   SPIRIT_RETREATS_HEADING,
   SPIRIT_RETREATS_LEAD,
+  resolveAreaIconKey,
   resolvePillarCopy,
 } from "./page-copy";
 import { CHILDRENS_BOOK_NOTE, HERO_HEADING, HERO_INTRO, isLegacyHeroIntro } from "./site-defaults";
@@ -633,7 +634,7 @@ export const PAGE_TEMPLATES: Record<string, PageTemplate> = {
             key: "areas",
             label: "Support areas",
             itemLabel: "Area",
-            help: "Icon keys: heart, droplet, weight, gut, bowl, lotus.",
+            help: "Icon keys: heart, droplet, weight, gut (stomach), bowl (apple + carrot), lotus. Gut, nutrient, and well-being titles always use those three icons on the public page.",
             fields: [
               { key: "title", label: "Title", kind: "text" },
               { key: "detail", label: "Detail", kind: "textarea", rows: 2 },
@@ -980,6 +981,13 @@ export function getTemplateFormValues(slug: string, raw?: string | null) {
         fallback,
         group.fields.map((field) => field.key),
       );
+      if (slug === "nutrition" && group.key === "areas") {
+        groups[group.key] = groups[group.key].map((area) => ({
+          title: area.title,
+          detail: area.detail,
+          icon: resolveAreaIconKey(area.title, area.icon),
+        }));
+      }
     }
   }
   return { fields, groups };
@@ -1076,7 +1084,11 @@ export function resolveNutritionContent(raw?: string | null) {
     howItWorks: pickItems(content.howItWorks, defaults.howItWorks, ["title", "text"]),
     areasEyebrow: pickText(content.areasEyebrow, NUTRITION_AREAS_EYEBROW),
     areasHeading: pickText(content.areasHeading, NUTRITION_AREAS_HEADING),
-    areas: pickItems(content.areas, defaults.areas, ["title", "detail", "icon"]),
+    areas: pickItems(content.areas, defaults.areas, ["title", "detail", "icon"]).map((area) => ({
+      title: area.title,
+      detail: area.detail,
+      icon: resolveAreaIconKey(area.title, area.icon),
+    })),
   };
 }
 

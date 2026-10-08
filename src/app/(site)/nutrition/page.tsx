@@ -3,7 +3,7 @@ import { buildMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/site/PageHero";
 import { CtaBand } from "@/components/site/CtaBand";
 import { SmartImage } from "@/components/site/SmartImage";
-import { areaIcons } from "@/components/site/SupportIcons";
+import { resolveAreaIcon } from "@/components/site/SupportIcons";
 import { isStockOrEmptyImage } from "@/lib/site-images";
 import { NUTRITION_HERO, NUTRITION_IMAGE, NUTRITION_IMAGE_ALT } from "@/lib/page-copy";
 import { resolveHeroText, resolveNutritionContent } from "@/lib/page-templates";
@@ -85,7 +85,7 @@ export default async function NutritionPage() {
           <h2 className="mt-3 font-serif text-4xl text-primary md:text-5xl">{content.areasHeading}</h2>
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {content.areas.map((area) => {
-              const Icon = areaIcons[area.icon as keyof typeof areaIcons] || areaIcons.lotus;
+              const Icon = resolveAreaIcon(area.title, area.icon);
               return (
                 <article key={area.title} className="rounded-3xl bg-mist p-6">
                   <Icon className="h-9 w-9 text-teal" strokeWidth={1.6} />

@@ -1,88 +1,59 @@
 import { Dumbbell, Droplet, HeartPulse } from "lucide-react";
+import { resolveAreaIconKey, type AreaIconKey } from "@/lib/page-copy";
 
 type IconProps = { className?: string; strokeWidth?: number };
 
-function GutIcon({ className, strokeWidth = 1.6 }: IconProps) {
+function iconProps({ className, strokeWidth = 1.6 }: IconProps) {
+  return {
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+    className,
+    "aria-hidden": true as const,
+  };
+}
+
+/** J-shaped stomach outline — Gut & Digestive Health */
+function StomachIcon(props: IconProps) {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={strokeWidth}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      aria-hidden="true"
-    >
-      {/* Large intestine: cecum, colon frame, sigmoid */}
-      <path d="M6.2 20.2c-1.95.2-3.1-1.15-2.95-3 .2-2.55.05-5.7.2-8.25C3.6 6.05 5.5 4 8.2 4.1c2.35.1 4.9-.2 7.15.25 2.3.45 3.55 2.25 3.4 4.55-.2 2.7.15 5.15-.2 7-.4 2.1-2.2 3.2-4.05 2.85" />
-      <path d="M14.5 16.5c.15 1.55-.55 3.05-2.15 3.5-1.25.35-2.4 0-3.15-.85" />
-      {/* Small intestine: packed curved loops */}
-      <path d="M8.85 7.05a1.55 1.55 0 1 1 0 3.1" />
-      <path d="M13.75 7.15a1.5 1.5 0 1 0 0 3" />
-      <path d="M8.95 10.75a1.5 1.5 0 1 1 0 3" />
-      <path d="M13.85 10.85a1.5 1.5 0 1 0 0 3" />
-      <path d="M11.35 14.35a1.4 1.4 0 1 1 0 2.8" />
+    <svg {...iconProps(props)}>
+      <path
+        fill="none"
+        d="M8.6 2.5c-.1 2.7-1.2 4.3-3 6.1-2.2 2.2-2.8 6.6-.4 10 2.2 3 7.4 3.8 11 1.4 2.6-1.8 3.4-5.4 1.2-8.2-1.2-1.6-1.4-2.6-.6-4.8L17.6 3.2l-3 1c-.6 3.2-2.2 5-4.4 4.6-1-.2-1.4-2.2-1.4-4.6Z"
+      />
     </svg>
   );
 }
 
-function FruitBowlIcon({ className, strokeWidth = 1.6 }: IconProps) {
+/** Grouped apple + carrot — Nutritional / Nutrient Deficiencies */
+function AppleCarrotIcon(props: IconProps) {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={strokeWidth}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      aria-hidden="true"
-    >
-      {/* Apple */}
-      <path d="M8.35 8.7c-2.1.15-3.6 1.95-3.6 4.2 0 2.8 2 5.15 3.95 5.15.45 0 .75-.26 1.05-.26.3 0 .6.26 1.05.26 1.95 0 3.95-2.35 3.95-5.15 0-2.25-1.5-4.05-3.6-4.2-.55 1.2-2.1 1.2-2.8 0Z" />
-      <path d="M8.65 8.55c.25-1.4 1.2-2.35 2.4-2.6" />
-      <path d="M8.85 7.15c1.1-.2 2 .5 2.15 1.45" />
-      {/* Fat tapered carrot, rings, and fanned greens */}
-      <path d="M13.85 8.85 20.7 6.7 15.7 20.35Z" />
-      <path d="M15.15 11.85 18.35 10.8" />
-      <path d="M15.25 14.95 17.75 14.1" />
-      <path d="M16.2 7.15C15.7 4.7 14.55 3.15 13.2 2.85" />
-      <path d="M17.35 6.85C17.55 4.35 18.35 2.7 19.4 2.45" />
-      <path d="M18.5 6.55C19.7 4.6 21.15 3.55 22.2 3.7" />
+    <svg {...iconProps(props)}>
+      <path
+        fill="none"
+        d="M8.2 6.6c-.55-.7-1.35-1.1-2.25-1.1-1.95 0-3.4 1.9-3.4 4.75 0 3.9 2.5 9.05 5.2 9.05.45 0 .8-.22 1.15-.22s.7.22 1.15.22c2.7 0 5.2-5.15 5.2-9.05 0-2.85-1.45-4.75-3.4-4.75-.9 0-1.7.4-2.25 1.1Z"
+      />
+      <path fill="none" d="M9 6.15c.3-1.5 1.25-2.5 2.5-2.8" />
+      <path fill="none" d="M10.2 5.05c1.4-.15 2.55.7 2.7 2-1.4.15-2.55-.7-2.7-2Z" />
+      <path fill="none" d="M14.95 8.55 20.35 7.45 16.7 21Z" />
+      <path fill="none" d="M16.85 8c-.55-2.55-1.45-4.15-2.75-4.55" />
+      <path fill="none" d="M18 7.75c.85-2.6 2-4.2 3.4-4.45" />
     </svg>
   );
 }
 
-function LotusIcon({ className, strokeWidth = 1.6 }: IconProps) {
+/** Five-petal line lotus — Well-Being & Stress Support */
+function LotusIcon(props: IconProps) {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={strokeWidth}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      aria-hidden="true"
-    >
-      {/* Circular head, no facial details */}
-      <circle cx="12" cy="4.15" r="2" />
-      {/* Upright torso */}
-      <path d="M9.35 8c.7-1.15 1.7-1.7 2.65-1.7s1.95.55 2.65 1.7" />
-      <path d="M9.35 8 9.6 12.7" />
-      <path d="M14.65 8 14.4 12.7" />
-      <path d="M9.6 12.7h4.8" />
-      {/* Arms to knees, hands resting */}
-      <path d="M9.35 8.3C7.25 10 5.7 12.15 4.9 14.3" />
-      <path d="M14.65 8.3C16.75 10 18.3 12.15 19.1 14.3" />
-      <circle cx="4.7" cy="14.85" r=".9" />
-      <circle cx="19.3" cy="14.85" r=".9" />
-      {/* Thighs to knees; shins cross as an X */}
-      <path d="M9.6 12.7C7.4 13.25 5.8 14 4.85 14.95" />
-      <path d="M14.4 12.7C16.6 13.25 18.2 14 19.15 14.95" />
-      <path d="M4.95 15.15C8.2 17.9 12.6 20.55 16.35 20.85" />
-      <path d="M19.05 15.15C15.8 17.9 11.4 20.55 7.65 20.85" />
+    <svg {...iconProps(props)}>
+      <path fill="none" d="M12 20.8C7.5 14.5 7.5 6 12 2C16.5 6 16.5 14.5 12 20.8Z" />
+      <path fill="none" d="M12 20.6C7 16.5 3.5 10 5.4 3.8C9.5 6.5 11.2 13.5 12 20.6Z" />
+      <path fill="none" d="M12 20.6C17 16.5 20.5 10 18.6 3.8C14.5 6.5 12.8 13.5 12 20.6Z" />
+      <path fill="none" d="M12 20.6C7.5 18.5 2.2 16.8 1.4 11.2C6.5 12.2 9.8 16.5 12 20.6Z" />
+      <path fill="none" d="M12 20.6C16.5 18.5 21.8 16.8 22.6 11.2C17.5 12.2 14.2 16.5 12 20.6Z" />
     </svg>
   );
 }
@@ -91,7 +62,19 @@ export const areaIcons = {
   heart: HeartPulse,
   droplet: Droplet,
   weight: Dumbbell,
-  gut: GutIcon,
-  bowl: FruitBowlIcon,
+  gut: StomachIcon,
+  stomach: StomachIcon,
+  bowl: AppleCarrotIcon,
+  apple: AppleCarrotIcon,
+  carrot: AppleCarrotIcon,
+  foods: AppleCarrotIcon,
   lotus: LotusIcon,
+  flower: LotusIcon,
+  meditate: LotusIcon,
+  meditation: LotusIcon,
 } as const;
+
+export function resolveAreaIcon(title?: string | null, icon?: string | null) {
+  const key = resolveAreaIconKey(title, icon) as AreaIconKey;
+  return areaIcons[key] || LotusIcon;
+}

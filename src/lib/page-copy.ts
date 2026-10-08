@@ -163,6 +163,40 @@ export const NUTRITION_AREAS = [
   },
 ] as const;
 
+export const AREA_ICON_KEYS = ["heart", "droplet", "weight", "gut", "bowl", "lotus"] as const;
+export type AreaIconKey = (typeof AREA_ICON_KEYS)[number];
+
+const AREA_ICON_ALIASES: Record<string, AreaIconKey> = {
+  heart: "heart",
+  droplet: "droplet",
+  weight: "weight",
+  gut: "gut",
+  stomach: "gut",
+  intestine: "gut",
+  intestines: "gut",
+  bowl: "bowl",
+  apple: "bowl",
+  carrot: "bowl",
+  foods: "bowl",
+  fruit: "bowl",
+  lotus: "lotus",
+  flower: "lotus",
+  meditate: "lotus",
+  meditation: "lotus",
+};
+
+export function resolveAreaIconKey(title?: string | null, icon?: string | null): AreaIconKey {
+  const name = (title || "").toLowerCase();
+  if (/(gut|digest)/.test(name)) return "gut";
+  if (/(deficien|nutrient)/.test(name)) return "bowl";
+  if (/(well-?being|wellbeing|stress support)/.test(name)) return "lotus";
+  if (/(cardio|heart|cholesterol|blood pressure)/.test(name)) return "heart";
+  if (/(blood sugar|metabolic|diabetes|insulin)/.test(name)) return "droplet";
+  if (/(weight|glp)/.test(name)) return "weight";
+  const key = (icon || "").trim().toLowerCase();
+  return AREA_ICON_ALIASES[key] || "lotus";
+}
+
 export const MIND_HERO =
   "Your mental and emotional well-being are deeply connected to how you feel in your body. Creating space to slow down, manage stress, and cultivate greater awareness can help you feel more present, grounded, and connected to yourself.";
 
