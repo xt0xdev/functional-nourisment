@@ -174,6 +174,9 @@ const AREA_ICON_ALIASES: Record<string, AreaIconKey> = {
   stomach: "gut",
   intestine: "gut",
   intestines: "gut",
+  cross: "gut",
+  medical: "gut",
+  stethoscope: "gut",
   bowl: "bowl",
   apple: "bowl",
   carrot: "bowl",
@@ -185,6 +188,7 @@ const AREA_ICON_ALIASES: Record<string, AreaIconKey> = {
   meditation: "lotus",
 };
 
+/** Title wins so Gut, Nutritional Deficiencies, and Well-Being stay distinct. */
 export function resolveAreaIconKey(title?: string | null, icon?: string | null): AreaIconKey {
   const name = (title || "").toLowerCase();
   if (/(gut|digest)/.test(name)) return "gut";

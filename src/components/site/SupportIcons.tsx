@@ -1,4 +1,4 @@
-import { Dumbbell, Droplet, HeartPulse } from "lucide-react";
+import { Apple, Cross, Dumbbell, Droplet, HeartPulse } from "lucide-react";
 import { resolveAreaIconKey, type AreaIconKey } from "@/lib/page-copy";
 
 type IconProps = { className?: string; strokeWidth?: number };
@@ -14,35 +14,6 @@ function iconProps({ className, strokeWidth = 1.6 }: IconProps) {
     className,
     "aria-hidden": true as const,
   };
-}
-
-/** J-shaped stomach outline — Gut & Digestive Health */
-function StomachIcon(props: IconProps) {
-  return (
-    <svg {...iconProps(props)}>
-      <path
-        fill="none"
-        d="M8.6 2.5c-.1 2.7-1.2 4.3-3 6.1-2.2 2.2-2.8 6.6-.4 10 2.2 3 7.4 3.8 11 1.4 2.6-1.8 3.4-5.4 1.2-8.2-1.2-1.6-1.4-2.6-.6-4.8L17.6 3.2l-3 1c-.6 3.2-2.2 5-4.4 4.6-1-.2-1.4-2.2-1.4-4.6Z"
-      />
-    </svg>
-  );
-}
-
-/** Grouped apple + carrot — Nutritional / Nutrient Deficiencies */
-function AppleCarrotIcon(props: IconProps) {
-  return (
-    <svg {...iconProps(props)}>
-      <path
-        fill="none"
-        d="M8.2 6.6c-.55-.7-1.35-1.1-2.25-1.1-1.95 0-3.4 1.9-3.4 4.75 0 3.9 2.5 9.05 5.2 9.05.45 0 .8-.22 1.15-.22s.7.22 1.15.22c2.7 0 5.2-5.15 5.2-9.05 0-2.85-1.45-4.75-3.4-4.75-.9 0-1.7.4-2.25 1.1Z"
-      />
-      <path fill="none" d="M9 6.15c.3-1.5 1.25-2.5 2.5-2.8" />
-      <path fill="none" d="M10.2 5.05c1.4-.15 2.55.7 2.7 2-1.4.15-2.55-.7-2.7-2Z" />
-      <path fill="none" d="M14.95 8.55 20.35 7.45 16.7 21Z" />
-      <path fill="none" d="M16.85 8c-.55-2.55-1.45-4.15-2.75-4.55" />
-      <path fill="none" d="M18 7.75c.85-2.6 2-4.2 3.4-4.45" />
-    </svg>
-  );
 }
 
 /** Five-petal line lotus — Well-Being & Stress Support */
@@ -62,12 +33,12 @@ export const areaIcons = {
   heart: HeartPulse,
   droplet: Droplet,
   weight: Dumbbell,
-  gut: StomachIcon,
-  stomach: StomachIcon,
-  bowl: AppleCarrotIcon,
-  apple: AppleCarrotIcon,
-  carrot: AppleCarrotIcon,
-  foods: AppleCarrotIcon,
+  gut: Cross,
+  stomach: Cross,
+  bowl: Apple,
+  apple: Apple,
+  carrot: Apple,
+  foods: Apple,
   lotus: LotusIcon,
   flower: LotusIcon,
   meditate: LotusIcon,
