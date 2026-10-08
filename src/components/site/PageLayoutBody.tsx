@@ -218,7 +218,7 @@ export function LayoutDocument({
         {blocks.map((block) => (
           <FlowBlock
             key={block.id}
-            usesWrap={usesWrap}
+            usesWrap={false}
             block={block.wrap === "none" ? { ...block, wrap: "full", x: 0, w: 100 } : block}
           />
         ))}
