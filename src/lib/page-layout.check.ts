@@ -220,7 +220,8 @@ assert(getPublicPageLayout("home", JSON.stringify(enabledHome)) === null, "enabl
 assert(getPublicPageLayout("nutrition", JSON.stringify(enabledHome))?.enabled === true, "other pages still read an enabled layout");
 
 const otherPage = { intro: "About", layout: enabledHome.layout };
-assert(preserveLayout(otherPage, { intro: "About next" }).layout === enabledHome.layout, "sync must not strip other pages' layouts");
+const preservedOther = preserveLayout(otherPage, { intro: "About next" });
+assert((preservedOther as { layout?: unknown }).layout === enabledHome.layout, "sync must not strip other pages' layouts");
 
 const homeForm = new FormData();
 homeForm.set("contentMode", "template");
