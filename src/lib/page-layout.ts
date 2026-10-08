@@ -213,6 +213,25 @@ export function getStoredLayout(raw?: string | null): PageLayout | null {
   return parseLayoutFromUnknown(parsed.layout);
 }
 
+/** The marketing homepage always uses its locked Ocean Deep sections. */
+export function usesPublicBodyDesigner(slug: string) {
+  return slug !== "home";
+}
+
+export function getPublicPageLayout(slug: string, raw?: string | null): PageLayout | null {
+  if (!usesPublicBodyDesigner(slug)) return null;
+  return getStoredLayout(raw);
+}
+
+/** Turn off a designed layout without deleting blocks or other content keys. */
+export function disablePublishedLayout<T extends Record<string, unknown>>(content: T): T {
+  const layout = content.layout;
+  if (!layout || typeof layout !== "object" || Array.isArray(layout)) return content;
+  const current = layout as { enabled?: unknown };
+  if (current.enabled === false) return content;
+  return { ...content, layout: { ...current, enabled: false } };
+}
+
 export function hasEnabledLayout(raw?: string | null) {
   const layout = getStoredLayout(raw);
   return Boolean(layout?.enabled && layout.blocks.length);

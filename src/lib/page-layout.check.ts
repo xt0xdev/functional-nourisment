@@ -4,10 +4,12 @@ import {
   applyWrapPreset,
   buttonStyle,
   createBlankBlock,
+  disablePublishedLayout,
   ensureAboutAmazonButton,
   flowBlockBoxStyle,
   flowIgnoresDesignerBox,
   flowShellClass,
+  getPublicPageLayout,
   layoutUsesWrap,
   getEventLayout,
   hasEnabledEventLayout,
@@ -19,11 +21,14 @@ import {
   normalizeLayout,
   prefillEventLayout,
   prefillLayout,
+  preserveLayout,
   removeBlockFromLayout,
   resolveEventEditorLayout,
   sanitizeLayoutHref,
+  usesPublicBodyDesigner,
   wrapLabel,
 } from "./page-layout";
+import { contentFromFormData } from "./page-templates";
 
 function assert(condition: unknown, message: string) {
   if (!condition) throw new Error(message);
@@ -191,5 +196,49 @@ assert(flowShellClass(aboutWrapText, true) === "", "body copy wraps beside the p
 assert(flowShellClass(aboutHeading, true) === "fn-layout-clear", "Credentials clears so it shares the well edges");
 assert(flowShellClass({ type: "text", wrap: "full" }, true) === "", "full-wrap paragraphs still flow around the photo");
 assert(SITE_CONTENT_CLASS.includes("max-w-6xl") && SITE_CONTENT_CLASS.includes("px-4") && SITE_CONTENT_CLASS.includes("md:px-6"), "live layout well matches hero / Credentials gutters");
+
+const enabledHome = {
+  intro: "Custom intro",
+  mind: "Mind copy",
+  layout: {
+    enabled: true,
+    version: 1,
+    canvasHeight: 800,
+    blocks: [{ type: "text", wrap: "full", html: "<p>Broken canvas</p>" }],
+  },
+};
+const disabledHome = disablePublishedLayout(enabledHome);
+assert(disabledHome.intro === "Custom intro", "disabling home layout must keep template copy");
+assert(disabledHome.mind === "Mind copy", "disabling home layout must keep pillar copy");
+assert((disabledHome.layout as { enabled?: boolean }).enabled === false, "home sync/save must turn the canvas off");
+assert((disabledHome.layout as { blocks?: unknown[] }).blocks?.length === 1, "home layout blocks are not wiped");
+assert(!usesPublicBodyDesigner("home"), "public home never uses the freeform body designer");
+assert(usesPublicBodyDesigner("nutrition"), "Nourish Body can still use the designer");
+assert(usesPublicBodyDesigner("about"), "About wrap can still use the designer");
+assert(usesPublicBodyDesigner("events"), "events designer stays available");
+assert(getPublicPageLayout("home", JSON.stringify(enabledHome)) === null, "enabled home layout must not render on the public site");
+assert(getPublicPageLayout("nutrition", JSON.stringify(enabledHome))?.enabled === true, "other pages still read an enabled layout");
+
+const otherPage = { intro: "About", layout: enabledHome.layout };
+assert(preserveLayout(otherPage, { intro: "About next" }).layout === enabledHome.layout, "sync must not strip other pages' layouts");
+
+const homeForm = new FormData();
+homeForm.set("contentMode", "template");
+homeForm.set("sec_intro", "Saved intro");
+homeForm.set("sec_mind", "Mind");
+homeForm.set("sec_body", "Body");
+homeForm.set("sec_spirit", "Spirit");
+homeForm.set("sec_quote", "Quote");
+homeForm.set("sec_practitioner", "Anna");
+homeForm.set("sec_practitionerMore", "More");
+homeForm.set("sec_pillarsEyebrow", "Pillars");
+homeForm.set("sec_pillarsHeading", "Core");
+homeForm.set("sec_pillarsSub", "Sub");
+homeForm.set("sec_meetEyebrow", "Meet");
+homeForm.set("sec_meetHeading", "Anna");
+homeForm.set("layout", JSON.stringify(enabledHome.layout));
+const savedHome = JSON.parse(contentFromFormData("home", homeForm, JSON.stringify(enabledHome)));
+assert(savedHome.intro === "Saved intro", "home template fields still save");
+assert(savedHome.layout.enabled === false, "saving Home cannot publish a freeform canvas");
 
 console.log("page-layout caption/fit/button checks passed");

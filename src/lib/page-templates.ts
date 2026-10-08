@@ -1042,6 +1042,9 @@ export function contentFromFormData(slug: string, formData: FormData, existingRa
     const gallery = galleryFromFormData(formData);
     if (gallery) next.gallery = gallery;
   }
+  if (slug === "home" && next.layout && typeof next.layout === "object" && !Array.isArray(next.layout)) {
+    next.layout = { ...(next.layout as Record<string, unknown>), enabled: false };
+  }
   return JSON.stringify(next);
 }
 

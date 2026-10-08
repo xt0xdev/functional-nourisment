@@ -65,7 +65,7 @@ import {
   parsePageJson,
   retreatsContentDefaults,
 } from "../src/lib/page-templates";
-import { preserveLayout } from "../src/lib/page-layout";
+import { disablePublishedLayout, preserveLayout } from "../src/lib/page-layout";
 
 const prisma = new PrismaClient();
 
@@ -208,14 +208,16 @@ async function main() {
       data: {
         heroSubheading: isLegacyIntro(home.heroSubheading) ? HOME_INTRO : home.heroSubheading,
         content: JSON.stringify(
-          preserveLayout(
-            content,
-            fillMissingContent(
-              {
-                ...content,
-                intro: isLegacyIntro(intro) ? HOME_INTRO : intro,
-              },
-              defaultContentFor("home"),
+          disablePublishedLayout(
+            preserveLayout(
+              content,
+              fillMissingContent(
+                {
+                  ...content,
+                  intro: isLegacyIntro(intro) ? HOME_INTRO : intro,
+                },
+                defaultContentFor("home"),
+              ),
             ),
           ),
         ),

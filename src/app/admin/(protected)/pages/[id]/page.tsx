@@ -9,7 +9,7 @@ import { ExperiencesGalleryEditor } from "@/components/admin/ExperiencesGalleryE
 import { WellnessPartnersEditor } from "@/components/admin/WellnessPartnersEditor";
 import { ExperiencesGallery } from "@/components/site/ExperiencesGallery";
 import { HERO_DEFAULTS, getPageTemplate, resolveExperiencesContent } from "@/lib/page-templates";
-import { SITE_CONTENT_CLASS, getStoredLayout, resolveEditorLayout } from "@/lib/page-layout";
+import { SITE_CONTENT_CLASS, getStoredLayout, resolveEditorLayout, usesPublicBodyDesigner } from "@/lib/page-layout";
 import { resolveWellnessPartners } from "@/lib/wellness-partners";
 
 export default async function EditPage({ params }: { params: Promise<{ id: string }> }) {
@@ -19,6 +19,7 @@ export default async function EditPage({ params }: { params: Promise<{ id: strin
 
   const template = getPageTemplate(page.slug);
   const heroDefaults = HERO_DEFAULTS[page.slug];
+  const usesDesigner = usesPublicBodyDesigner(page.slug);
   const storedLayout = getStoredLayout(page.content);
   const editorLayout = resolveEditorLayout(page.slug, page.content);
   const heroHeading = page.heroHeading.trim() || heroDefaults?.heading || page.heroHeading;
@@ -34,8 +35,9 @@ export default async function EditPage({ params }: { params: Promise<{ id: strin
       </p>
       <h1 className="mt-2 font-serif text-4xl text-forest">Edit {page.title}</h1>
       <p className="mt-2 max-w-3xl text-sm text-muted">
-        Three separate areas: the hero banner, the body canvas, and any template widgets. Selecting a
-        body photo and pressing Delete removes it from the canvas and from the saved layout.
+        {page.slug === "home"
+          ? "The live homepage always uses the Ocean Deep template: hero, mind/body/spirit pillars, Meet Anna, service area, and CTA. Edit those fields below — the freeform body designer is not used on the public home."
+          : "Three separate areas: the hero banner, the body canvas, and any template widgets. Selecting a body photo and pressing Delete removes it from the canvas and from the saved layout."}
       </p>
       <form action={savePage} className="mt-6 grid gap-8">
         <input type="hidden" name="id" value={page.id} />
@@ -112,6 +114,7 @@ export default async function EditPage({ params }: { params: Promise<{ id: strin
           </label>
         </section>
 
+        {usesDesigner ? (
         <section className="grid gap-3">
           <PageLayoutDesigner
             initialLayout={editorLayout}
@@ -142,9 +145,19 @@ export default async function EditPage({ params }: { params: Promise<{ id: strin
             }
           />
         </section>
+        ) : null}
 
         {template ? (
-          page.slug === "about" ? (
+          page.slug === "home" ? (
+            <section className="grid gap-3 rounded-2xl bg-white p-5">
+              <h2 className="font-serif text-2xl text-forest">Template · Home</h2>
+              <p className="text-sm text-muted">
+                Intro, pillars, and Meet Anna copy for the published homepage. Saving never turns on a
+                freeform canvas for this page.
+              </p>
+              <PageTemplateFields slug={page.slug} content={page.content} />
+            </section>
+          ) : page.slug === "about" ? (
             <section className="grid gap-3 rounded-2xl bg-white p-5">
               <h2 className="font-serif text-2xl text-forest">Template widgets · About</h2>
               <p className="text-sm text-muted">
