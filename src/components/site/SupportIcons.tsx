@@ -16,13 +16,15 @@ function iconProps({ className, strokeWidth = 1.6 }: IconProps) {
   };
 }
 
-/** Clinical J-shaped stomach with esophagus — Gut & Digestive Health */
+/** Clinical J-shaped stomach outline with esophagus — Gut & Digestive Health */
 export function StomachIcon(props: IconProps) {
   return (
     <svg {...iconProps(props)}>
-      <path d="M9.6 2.2v5.4" />
-      <path d="M9.6 7.6c-3.85.2-6.2 2.7-6.25 6.05C3.25 18.3 6.7 22.2 11.9 22.3c3.55.08 6.05-2.3 5.95-5.4-.08-2.15-1.55-3.2-1.2-5.75.3-2 1.85-3.15 4.05-3" />
-      <path d="M10 9.2c1.2 2.3 1.3 4.9.05 7.1" />
+      <path d="M9.5 2.2v5" />
+      <path d="M11.6 2.2v4.3" />
+      <path d="M9.5 7.2c-3.7.4-5.6 3.1-5.45 6.6.2 4.4 3.8 7.4 8.2 7.15 3.4-.2 5.9-2.8 5.7-5.8" />
+      <path d="M11.6 6.5c1.35 2.2 1.5 5.4.35 8.1-.75 1.8.35 3.15 2.55 2.85 1.7-.25 2.85-1.5 3.55-2.75" />
+      <path d="M18.05 14.7c1.35-1.15 2.65-2.5 2.85-4.4" />
     </svg>
   );
 }
