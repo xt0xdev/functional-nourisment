@@ -141,10 +141,17 @@ body {
   shape-outside: margin-box;
 }
 
-.fn-layout-full {
+.fn-layout-full,
+.fn-layout-clear {
   clear: both;
+  display: block;
   width: 100%;
   margin: 0 0 1.25rem;
+}
+
+.fn-layout-clear > a.btn-outline,
+.fn-layout-clear > a.btn-primary {
+  display: inline-flex;
 }
 
 .fn-layout-canvas {

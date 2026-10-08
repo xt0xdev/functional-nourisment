@@ -602,6 +602,7 @@ export function ensureAboutAmazonButton(layout: PageLayout, raw?: string | null)
     x: 0,
     w: 36,
     h: 64,
+    z: nextBlockZ(layout.blocks),
   };
   const blocks = [...layout.blocks, button];
   return {
@@ -666,7 +667,7 @@ export function createBlankBlock(type: LayoutBlockType, y: number): LayoutBlock 
       w: 40,
       h: 240,
       z: 1,
-      wrap: "left",
+      wrap: "none",
       src: "",
       alt: "",
       caption: "",
@@ -716,17 +717,47 @@ export function nextBlockY(blocks: LayoutBlock[]) {
   return blocks.reduce((max, block) => Math.max(max, block.y + block.h), 0) + 20;
 }
 
+export const WRAP_OPTIONS: { value: LayoutWrap; label: string; hint: string }[] = [
+  { value: "none", label: "None", hint: "Place exactly — no text wrapping" },
+  { value: "left", label: "Left", hint: "Image on the left, text wraps on the right" },
+  { value: "right", label: "Right", hint: "Image on the right, text wraps on the left" },
+  { value: "full", label: "Full", hint: "Full width, stacked above or below other blocks" },
+];
+
 export function wrapLabel(wrap: LayoutWrap) {
-  switch (wrap) {
-    case "left":
-      return "Wrap text right";
-    case "right":
-      return "Wrap text left";
-    case "full":
-      return "Full width";
+  return WRAP_OPTIONS.find((option) => option.value === wrap)?.label || "None";
+}
+
+export function wrapHint(wrap: LayoutWrap) {
+  return WRAP_OPTIONS.find((option) => option.value === wrap)?.hint || WRAP_OPTIONS[0].hint;
+}
+
+export function blockTypeLabel(type: LayoutBlockType) {
+  switch (type) {
+    case "heading":
+      return "Heading";
+    case "quote":
+      return "Quote";
+    case "image":
+      return "Image";
+    case "button":
+      return "Button";
     default:
-      return "Freeform";
+      return "Text";
   }
+}
+
+export function nextBlockZ(blocks: LayoutBlock[]) {
+  return blocks.reduce((max, block) => Math.max(max, block.z), 0) + 1;
+}
+
+export function removeBlockFromLayout(layout: PageLayout, id: string): PageLayout {
+  const blocks = layout.blocks.filter((block) => block.id !== id);
+  return {
+    ...layout,
+    blocks,
+    canvasHeight: measureCanvasHeight(blocks, layout.canvasHeight),
+  };
 }
 
 export function applyWrapPreset(block: LayoutBlock, wrap: LayoutWrap): LayoutBlock {
@@ -734,5 +765,12 @@ export function applyWrapPreset(block: LayoutBlock, wrap: LayoutWrap): LayoutBlo
   if (wrap === "right") return { ...block, wrap, x: Math.max(52, 100 - (block.w || 40)), w: Math.min(block.w || 40, 48) };
   if (wrap === "full") return { ...block, wrap, x: 0, w: 100 };
   return { ...block, wrap };
+}
+
+/** Buttons and freeform/full blocks start on a new line so floated photos cannot sit under them. */
+export function flowShellClass(block: Pick<LayoutBlock, "type" | "wrap">) {
+  if (block.type === "button") return "fn-layout-clear";
+  if (block.wrap === "full" || block.wrap === "none") return "fn-layout-clear";
+  return "";
 }
 

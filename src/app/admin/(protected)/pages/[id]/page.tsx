@@ -33,48 +33,57 @@ export default async function EditPage({ params }: { params: Promise<{ id: strin
         </Link>
       </p>
       <h1 className="mt-2 font-serif text-4xl text-forest">Edit {page.title}</h1>
-      <p className="mt-2 text-sm text-muted">
-        Hero, header, and footer stay on the site template. Use the body designer to place text and
-        images, wrap copy around photos, and drag or resize blocks.{" "}
-        {template
-          ? page.slug === "experiences"
-            ? "Intro and experience cards stay in Template sections. The bottom workshop gallery is managed below and always appears on the public page, including when the body designer is on."
-            : page.slug === "collaborative-care"
-              ? "Intro copy stays editable below. Wellness partner cards are managed in the Wellness partners section and always appear on the public page, including when the body designer is on."
-              : "Card grids, forms, calendars, and listings under Template sections stay as designed widgets."
-          : `Public URL: /${page.slug}. Add this URL to the menu under Navigation.`}
+      <p className="mt-2 max-w-3xl text-sm text-muted">
+        Three separate areas: the hero banner, the body canvas, and any template widgets. Selecting a
+        body photo and pressing Delete removes it from the canvas and from the saved layout.
       </p>
-      <form action={savePage} className="mt-6 grid gap-6">
+      <form action={savePage} className="mt-6 grid gap-8">
         <input type="hidden" name="id" value={page.id} />
-        <div className="grid gap-4 rounded-2xl bg-white p-5">
-          <label className="grid gap-1 text-sm">
-            Title
-            <input name="title" defaultValue={page.title} className="rounded-xl border border-forest/15 bg-white px-3 py-2" />
-          </label>
-          <label className="grid gap-1 text-sm">
-            URL slug
-            <input
-              name="slug"
-              defaultValue={page.slug}
-              readOnly={page.system}
-              className="rounded-xl border border-forest/15 bg-white px-3 py-2"
-            />
-          </label>
-          <label className="grid gap-1 text-sm">
-            SEO title
-            <input name="metaTitle" defaultValue={page.metaTitle} className="rounded-xl border border-forest/15 bg-white px-3 py-2" />
-          </label>
-          <label className="grid gap-1 text-sm">
-            SEO description
-            <textarea name="metaDescription" defaultValue={page.metaDescription} rows={3} className="rounded-xl border border-forest/15 bg-white px-3 py-2" />
-          </label>
-        </div>
 
-        <fieldset className="grid gap-4 rounded-2xl bg-white p-5">
-          <legend className="px-1 font-serif text-2xl text-forest">Hero · locked template</legend>
-          <p className="text-sm text-muted">
-            The hero shell is not movable in the designer. Edit the heading, subheading, and image here.
-          </p>
+        <section className="grid gap-4 rounded-2xl bg-white p-5">
+          <h2 className="font-serif text-2xl text-forest">Page</h2>
+          <div className="grid gap-4 md:grid-cols-2">
+            <label className="grid gap-1 text-sm">
+              Title
+              <input name="title" defaultValue={page.title} className="rounded-xl border border-forest/15 bg-white px-3 py-2" />
+            </label>
+            <label className="grid gap-1 text-sm">
+              URL slug
+              <input
+                name="slug"
+                defaultValue={page.slug}
+                readOnly={page.system}
+                className="rounded-xl border border-forest/15 bg-white px-3 py-2"
+              />
+            </label>
+          </div>
+          <label className="flex items-center gap-2 text-sm">
+            <input type="checkbox" name="published" defaultChecked={page.published} />
+            Published
+          </label>
+          <details className="rounded-xl bg-sand/60 px-4 py-3">
+            <summary className="cursor-pointer text-sm font-medium text-forest">SEO</summary>
+            <div className="mt-3 grid gap-3">
+              <label className="grid gap-1 text-sm">
+                SEO title
+                <input name="metaTitle" defaultValue={page.metaTitle} className="rounded-xl border border-forest/15 bg-white px-3 py-2" />
+              </label>
+              <label className="grid gap-1 text-sm">
+                SEO description
+                <textarea name="metaDescription" defaultValue={page.metaDescription} rows={3} className="rounded-xl border border-forest/15 bg-white px-3 py-2" />
+              </label>
+            </div>
+          </details>
+        </section>
+
+        <section className="grid gap-4 rounded-2xl bg-white p-5">
+          <div>
+            <h2 className="font-serif text-2xl text-forest">Hero banner</h2>
+            <p className="mt-1 text-sm text-muted">
+              The page banner at the top of the live site. Changing this photo does not add or replace
+              images on the body canvas below.
+            </p>
+          </div>
           <label className="grid gap-1 text-sm">
             Hero heading
             <input name="heroHeading" defaultValue={heroHeading} className="rounded-xl border border-forest/15 bg-white px-3 py-2" />
@@ -89,88 +98,92 @@ export default async function EditPage({ params }: { params: Promise<{ id: strin
             />
           </label>
           <MediaPicker
+            variant="hero"
             label="Hero image"
             name="heroImage"
             defaultUrl={page.heroImage}
-            help="Pick from the media library or paste a URL in the library dialog."
+            changeLabel="Change banner"
+            removeLabel="Remove banner"
+            help="Pick from the media library or paste a URL. This is the banner only — it is not inserted into the body designer."
           />
           <label className="grid gap-1 text-sm">
             Hero image alt text
             <input name="heroImageAlt" defaultValue={page.heroImageAlt} className="rounded-xl border border-forest/15 bg-white px-3 py-2" />
           </label>
-        </fieldset>
+        </section>
 
-        <PageLayoutDesigner
-          initialLayout={editorLayout}
-          pageTitle={page.title}
-          heroHeading={heroHeading}
-          heroSubheading={heroSubheading}
-          heroImage={page.heroImage}
-          wasPublishedLayout={Boolean(storedLayout?.enabled && storedLayout.blocks.length)}
-          lockedAfterBody={
-            experiencesContent ? (
-              <div className="border-t border-dashed border-teal/30 bg-teal/[0.04] px-5 py-4">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-teal">Workshop gallery · locked</p>
-                <p className="mt-1 text-xs text-muted">
-                  Always shown on the public page. Edit photos in Workshop gallery below.
-                </p>
-                <div className="mt-3">
-                  <ExperiencesGallery
-                    eyebrow={experiencesContent.galleryEyebrow}
-                    heading={experiencesContent.galleryHeading}
-                    items={experiencesContent.gallery}
-                    compact
-                  />
+        <section className="grid gap-3">
+          <PageLayoutDesigner
+            initialLayout={editorLayout}
+            pageTitle={page.title}
+            heroHeading={heroHeading}
+            heroSubheading={heroSubheading}
+            heroImage={page.heroImage}
+            wasPublishedLayout={Boolean(storedLayout?.enabled && storedLayout.blocks.length)}
+            lockedAfterBody={
+              experiencesContent ? (
+                <div className="border-t border-dashed border-teal/30 bg-teal/[0.04] px-5 py-4">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-teal">Workshop gallery · locked widget</p>
+                  <p className="mt-1 text-xs text-muted">
+                    Always shown on the public page. Edit photos in Template widgets below.
+                  </p>
+                  <div className="mt-3">
+                    <ExperiencesGallery
+                      eyebrow={experiencesContent.galleryEyebrow}
+                      heading={experiencesContent.galleryHeading}
+                      items={experiencesContent.gallery}
+                      compact
+                    />
+                  </div>
                 </div>
-              </div>
-            ) : undefined
-          }
-        />
+              ) : undefined
+            }
+          />
+        </section>
 
         {template ? (
           page.slug === "about" ? (
-            <div className="rounded-2xl bg-white p-5">
-              <h2 className="font-serif text-2xl text-forest">About copy & Amazon button</h2>
-              <p className="mt-2 text-sm text-muted">
-                Edit the biography here, and set whether the Buy on Amazon button is shown, its label,
-                and its URL. When the visual layout is on, add or drag a button block on the canvas to
-                place it. These fields still control the template button if you turn the layout off.
+            <section className="grid gap-3 rounded-2xl bg-white p-5">
+              <h2 className="font-serif text-2xl text-forest">Template widgets · About</h2>
+              <p className="text-sm text-muted">
+                Biography and the Amazon button fields used when the body layout is off. On the live
+                designed layout, delete or move the button block on the canvas to change placement.
               </p>
-              <div className="mt-4">
-                <PageTemplateFields slug={page.slug} content={page.content} />
-              </div>
-            </div>
+              <PageTemplateFields slug={page.slug} content={page.content} />
+            </section>
           ) : page.slug === "experiences" ? (
-            <>
+            <section className="grid gap-6">
               <ExperiencesGalleryEditor items={experiencesContent?.gallery || []} />
               <details className="rounded-2xl bg-white p-5">
                 <summary className="cursor-pointer font-serif text-2xl text-forest">
-                  Template sections
+                  Template widgets
                 </summary>
                 <p className="mt-2 text-sm text-muted">
-                  These labeled fields still power intro copy, experience cards, and the gallery
-                  heading. They stay available if you turn the visual layout off.
+                  Intro copy, experience cards, and the gallery heading. They stay available if you
+                  turn the visual layout off.
                 </p>
                 <div className="mt-4">
                   <PageTemplateFields slug={page.slug} content={page.content} />
                 </div>
               </details>
-            </>
+            </section>
           ) : page.slug === "collaborative-care" ? (
-            <>
+            <section className="grid gap-6">
               <div className="rounded-2xl bg-white p-5">
-                <PageTemplateFields slug={page.slug} content={page.content} />
+                <h2 className="font-serif text-2xl text-forest">Template widgets · Collaborative Care</h2>
+                <div className="mt-4">
+                  <PageTemplateFields slug={page.slug} content={page.content} />
+                </div>
               </div>
               <WellnessPartnersEditor partners={resolveWellnessPartners(page.content)} />
-            </>
+            </section>
           ) : (
             <details className="rounded-2xl bg-white p-5">
               <summary className="cursor-pointer font-serif text-2xl text-forest">
-                Template sections
+                Template widgets
               </summary>
               <p className="mt-2 text-sm text-muted">
-                These labeled fields still power cards, forms, and listings that are not freeform body
-                blocks. They stay available if you turn the visual layout off.
+                Card grids, forms, calendars, and listings that are not freeform body blocks.
               </p>
               <div className="mt-4">
                 <PageTemplateFields slug={page.slug} content={page.content} />
@@ -180,10 +193,7 @@ export default async function EditPage({ params }: { params: Promise<{ id: strin
         ) : (
           <input type="hidden" name="content" value={page.content} />
         )}
-        <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" name="published" defaultChecked={page.published} />
-          Published
-        </label>
+
         <button className="w-fit rounded-full bg-forest px-6 py-3 text-cream">Save page</button>
       </form>
     </div>

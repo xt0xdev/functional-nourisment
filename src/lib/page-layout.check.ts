@@ -1,18 +1,24 @@
 import { AMAZON_BOOK_LABEL, AMAZON_BOOK_URL } from "./page-copy";
 import {
+  applyWrapPreset,
   buttonStyle,
+  createBlankBlock,
   ensureAboutAmazonButton,
+  flowShellClass,
   getEventLayout,
   hasEnabledEventLayout,
   imageCaption,
   imageFit,
   layoutButtonLabel,
+  nextBlockZ,
   normalizeBlock,
   normalizeLayout,
   prefillEventLayout,
   prefillLayout,
+  removeBlockFromLayout,
   resolveEventEditorLayout,
   sanitizeLayoutHref,
+  wrapLabel,
 } from "./page-layout";
 
 function assert(condition: unknown, message: string) {
@@ -134,5 +140,38 @@ const resolvedStored = resolveEventEditorLayout(storedEvent, { description: "ign
 assert(resolvedStored.blocks.some((block) => (block.html || "").includes("Designed copy")), "saved event layouts win over prefill");
 assert(!hasEnabledEventLayout(null), "events without layout JSON keep the current description fallback");
 assert(!hasEnabledEventLayout("{}"), "empty objects are not live event layouts");
+
+assert(wrapLabel("none") === "None", "wrap none label");
+assert(wrapLabel("left") === "Left", "wrap left label");
+assert(wrapLabel("right") === "Right", "wrap right label");
+assert(wrapLabel("full") === "Full", "wrap full label");
+
+const blankImage = createBlankBlock("image", 20);
+assert(blankImage.wrap === "none", "new body images default to None so they do not float under buttons");
+const wrappedLeft = applyWrapPreset(blankImage, "left");
+assert(wrappedLeft.wrap === "left" && wrappedLeft.x === 0 && wrappedLeft.w <= 48, "Left wrap must move the image to the left on the canvas");
+const wrappedRight = applyWrapPreset(blankImage, "right");
+assert(wrappedRight.wrap === "right" && wrappedRight.x >= 52, "Right wrap must move the image to the right on the canvas");
+const wrappedFull = applyWrapPreset(blankImage, "full");
+assert(wrappedFull.wrap === "full" && wrappedFull.x === 0 && wrappedFull.w === 100, "Full wrap must span the canvas");
+const wrappedNone = applyWrapPreset(wrappedFull, "none");
+assert(wrappedNone.wrap === "none" && wrappedNone.w === 100, "None keeps the current size after leaving Full");
+
+const withGhost = normalizeLayout({
+  enabled: true,
+  blocks: [
+    { id: "keep", type: "button", label: "Buy on Amazon", href: AMAZON_BOOK_URL, wrap: "full" },
+    { id: "ghost", type: "image", src: "https://example.com/child.jpg", wrap: "left", w: 40, h: 240 },
+  ],
+});
+assert(withGhost && withGhost.blocks.length === 2, "leftover images stay in an enabled layout");
+const deleted = removeBlockFromLayout(withGhost!, "ghost");
+assert(deleted.blocks.length === 1 && deleted.blocks[0].id === "keep", "Delete must drop the selected image from the saved layout");
+assert(!deleted.blocks.some((block) => block.id === "ghost"), "deleted leftover images cannot remain as ghosts");
+assert(nextBlockZ(deleted.blocks) > deleted.blocks[0].z, "new blocks stack above existing ones");
+
+assert(flowShellClass({ type: "button", wrap: "full" }) === "fn-layout-clear", "Amazon-style buttons clear floats so photos cannot sit under them");
+assert(flowShellClass({ type: "image", wrap: "none" }) === "fn-layout-clear", "None-wrap images start on their own line");
+assert(flowShellClass({ type: "image", wrap: "left" }) === "", "Left wrap still floats");
 
 console.log("page-layout caption/fit/button checks passed");

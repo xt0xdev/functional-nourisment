@@ -3,6 +3,7 @@ import {
   CANVAS_WIDTH,
   buttonLinkProps,
   buttonStyle,
+  flowShellClass,
   imageCaption,
   imageFit,
   layoutButtonClass,
@@ -95,7 +96,7 @@ function FlowImage({ block }: { block: LayoutBlock }) {
       ? "fn-layout-float-left"
       : block.wrap === "right"
         ? "fn-layout-float-right"
-        : "fn-layout-full";
+        : "fn-layout-clear";
   const fit = imageFit(block);
   const caption = imageCaption(block);
   return (
@@ -138,24 +139,30 @@ function FlowImage({ block }: { block: LayoutBlock }) {
 
 function FlowBlock({ block }: { block: LayoutBlock }) {
   if (block.type === "image") return <FlowImage block={block} />;
+  const shell = flowShellClass(block);
   if (block.type === "button") {
-    if (block.wrap === "none") {
-      return (
-        <div style={{ width: `${Math.min(100, Math.max(20, block.w))}%`, marginLeft: `${block.x}%` }}>
-          <BlockButton block={block} />
-        </div>
-      );
-    }
-    return <BlockButton block={block} />;
+    const style =
+      block.wrap === "none"
+        ? { width: `${Math.min(100, Math.max(20, block.w))}%`, marginLeft: `${block.x}%` }
+        : undefined;
+    return (
+      <div className={shell} style={style}>
+        <BlockButton block={block} />
+      </div>
+    );
   }
   if (block.wrap === "none") {
     return (
-      <div style={{ width: `${Math.min(100, Math.max(20, block.w))}%`, marginLeft: `${block.x}%` }}>
+      <div className={shell} style={{ width: `${Math.min(100, Math.max(20, block.w))}%`, marginLeft: `${block.x}%` }}>
         <TextualBlock block={block} />
       </div>
     );
   }
-  return <TextualBlock block={block} />;
+  return (
+    <div className={shell}>
+      <TextualBlock block={block} />
+    </div>
+  );
 }
 
 function FreeBlock({ block, canvasHeight }: { block: LayoutBlock; canvasHeight: number }) {
@@ -164,7 +171,7 @@ function FreeBlock({ block, canvasHeight }: { block: LayoutBlock; canvasHeight: 
     top: `${(block.y / canvasHeight) * 100}%`,
     width: `${block.w}%`,
     height: `${(block.h / canvasHeight) * 100}%`,
-    zIndex: block.z,
+    zIndex: block.type === "button" ? Math.max(block.z, 8) : block.z,
   };
 
   if (block.type === "button") {

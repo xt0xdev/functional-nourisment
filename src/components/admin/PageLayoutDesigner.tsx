@@ -5,7 +5,9 @@ import { MediaPicker } from "./MediaPicker";
 import { LayoutDocument } from "@/components/site/PageLayoutBody";
 import {
   CANVAS_WIDTH,
+  WRAP_OPTIONS,
   applyWrapPreset,
+  blockTypeLabel,
   buttonStyle,
   createBlankBlock,
   imageFit,
@@ -13,12 +15,15 @@ import {
   layoutButtonLabel,
   measureCanvasHeight,
   nextBlockY,
+  nextBlockZ,
+  removeBlockFromLayout,
   type LayoutBlock,
   type LayoutBlockType,
   type LayoutButtonStyle,
   type LayoutImageFit,
   type LayoutWrap,
   type PageLayout,
+  wrapHint,
   wrapLabel,
 } from "@/lib/page-layout";
 import {
@@ -64,9 +69,9 @@ export function PageLayoutDesigner({
   heroSubheading,
   heroImage,
   wasPublishedLayout,
-  title = "Page body designer",
-  help = "Drag text, images, and buttons in the body area. Header, navigation, hero, and footer stay locked to the site template. Wrap left or right so published text flows around a photo. On phones, blocks stack in top-to-bottom order. Nearby edges and centers snap while you drag.",
-  bodyLabel = "Editable page body",
+  title = "Page body",
+  help = "Select a block, then use Delete or Backspace — or the Delete button — to remove it. Wrap (None / Left / Right / Full) is in the inspector when a photo is selected. The hero banner above is edited in the Hero section, not on this canvas.",
+  bodyLabel = "Body canvas",
   enabledLabel = "Use this layout on the live page",
   lockedAfterHero,
   lockedAfterBody,
@@ -82,11 +87,19 @@ export function PageLayoutDesigner({
   const canvasRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<DragState | null>(null);
   const layoutRef = useRef(layout);
+  const selectedIdRef = useRef(selectedId);
+  const editingIdRef = useRef(editingId);
   layoutRef.current = layout;
+  selectedIdRef.current = selectedId;
+  editingIdRef.current = editingId;
 
   const selected = layout.blocks.find((block) => block.id === selectedId) || null;
   const scale = canvasWidth / CANVAS_WIDTH;
   const canvasHeight = Math.max(layout.canvasHeight, measureCanvasHeight(layout.blocks));
+  const orderedBlocks = useMemo(
+    () => [...layout.blocks].sort((a, b) => a.y - b.y || a.x - b.x || a.z - b.z),
+    [layout.blocks],
+  );
 
   useEffect(() => {
     const node = canvasRef.current;
@@ -106,9 +119,10 @@ export function PageLayoutDesigner({
   }
 
   function updateBlock(id: string, patch: Partial<LayoutBlock> | ((block: LayoutBlock) => LayoutBlock)) {
+    const current = layoutRef.current;
     commit({
-      ...layout,
-      blocks: layout.blocks.map((block) => {
+      ...current,
+      blocks: current.blocks.map((block) => {
         if (block.id !== id) return block;
         return typeof patch === "function" ? patch(block) : { ...block, ...patch };
       }),
@@ -116,18 +130,36 @@ export function PageLayoutDesigner({
   }
 
   function addBlock(type: LayoutBlockType) {
-    const block = createBlankBlock(type, nextBlockY(layout.blocks));
-    commit({ ...layout, blocks: [...layout.blocks, block] });
+    const current = layoutRef.current;
+    const block = {
+      ...createBlankBlock(type, nextBlockY(current.blocks)),
+      z: nextBlockZ(current.blocks),
+    };
+    commit({ ...current, blocks: [...current.blocks, block] });
     setSelectedId(block.id);
     if (type === "image") setPicker(block.id);
     if (type !== "image" && type !== "button") setEditingId(block.id);
   }
 
-  function removeSelected() {
-    if (!selectedId) return;
-    commit({ ...layout, blocks: layout.blocks.filter((block) => block.id !== selectedId) });
-    setSelectedId(null);
+  function removeBlock(id: string | null) {
+    if (!id) return;
+    const current = layoutRef.current;
+    if (!current.blocks.some((block) => block.id === id)) return;
+    commit(removeBlockFromLayout(current, id));
+    setSelectedId((cur) => (cur === id ? null : cur));
+    setEditingId((cur) => (cur === id ? null : cur));
+    setPicker((cur) => (cur === id ? null : cur));
+  }
+
+  function selectBlock(id: string) {
+    setSelectedId(id);
     setEditingId(null);
+    const current = layoutRef.current;
+    const maxZ = current.blocks.reduce((max, block) => Math.max(max, block.z), 0);
+    const block = current.blocks.find((item) => item.id === id);
+    if (block && block.z < maxZ) {
+      updateBlock(id, { z: maxZ + 1 });
+    }
   }
 
   function shiftLayer(direction: "front" | "back") {
@@ -137,14 +169,28 @@ export function PageLayoutDesigner({
     updateBlock(selected.id, { z: nextZ });
   }
 
+  useEffect(() => {
+    function onKey(event: KeyboardEvent) {
+      if (event.key !== "Delete" && event.key !== "Backspace") return;
+      const target = event.target as HTMLElement | null;
+      if (target?.closest("input, textarea, select, [contenteditable='true']")) return;
+      if (editingIdRef.current) return;
+      const id = selectedIdRef.current;
+      if (!id) return;
+      event.preventDefault();
+      removeBlock(id);
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
   function onPointerDown(event: ReactPointerEvent, id: string, handle?: ResizeHandle) {
     if (editingId === id && !handle) return;
     const block = layout.blocks.find((item) => item.id === id);
     if (!block) return;
     event.preventDefault();
     event.stopPropagation();
-    setSelectedId(id);
-    setEditingId(null);
+    selectBlock(id);
     setInteractingId(id);
     const drag: DragState = {
       id,
@@ -184,8 +230,9 @@ export function PageLayoutDesigner({
   }
 
   function setWrap(wrap: LayoutWrap) {
-    if (!selected) return;
-    updateBlock(selected.id, applyWrapPreset(selected, wrap));
+    const block = layoutRef.current.blocks.find((item) => item.id === selectedIdRef.current);
+    if (!block) return;
+    updateBlock(block.id, applyWrapPreset(block, wrap));
   }
 
   const payload = useMemo(() => JSON.stringify(layout), [layout]);
@@ -202,7 +249,7 @@ export function PageLayoutDesigner({
           <input
             type="checkbox"
             checked={layout.enabled}
-            onChange={(event) => commit({ ...layout, enabled: event.target.checked })}
+            onChange={(event) => commit({ ...layout, enabled: event.target.checked }, false)}
           />
           {enabledLabel}
         </label>
@@ -210,13 +257,13 @@ export function PageLayoutDesigner({
 
       {!layout.enabled ? (
         <p className="rounded-2xl bg-mist px-4 py-3 text-sm text-muted">
-          The live page still uses the current template body. Change the layout or turn on “{enabledLabel}”
+          The live page still uses the template body. Edit the canvas or turn on “{enabledLabel}”
           {wasPublishedLayout ? "" : " — this canvas is prefilled from the published copy so it is not blank"}.
         </p>
       ) : (
         <p className="rounded-2xl bg-white px-4 py-3 text-sm text-muted">
-          Saving publishes this body layout. Site chrome (header, hero, footer, forms, calendars, and card
-          widgets) stays template-controlled.
+          Saving publishes this body layout. Header, hero banner, footer, and template widgets stay
+          outside the canvas.
         </p>
       )}
 
@@ -231,7 +278,7 @@ export function PageLayoutDesigner({
           Add quote
         </button>
         <button type="button" className="rounded-full bg-forest px-4 py-2 text-sm text-cream" onClick={() => addBlock("image")}>
-          Add image
+          Add body image
         </button>
         <button type="button" className="rounded-full bg-forest px-4 py-2 text-sm text-cream" onClick={() => addBlock("button")}>
           Add button
@@ -250,6 +297,15 @@ export function PageLayoutDesigner({
         >
           Published preview
         </button>
+        {selected ? (
+          <button
+            type="button"
+            className="rounded-full bg-clay px-4 py-2 text-sm text-cream"
+            onClick={() => removeBlock(selected.id)}
+          >
+            Delete selected
+          </button>
+        ) : null}
       </div>
 
       <div className="overflow-hidden rounded-3xl border border-forest/10 bg-sand">
@@ -262,9 +318,10 @@ export function PageLayoutDesigner({
         </div>
         <div className="pointer-events-none select-none grid gap-4 bg-background px-5 py-6 md:grid-cols-2">
           <div>
-            <p className="text-[10px] uppercase tracking-[0.2em] text-teal">Hero · locked</p>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-teal">Hero banner · locked here</p>
             <p className="mt-2 font-serif text-3xl text-primary">{heroHeading || pageTitle}</p>
             {heroSubheading ? <p className="mt-2 text-sm text-muted">{heroSubheading}</p> : null}
+            <p className="mt-3 text-xs text-muted">Change the banner photo in the Hero banner section above.</p>
           </div>
           {heroImage ? (
             <div className="relative aspect-[16/9] overflow-hidden rounded-2xl bg-mist">
@@ -273,7 +330,7 @@ export function PageLayoutDesigner({
             </div>
           ) : (
             <div className="flex aspect-[16/9] items-center justify-center rounded-2xl bg-mist text-sm text-muted">
-              Hero image
+              No hero banner
             </div>
           )}
         </div>
@@ -288,7 +345,8 @@ export function PageLayoutDesigner({
           ) : (
             <div
               ref={canvasRef}
-              className="fn-layout-canvas mx-auto max-w-[960px] overflow-visible rounded-2xl bg-background"
+              tabIndex={0}
+              className="fn-layout-canvas mx-auto max-w-[960px] overflow-visible rounded-2xl bg-background outline-none"
               style={{ height: canvasHeight * scale, minHeight: 360 }}
               onClick={() => {
                 setSelectedId(null);
@@ -302,6 +360,7 @@ export function PageLayoutDesigner({
                 return (
                   <div
                     key={block.id}
+                    data-layout-block={block.id}
                     className={`absolute ${active ? "cursor-move ring-2 ring-teal" : "cursor-move hover:ring-1 hover:ring-teal/40"}`}
                     style={{
                       left: `${block.x}%`,
@@ -315,7 +374,7 @@ export function PageLayoutDesigner({
                     }}
                     onClick={(event) => {
                       event.stopPropagation();
-                      setSelectedId(block.id);
+                      selectBlock(block.id);
                     }}
                     onDoubleClick={(event) => {
                       event.stopPropagation();
@@ -332,8 +391,23 @@ export function PageLayoutDesigner({
                     </div>
                     {block.type === "image" ? (
                       <span className="pointer-events-none absolute left-2 top-2 rounded-full bg-white/90 px-2 py-0.5 text-[10px] uppercase tracking-wide text-forest">
-                        {wrapLabel(block.wrap)}
+                        Wrap: {wrapLabel(block.wrap)}
                       </span>
+                    ) : null}
+                    {active ? (
+                      <div
+                        className="absolute -top-10 right-0 z-[60] flex gap-1"
+                        onPointerDown={(event) => event.stopPropagation()}
+                        onClick={(event) => event.stopPropagation()}
+                      >
+                        <button
+                          type="button"
+                          className="rounded-full bg-forest px-3 py-1 text-[11px] text-cream shadow"
+                          onClick={() => removeBlock(block.id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
                     ) : null}
                     {active
                       ? HANDLES.map((handle) => (
@@ -371,116 +445,166 @@ export function PageLayoutDesigner({
         </div>
       </div>
 
-      {selected ? (
-        <div className="grid gap-3 rounded-2xl bg-white p-5 md:grid-cols-[1fr_1fr_auto]">
-          <label className="grid gap-1 text-sm">
-            Placement
-            <select
-              value={selected.wrap}
-              onChange={(event) => setWrap(event.target.value as LayoutWrap)}
-              className="rounded-xl border border-forest/15 px-3 py-2"
-            >
-              <option value="none">Freeform — place exactly</option>
-              <option value="left">Image left, wrap text around</option>
-              <option value="right">Image right, wrap text around</option>
-              <option value="full">Full width, stacked</option>
-            </select>
-          </label>
-          {selected.type === "image" ? (
-            <label className="grid gap-1 text-sm">
-              Image alt text
-              <input
-                value={selected.alt || ""}
-                onChange={(event) => updateBlock(selected.id, { alt: event.target.value })}
-                className="rounded-xl border border-forest/15 px-3 py-2"
-                placeholder="For screen readers only"
-              />
-            </label>
-          ) : selected.type === "button" ? (
-            <label className="grid gap-1 text-sm">
-              Button label
-              <input
-                value={selected.label || ""}
-                onChange={(event) => updateBlock(selected.id, { label: event.target.value })}
-                className="rounded-xl border border-forest/15 px-3 py-2"
-                placeholder="Buy on Amazon"
-              />
-            </label>
-          ) : (
-            <p className="self-end text-sm text-muted">
-              Double-click the box to edit text. Drag the edge handles to shrink or grow after any resize.
-            </p>
-          )}
-          <div className="flex flex-wrap items-end gap-2">
-            {selected.type === "image" ? (
-              <button type="button" className="rounded-full bg-forest px-4 py-2 text-sm text-cream" onClick={() => setPicker(selected.id)}>
-                Change image
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
+        {selected ? (
+          <div className="grid gap-3 rounded-2xl bg-white p-5 md:grid-cols-2">
+            <div className="md:col-span-2 flex flex-wrap items-center justify-between gap-2">
+              <p className="font-serif text-xl text-forest">Selected: {blockTypeLabel(selected.type)}</p>
+              <button
+                type="button"
+                className="rounded-full bg-clay px-4 py-2 text-sm text-cream"
+                onClick={() => removeBlock(selected.id)}
+              >
+                Delete
               </button>
+            </div>
+            <label className="grid gap-1 text-sm">
+              Wrap
+              <select
+                value={selected.wrap}
+                onChange={(event) => setWrap(event.target.value as LayoutWrap)}
+                className="rounded-xl border border-forest/15 px-3 py-2"
+              >
+                {WRAP_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label} — {option.hint}
+                  </option>
+                ))}
+              </select>
+              <span className="text-xs text-muted">{wrapHint(selected.wrap)}</span>
+            </label>
+            {selected.type === "image" ? (
+              <label className="grid gap-1 text-sm">
+                Image alt text
+                <input
+                  value={selected.alt || ""}
+                  onChange={(event) => updateBlock(selected.id, { alt: event.target.value })}
+                  className="rounded-xl border border-forest/15 px-3 py-2"
+                  placeholder="For screen readers only"
+                />
+              </label>
+            ) : selected.type === "button" ? (
+              <label className="grid gap-1 text-sm">
+                Button label
+                <input
+                  value={selected.label || ""}
+                  onChange={(event) => updateBlock(selected.id, { label: event.target.value })}
+                  className="rounded-xl border border-forest/15 px-3 py-2"
+                  placeholder="Buy on Amazon"
+                />
+              </label>
+            ) : (
+              <p className="self-end text-sm text-muted">
+                Double-click the box to edit text. Drag the edge handles to shrink or grow after any resize.
+              </p>
+            )}
+            <div className="flex flex-wrap items-end gap-2 md:col-span-2">
+              {selected.type === "image" ? (
+                <button type="button" className="rounded-full bg-forest px-4 py-2 text-sm text-cream" onClick={() => setPicker(selected.id)}>
+                  Replace body image
+                </button>
+              ) : null}
+              <button type="button" className="rounded-full bg-mist px-4 py-2 text-sm text-forest" onClick={() => shiftLayer("front")}>
+                Bring forward
+              </button>
+              <button type="button" className="rounded-full bg-mist px-4 py-2 text-sm text-forest" onClick={() => shiftLayer("back")}>
+                Send back
+              </button>
+            </div>
+            {selected.type === "image" ? (
+              <>
+                <label className="grid gap-1 text-sm">
+                  Caption (optional)
+                  <input
+                    value={selected.caption || ""}
+                    onChange={(event) => updateBlock(selected.id, { caption: event.target.value })}
+                    className="rounded-xl border border-forest/15 px-3 py-2"
+                    placeholder="Leave blank — alt text is not a caption"
+                  />
+                </label>
+                <label className="grid gap-1 text-sm">
+                  Photo fit
+                  <select
+                    value={imageFit(selected)}
+                    onChange={(event) => updateBlock(selected.id, { fit: event.target.value as LayoutImageFit })}
+                    className="rounded-xl border border-forest/15 px-3 py-2"
+                  >
+                    <option value="contain">Show full photo</option>
+                    <option value="cover">Crop to fill the box</option>
+                    <option value="circle">Circle crop</option>
+                  </select>
+                </label>
+              </>
             ) : null}
-            <button type="button" className="rounded-full bg-mist px-4 py-2 text-sm text-forest" onClick={() => shiftLayer("front")}>
-              Bring forward
-            </button>
-            <button type="button" className="rounded-full bg-mist px-4 py-2 text-sm text-forest" onClick={() => shiftLayer("back")}>
-              Send back
-            </button>
-            <button type="button" className="rounded-full bg-clay/10 px-4 py-2 text-sm text-forest" onClick={removeSelected}>
-              Delete block
-            </button>
+            {selected.type === "button" ? (
+              <>
+                <label className="grid gap-1 text-sm">
+                  Button URL
+                  <input
+                    value={selected.href || ""}
+                    onChange={(event) => updateBlock(selected.id, { href: event.target.value })}
+                    className="rounded-xl border border-forest/15 px-3 py-2"
+                    placeholder="https://www.amazon.com/…"
+                  />
+                </label>
+                <label className="grid gap-1 text-sm">
+                  Button style
+                  <select
+                    value={buttonStyle(selected)}
+                    onChange={(event) => updateBlock(selected.id, { style: event.target.value as LayoutButtonStyle })}
+                    className="rounded-xl border border-forest/15 px-3 py-2"
+                  >
+                    <option value="outline">Outline</option>
+                    <option value="primary">Filled</option>
+                    <option value="link">Text link</option>
+                  </select>
+                </label>
+              </>
+            ) : null}
           </div>
-          {selected.type === "image" ? (
-            <>
-              <label className="grid gap-1 text-sm">
-                Caption (optional)
-                <input
-                  value={selected.caption || ""}
-                  onChange={(event) => updateBlock(selected.id, { caption: event.target.value })}
-                  className="rounded-xl border border-forest/15 px-3 py-2"
-                  placeholder="Leave blank — alt text is not a caption"
-                />
-              </label>
-              <label className="grid gap-1 text-sm">
-                Photo fit
-                <select
-                  value={imageFit(selected)}
-                  onChange={(event) => updateBlock(selected.id, { fit: event.target.value as LayoutImageFit })}
-                  className="rounded-xl border border-forest/15 px-3 py-2"
-                >
-                  <option value="contain">Show full photo</option>
-                  <option value="cover">Crop to fill the box</option>
-                  <option value="circle">Circle crop</option>
-                </select>
-              </label>
-            </>
-          ) : null}
-          {selected.type === "button" ? (
-            <>
-              <label className="grid gap-1 text-sm">
-                Button URL
-                <input
-                  value={selected.href || ""}
-                  onChange={(event) => updateBlock(selected.id, { href: event.target.value })}
-                  className="rounded-xl border border-forest/15 px-3 py-2"
-                  placeholder="https://www.amazon.com/…"
-                />
-              </label>
-              <label className="grid gap-1 text-sm">
-                Button style
-                <select
-                  value={buttonStyle(selected)}
-                  onChange={(event) => updateBlock(selected.id, { style: event.target.value as LayoutButtonStyle })}
-                  className="rounded-xl border border-forest/15 px-3 py-2"
-                >
-                  <option value="outline">Outline</option>
-                  <option value="primary">Filled</option>
-                  <option value="link">Text link</option>
-                </select>
-              </label>
-            </>
-          ) : null}
+        ) : (
+          <p className="rounded-2xl bg-white px-5 py-4 text-sm text-muted">
+            Select a body block to change wrap (None / Left / Right / Full), replace a photo, or delete
+            it. Delete and Backspace also remove the selected block.
+          </p>
+        )}
+
+        <div className="rounded-2xl bg-white p-4">
+          <p className="text-sm font-medium text-forest">Blocks on this page</p>
+          <p className="mt-1 text-xs text-muted">Covered or leftover images stay in this list so they can always be selected and deleted.</p>
+          {orderedBlocks.length ? (
+            <ul className="mt-3 grid gap-1">
+              {orderedBlocks.map((block) => {
+                const active = block.id === selectedId;
+                return (
+                  <li key={block.id} className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      className={`min-w-0 flex-1 truncate rounded-xl px-3 py-2 text-left text-sm ${
+                        active ? "bg-forest text-cream" : "bg-mist text-forest"
+                      }`}
+                      onClick={() => selectBlock(block.id)}
+                    >
+                      {blockTypeLabel(block.type)}
+                      {block.type === "image" ? ` · ${wrapLabel(block.wrap)}` : ""}
+                      {block.type === "button" && block.label ? ` · ${block.label}` : ""}
+                    </button>
+                    <button
+                      type="button"
+                      className="rounded-full bg-clay/10 px-2.5 py-1 text-xs text-forest"
+                      onClick={() => removeBlock(block.id)}
+                    >
+                      Delete
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <p className="mt-3 text-sm text-muted">No body blocks yet.</p>
+          )}
         </div>
-      ) : (
-        <p className="text-sm text-muted">Select a block to set wrap, edit a button, replace an image, or delete it.</p>
-      )}
+      </div>
 
       {picker ? (
         <MediaPicker
@@ -488,11 +612,18 @@ export function PageLayoutDesigner({
           asField={false}
           hideTrigger
           defaultOpen
-          label="Choose an image"
+          label="Choose a body image"
+          help="This photo is placed on the body canvas. It does not replace the hero banner."
           onSelect={(item) => {
+            const current = layoutRef.current;
             if (picker === "new") {
-              const block = { ...createBlankBlock("image", nextBlockY(layout.blocks)), src: item.url, alt: item.alt || "" };
-              commit({ ...layout, blocks: [...layout.blocks, block] });
+              const block = {
+                ...createBlankBlock("image", nextBlockY(current.blocks)),
+                src: item.url,
+                alt: item.alt || "",
+                z: nextBlockZ(current.blocks),
+              };
+              commit({ ...current, blocks: [...current.blocks, block] });
               setSelectedId(block.id);
             } else {
               updateBlock(picker, { src: item.url, alt: item.alt || "" });

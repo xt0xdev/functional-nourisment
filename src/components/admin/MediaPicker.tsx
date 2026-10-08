@@ -19,6 +19,9 @@ type MediaPickerProps = {
   asField?: boolean;
   defaultOpen?: boolean;
   hideTrigger?: boolean;
+  variant?: "default" | "hero";
+  changeLabel?: string;
+  removeLabel?: string;
   onSelect?: (item: PickerItem) => void;
 };
 
@@ -57,6 +60,9 @@ export function MediaPicker({
   asField = true,
   defaultOpen = false,
   hideTrigger = false,
+  variant = "default",
+  changeLabel,
+  removeLabel,
   onSelect,
 }: MediaPickerProps) {
   const inputId = useId();
@@ -201,19 +207,24 @@ export function MediaPicker({
   }
 
   const preview = multiple ? gallery : single ? [single] : [];
+  const isHero = variant === "hero";
+  const chooseLabel = changeLabel || (multiple ? "Add from library" : isHero ? "Change banner" : "Choose from library");
+  const clearLabel = removeLabel || (isHero ? "Remove banner" : "Remove");
 
   return (
     <div className="grid gap-2">
       {hideTrigger ? null : (
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="text-sm font-medium text-forest">{label}</p>
-          <button
-            type="button"
-            onClick={() => setOpen(true)}
-            className="rounded-full bg-forest px-3 py-1.5 text-xs text-cream"
-          >
-            {multiple ? "Add from library" : "Choose from library"}
-          </button>
+          <p className={`text-sm font-medium text-forest ${isHero ? "font-serif text-lg" : ""}`}>{label}</p>
+          {isHero && preview.length ? null : (
+            <button
+              type="button"
+              onClick={() => setOpen(true)}
+              className="rounded-full bg-forest px-3 py-1.5 text-xs text-cream"
+            >
+              {chooseLabel}
+            </button>
+          )}
         </div>
       )}
       {hideTrigger || !help ? null : <p className="text-xs text-muted">{help}</p>}
@@ -232,21 +243,25 @@ export function MediaPicker({
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="rounded-2xl border border-dashed border-forest/25 bg-white px-4 py-8 text-sm text-muted"
+          className={`rounded-2xl border border-dashed border-forest/25 bg-white text-sm text-muted ${
+            isHero ? "min-h-[220px] px-4 py-12" : "px-4 py-8"
+          }`}
         >
-          No image selected. Upload or pick one from the media library.
+          {isHero
+            ? "No hero banner yet. Choose a photo from the media library — this does not add it to the body canvas."
+            : "No image selected. Upload or pick one from the media library."}
         </button>
       ) : asField ? (
         <div className={multiple ? "grid gap-3 sm:grid-cols-2" : "grid gap-3"}>
           {preview.map((item, index) => (
             <div key={`${item.id}-${item.url}`} className="overflow-hidden rounded-2xl border border-forest/10 bg-white">
-              <div className="relative aspect-[16/10] bg-sand">
+              <div className={`relative bg-sand ${isHero ? "aspect-[16/9] min-h-[220px]" : "aspect-[16/10]"}`}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={item.url} alt={item.alt || item.filename || ""} className="h-full w-full object-cover" />
               </div>
-              <div className="flex flex-wrap items-center justify-between gap-2 p-3 text-xs">
+              <div className={`flex flex-wrap items-center justify-between gap-2 p-3 ${isHero ? "text-sm" : "text-xs"}`}>
                 <span className="truncate text-muted">{item.filename || item.url}</span>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   {multiple ? (
                     <>
                       <button type="button" className="text-moss" onClick={() => move(index, -1)}>
@@ -257,16 +272,35 @@ export function MediaPicker({
                       </button>
                     </>
                   ) : null}
-                  <button
-                    type="button"
-                    className="text-clay"
-                    onClick={() => {
-                      if (multiple) setGallery((current) => current.filter((_, i) => i !== index));
-                      else setSingle(null);
-                    }}
-                  >
-                    Remove
-                  </button>
+                  {isHero ? (
+                    <>
+                      <button
+                        type="button"
+                        className="rounded-full bg-forest px-3 py-1.5 text-xs text-cream"
+                        onClick={() => setOpen(true)}
+                      >
+                        {chooseLabel}
+                      </button>
+                      <button
+                        type="button"
+                        className="rounded-full bg-mist px-3 py-1.5 text-xs text-forest"
+                        onClick={() => setSingle(null)}
+                      >
+                        {clearLabel}
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      type="button"
+                      className="text-clay"
+                      onClick={() => {
+                        if (multiple) setGallery((current) => current.filter((_, i) => i !== index));
+                        else setSingle(null);
+                      }}
+                    >
+                      {clearLabel}
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

@@ -16,7 +16,7 @@ export function PageTemplateFields({ slug, content }: { slug: string; content: s
       <input type="hidden" name="contentMode" value="template" />
       <p className="text-sm text-muted">{template.description}</p>
       {template.sections.map((section) => (
-        <fieldset key={section.heading} className="grid gap-4 rounded-2xl bg-white p-5">
+        <fieldset key={section.heading} className="grid gap-4 rounded-2xl bg-sand/50 p-5">
           <legend className="px-1 font-serif text-2xl text-forest">{section.heading}</legend>
           {section.help ? <p className="text-sm text-muted">{section.help}</p> : null}
 
