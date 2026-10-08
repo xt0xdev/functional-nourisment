@@ -11,7 +11,7 @@ import {
   withUpdatedSoundCredential,
 } from "@/lib/page-copy";
 import { resolveAboutContent, resolveHeroText } from "@/lib/page-templates";
-import { ensureAboutAmazonButton, getStoredLayout } from "@/lib/page-layout";
+import { SITE_CONTENT_CLASS, ensureAboutAmazonButton, getStoredLayout } from "@/lib/page-layout";
 import { LayoutLinkButton, PageBodyOrLayout } from "@/components/site/PageLayoutBody";
 import { SITE_IMAGES } from "@/lib/site-images";
 
@@ -57,7 +57,7 @@ export default async function AboutPage() {
       <PageBodyOrLayout
         layout={layout}
         fallback={
-          <section className="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-[1fr_1.2fr] md:px-6">
+          <section className={`${SITE_CONTENT_CLASS} grid gap-10 py-16 md:grid-cols-[1fr_1.2fr]`}>
             <div className="relative overflow-hidden rounded-3xl">
               <Image
                 src={SITE_IMAGES.practitionerPortrait}

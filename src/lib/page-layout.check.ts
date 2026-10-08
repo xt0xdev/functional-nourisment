@@ -1,10 +1,14 @@
 import { AMAZON_BOOK_LABEL, AMAZON_BOOK_URL } from "./page-copy";
 import {
+  SITE_CONTENT_CLASS,
   applyWrapPreset,
   buttonStyle,
   createBlankBlock,
   ensureAboutAmazonButton,
+  flowBlockBoxStyle,
+  flowIgnoresDesignerBox,
   flowShellClass,
+  layoutUsesWrap,
   getEventLayout,
   hasEnabledEventLayout,
   imageCaption,
@@ -173,5 +177,19 @@ assert(nextBlockZ(deleted.blocks) > deleted.blocks[0].z, "new blocks stack above
 assert(flowShellClass({ type: "button", wrap: "full" }) === "fn-layout-clear", "Amazon-style buttons clear floats so photos cannot sit under them");
 assert(flowShellClass({ type: "image", wrap: "none" }) === "fn-layout-clear", "None-wrap images start on their own line");
 assert(flowShellClass({ type: "image", wrap: "left" }) === "", "Left wrap still floats");
+
+const aboutWrapText = { type: "text" as const, wrap: "none" as const, x: 42, w: 58 };
+const aboutHeading = { type: "heading" as const, wrap: "full" as const, x: 0, w: 100 };
+const aboutImage = { type: "image" as const, wrap: "left" as const, x: 0, w: 38 };
+assert(layoutUsesWrap([aboutImage, aboutWrapText, aboutHeading]), "About-style wrap-left still uses flow");
+assert(flowIgnoresDesignerBox(aboutWrapText, true), "wrap pages must not lock body copy to the 960px designer column");
+assert(flowIgnoresDesignerBox(aboutHeading, true), "Credentials heading uses the full content well");
+assert(flowBlockBoxStyle(aboutWrapText, true) === undefined, "live wrap text is not width:58% / margin-left:42%");
+assert(flowBlockBoxStyle(aboutHeading, true) === undefined, "live headings are not a designer box");
+assert(flowBlockBoxStyle(aboutImage, true)?.width === "38%", "wrap-left images still use their canvas width percent inside the well");
+assert(flowShellClass(aboutWrapText, true) === "", "body copy wraps beside the photo then fills the well");
+assert(flowShellClass(aboutHeading, true) === "fn-layout-clear", "Credentials clears so it shares the well edges");
+assert(flowShellClass({ type: "text", wrap: "full" }, true) === "", "full-wrap paragraphs still flow around the photo");
+assert(SITE_CONTENT_CLASS.includes("max-w-6xl") && SITE_CONTENT_CLASS.includes("px-4") && SITE_CONTENT_CLASS.includes("md:px-6"), "live layout well matches hero / Credentials gutters");
 
 console.log("page-layout caption/fit/button checks passed");

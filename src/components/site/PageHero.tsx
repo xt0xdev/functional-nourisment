@@ -1,3 +1,4 @@
+import { SITE_CONTENT_CLASS } from "@/lib/page-layout";
 import { SmartImage } from "./SmartImage";
 
 export function PageHero({
@@ -17,7 +18,7 @@ export function PageHero({
 }) {
   return (
     <section className="bg-background">
-      <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-14 md:grid-cols-2 md:px-6 md:py-20">
+      <div className={`${SITE_CONTENT_CLASS} grid items-center gap-10 py-14 md:grid-cols-2 md:py-20`}>
         <div>
           {eyebrow ? <p className="eyebrow">{eyebrow}</p> : null}
           <h1 className="mt-3 font-serif text-4xl leading-tight text-primary md:text-6xl">{heading}</h1>

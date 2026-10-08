@@ -15,7 +15,13 @@ import {
 } from "./page-templates";
 
 export const LAYOUT_VERSION = 1;
+/** Designer coordinate space for x/w percentages and snap math. Not the live page width. */
 export const CANVAS_WIDTH = 960;
+/**
+ * Public content well — same rail as PageHero, Header, Footer, and Credentials.
+ * Tailwind `max-w-6xl` (72rem) with `px-4 md:px-6`.
+ */
+export const SITE_CONTENT_CLASS = "mx-auto max-w-6xl px-4 md:px-6";
 export const MIN_BLOCK_WIDTH_PCT = 8;
 export const MIN_BLOCK_HEIGHT = 40;
 
@@ -767,10 +773,49 @@ export function applyWrapPreset(block: LayoutBlock, wrap: LayoutWrap): LayoutBlo
   return { ...block, wrap };
 }
 
+export function layoutUsesWrap(blocks: Pick<LayoutBlock, "wrap">[]) {
+  return blocks.some((block) => block.wrap === "left" || block.wrap === "right");
+}
+
+function clampFlowWidth(width: number, min = 18) {
+  return `${Math.min(100, Math.max(min, width))}%`;
+}
+
+/**
+ * Wrap-left/right pages flow copy in the full content well. The designer may
+ * still store a narrow right-hand box (x/w on a 960px canvas); the public
+ * renderer must not keep text locked to that box.
+ */
+export function flowIgnoresDesignerBox(block: Pick<LayoutBlock, "type" | "wrap">, usesWrap: boolean) {
+  if (block.type === "image") return false;
+  if (usesWrap && block.type !== "button") return true;
+  return block.wrap === "full";
+}
+
 /** Buttons and freeform/full blocks start on a new line so floated photos cannot sit under them. */
-export function flowShellClass(block: Pick<LayoutBlock, "type" | "wrap">) {
+export function flowShellClass(block: Pick<LayoutBlock, "type" | "wrap">, usesWrap = false) {
   if (block.type === "button") return "fn-layout-clear";
+  if (block.type === "heading") return "fn-layout-clear";
+  if (block.type === "image") {
+    return block.wrap === "left" || block.wrap === "right" ? "" : "fn-layout-clear";
+  }
+  // Body copy wraps beside floated photos, then fills the same well as Credentials.
+  if (usesWrap) return "";
   if (block.wrap === "full" || block.wrap === "none") return "fn-layout-clear";
   return "";
+}
+
+export function flowBlockBoxStyle(
+  block: Pick<LayoutBlock, "type" | "wrap" | "w" | "x">,
+  usesWrap: boolean,
+): { width: string; marginLeft?: string } | undefined {
+  if (block.type === "image") {
+    if (block.wrap === "full") return undefined;
+    const width = clampFlowWidth(block.w);
+    if (block.wrap === "none") return { width, marginLeft: `${block.x}%` };
+    return { width };
+  }
+  if (flowIgnoresDesignerBox(block, usesWrap)) return undefined;
+  return { width: clampFlowWidth(block.w, 20), marginLeft: `${block.x}%` };
 }
 

@@ -5,6 +5,7 @@ import { MediaPicker } from "./MediaPicker";
 import { LayoutDocument } from "@/components/site/PageLayoutBody";
 import {
   CANVAS_WIDTH,
+  SITE_CONTENT_CLASS,
   WRAP_OPTIONS,
   applyWrapPreset,
   blockTypeLabel,
@@ -316,7 +317,7 @@ export function PageLayoutDesigner({
             <p className="text-xs text-cream/70">Header · Navigation</p>
           </div>
         </div>
-        <div className="pointer-events-none select-none grid gap-4 bg-background px-5 py-6 md:grid-cols-2">
+        <div className={`${SITE_CONTENT_CLASS} pointer-events-none select-none grid gap-4 bg-background py-6 md:grid-cols-2`}>
           <div>
             <p className="text-[10px] uppercase tracking-[0.2em] text-teal">Hero banner · locked here</p>
             <p className="mt-2 font-serif text-3xl text-primary">{heroHeading || pageTitle}</p>
@@ -336,23 +337,24 @@ export function PageLayoutDesigner({
         </div>
         {lockedAfterHero}
 
-        <div className="border-y border-dashed border-forest/20 bg-white px-3 py-3 md:px-5">
-          <p className="mb-2 text-[10px] uppercase tracking-[0.2em] text-teal">{bodyLabel}</p>
+        <div className="border-y border-dashed border-forest/20 bg-white py-3">
+          <p className={`${SITE_CONTENT_CLASS} mb-2 text-[10px] uppercase tracking-[0.2em] text-teal`}>{bodyLabel}</p>
           {mode === "preview" ? (
-            <div className="rounded-2xl bg-background p-4">
+            <div className={`${SITE_CONTENT_CLASS} bg-background py-12 md:py-16`}>
               <LayoutDocument layout={layout} />
             </div>
           ) : (
-            <div
-              ref={canvasRef}
-              tabIndex={0}
-              className="fn-layout-canvas mx-auto max-w-[960px] overflow-visible rounded-2xl bg-background outline-none"
-              style={{ height: canvasHeight * scale, minHeight: 360 }}
-              onClick={() => {
-                setSelectedId(null);
-                setEditingId(null);
-              }}
-            >
+            <div className={SITE_CONTENT_CLASS}>
+              <div
+                ref={canvasRef}
+                tabIndex={0}
+                className="fn-layout-canvas w-full overflow-visible rounded-2xl bg-background outline-none"
+                style={{ height: canvasHeight * scale, minHeight: 360 }}
+                onClick={() => {
+                  setSelectedId(null);
+                  setEditingId(null);
+                }}
+              >
               {layout.blocks.map((block) => {
                 const active = block.id === selectedId;
                 const interacting = block.id === interactingId;
@@ -434,6 +436,7 @@ export function PageLayoutDesigner({
                   }
                 />
               ))}
+              </div>
             </div>
           )}
         </div>

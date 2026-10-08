@@ -1,13 +1,16 @@
 import type { CSSProperties, ReactNode } from "react";
 import {
   CANVAS_WIDTH,
+  SITE_CONTENT_CLASS,
   buttonLinkProps,
   buttonStyle,
+  flowBlockBoxStyle,
   flowShellClass,
   imageCaption,
   imageFit,
   layoutButtonClass,
   layoutButtonLabel,
+  layoutUsesWrap,
   sanitizeLayoutHref,
   type LayoutBlock,
   type LayoutButtonStyle,
@@ -89,8 +92,7 @@ function TextualBlock({ block }: { block: LayoutBlock }) {
   return <BlockHtml html={block.html} className="prose-fn max-w-none" />;
 }
 
-function FlowImage({ block }: { block: LayoutBlock }) {
-  const width = `${Math.min(100, Math.max(18, block.w))}%`;
+function FlowImage({ block, usesWrap }: { block: LayoutBlock; usesWrap: boolean }) {
   const floatClass =
     block.wrap === "left"
       ? "fn-layout-float-left"
@@ -100,16 +102,7 @@ function FlowImage({ block }: { block: LayoutBlock }) {
   const fit = imageFit(block);
   const caption = imageCaption(block);
   return (
-    <figure
-      className={floatClass}
-      style={
-        block.wrap === "full"
-          ? undefined
-          : block.wrap === "none"
-            ? { width, marginLeft: `${block.x}%` }
-            : { width }
-      }
-    >
+    <figure className={floatClass} style={flowBlockBoxStyle(block, usesWrap)}>
       {fit === "contain" ? (
         block.src ? (
           <SmartImage
@@ -137,29 +130,19 @@ function FlowImage({ block }: { block: LayoutBlock }) {
   );
 }
 
-function FlowBlock({ block }: { block: LayoutBlock }) {
-  if (block.type === "image") return <FlowImage block={block} />;
-  const shell = flowShellClass(block);
+function FlowBlock({ block, usesWrap }: { block: LayoutBlock; usesWrap: boolean }) {
+  if (block.type === "image") return <FlowImage block={block} usesWrap={usesWrap} />;
+  const shell = flowShellClass(block, usesWrap);
+  const style = flowBlockBoxStyle(block, usesWrap);
   if (block.type === "button") {
-    const style =
-      block.wrap === "none"
-        ? { width: `${Math.min(100, Math.max(20, block.w))}%`, marginLeft: `${block.x}%` }
-        : undefined;
     return (
       <div className={shell} style={style}>
         <BlockButton block={block} />
       </div>
     );
   }
-  if (block.wrap === "none") {
-    return (
-      <div className={shell} style={{ width: `${Math.min(100, Math.max(20, block.w))}%`, marginLeft: `${block.x}%` }}>
-        <TextualBlock block={block} />
-      </div>
-    );
-  }
   return (
-    <div className={shell}>
+    <div className={shell} style={style}>
       <TextualBlock block={block} />
     </div>
   );
@@ -226,14 +209,18 @@ export function LayoutDocument({
   className?: string;
 }) {
   const blocks = sortedBlocks(layout.blocks);
-  const usesWrap = layout.blocks.some((block) => block.wrap === "left" || block.wrap === "right");
+  const usesWrap = layoutUsesWrap(layout.blocks);
   const canvasHeight = Math.max(layout.canvasHeight, 240);
 
   return (
     <div className={`fn-layout ${className}`}>
       <div className="fn-layout-mobile space-y-6 md:hidden">
         {blocks.map((block) => (
-          <FlowBlock key={block.id} block={block.wrap === "none" ? { ...block, wrap: "full", x: 0, w: 100 } : block} />
+          <FlowBlock
+            key={block.id}
+            usesWrap={usesWrap}
+            block={block.wrap === "none" ? { ...block, wrap: "full", x: 0, w: 100 } : block}
+          />
         ))}
       </div>
 
@@ -241,7 +228,7 @@ export function LayoutDocument({
         {usesWrap ? (
           <div className="fn-layout-flow">
             {blocks.map((block) => (
-              <FlowBlock key={block.id} block={block} />
+              <FlowBlock key={block.id} block={block} usesWrap={usesWrap} />
             ))}
           </div>
         ) : (
@@ -274,7 +261,7 @@ export function PageLayoutBody({
   if (bare) return <LayoutDocument layout={layout} className={className} />;
   return (
     <section className={className || "bg-background"}>
-      <div className="mx-auto max-w-6xl px-4 py-12 md:px-6 md:py-16">
+      <div className={`${SITE_CONTENT_CLASS} py-12 md:py-16`}>
         <LayoutDocument layout={layout} />
       </div>
     </section>

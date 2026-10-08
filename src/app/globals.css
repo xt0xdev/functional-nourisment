@@ -123,6 +123,10 @@ body {
   outline-offset: 3px;
 }
 
+.fn-layout .prose-fn {
+  max-width: none;
+}
+
 .fn-layout-flow {
   overflow: auto;
 }

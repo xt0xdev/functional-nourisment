@@ -7,7 +7,7 @@ import { InsertImageField } from "@/components/admin/InsertImageField";
 import { PageLayoutDesigner } from "@/components/admin/PageLayoutDesigner";
 import { eventMediaInclude } from "@/lib/media";
 import { formatEventWhen } from "@/lib/events";
-import { getEventLayout, resolveEventEditorLayout } from "@/lib/page-layout";
+import { SITE_CONTENT_CLASS, getEventLayout, resolveEventEditorLayout } from "@/lib/page-layout";
 
 function dtLocal(value: Date | null) {
   if (!value) return "";
@@ -130,19 +130,23 @@ export default async function EditEventPage({ params }: { params: Promise<{ id: 
           bodyLabel="Editable event body"
           help="Drag text and multiple images in the body. Event title, date, location, and register or pay buttons stay locked to the template. Wrap left or right so copy flows around a photo. On phones, blocks stack top to bottom."
           lockedAfterHero={
-            <div className="pointer-events-none select-none bg-mist px-5 py-4">
-              <p className="text-[10px] uppercase tracking-[0.2em] text-teal">Event details · locked</p>
-              <p className="mt-2 text-sm text-clay">{when}</p>
-              {event.location ? <p className="text-sm text-muted">{event.location}</p> : null}
+            <div className="pointer-events-none select-none bg-mist py-4">
+              <div className={SITE_CONTENT_CLASS}>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-teal">Event details · locked</p>
+                <p className="mt-2 text-sm text-clay">{when}</p>
+                {event.location ? <p className="text-sm text-muted">{event.location}</p> : null}
+              </div>
             </div>
           }
           lockedAfterBody={
-            <div className="pointer-events-none select-none bg-white px-5 py-4">
-              <p className="text-[10px] uppercase tracking-[0.2em] text-teal">Register & pay · locked</p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                <span className="btn-primary">Register</span>
-                <span className="btn-outline">Pay with Stripe</span>
-                <span className="btn-outline">Pay with PayPal</span>
+            <div className="pointer-events-none select-none bg-white py-4">
+              <div className={SITE_CONTENT_CLASS}>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-teal">Register & pay · locked</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <span className="btn-primary">Register</span>
+                  <span className="btn-outline">Pay with Stripe</span>
+                  <span className="btn-outline">Pay with PayPal</span>
+                </div>
               </div>
             </div>
           }

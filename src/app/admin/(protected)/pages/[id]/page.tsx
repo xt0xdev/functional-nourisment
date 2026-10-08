@@ -9,7 +9,7 @@ import { ExperiencesGalleryEditor } from "@/components/admin/ExperiencesGalleryE
 import { WellnessPartnersEditor } from "@/components/admin/WellnessPartnersEditor";
 import { ExperiencesGallery } from "@/components/site/ExperiencesGallery";
 import { HERO_DEFAULTS, getPageTemplate, resolveExperiencesContent } from "@/lib/page-templates";
-import { getStoredLayout, resolveEditorLayout } from "@/lib/page-layout";
+import { SITE_CONTENT_CLASS, getStoredLayout, resolveEditorLayout } from "@/lib/page-layout";
 import { resolveWellnessPartners } from "@/lib/wellness-partners";
 
 export default async function EditPage({ params }: { params: Promise<{ id: string }> }) {
@@ -122,18 +122,20 @@ export default async function EditPage({ params }: { params: Promise<{ id: strin
             wasPublishedLayout={Boolean(storedLayout?.enabled && storedLayout.blocks.length)}
             lockedAfterBody={
               experiencesContent ? (
-                <div className="border-t border-dashed border-teal/30 bg-teal/[0.04] px-5 py-4">
-                  <p className="text-[10px] uppercase tracking-[0.2em] text-teal">Workshop gallery · locked widget</p>
-                  <p className="mt-1 text-xs text-muted">
-                    Always shown on the public page. Edit photos in Template widgets below.
-                  </p>
-                  <div className="mt-3">
-                    <ExperiencesGallery
-                      eyebrow={experiencesContent.galleryEyebrow}
-                      heading={experiencesContent.galleryHeading}
-                      items={experiencesContent.gallery}
-                      compact
-                    />
+                <div className="border-t border-dashed border-teal/30 bg-teal/[0.04] py-4">
+                  <div className={SITE_CONTENT_CLASS}>
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-teal">Workshop gallery · locked widget</p>
+                    <p className="mt-1 text-xs text-muted">
+                      Always shown on the public page. Edit photos in Template widgets below.
+                    </p>
+                    <div className="mt-3">
+                      <ExperiencesGallery
+                        eyebrow={experiencesContent.galleryEyebrow}
+                        heading={experiencesContent.galleryHeading}
+                        items={experiencesContent.gallery}
+                        compact
+                      />
+                    </div>
                   </div>
                 </div>
               ) : undefined
