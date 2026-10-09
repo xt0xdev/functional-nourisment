@@ -10,6 +10,7 @@ import {
   flowIgnoresDesignerBox,
   flowShellClass,
   getPublicPageLayout,
+  isTemplateLockedSlug,
   layoutUsesWrap,
   getEventLayout,
   hasEnabledEventLayout,
@@ -212,12 +213,27 @@ assert(disabledHome.intro === "Custom intro", "disabling home layout must keep t
 assert(disabledHome.mind === "Mind copy", "disabling home layout must keep pillar copy");
 assert((disabledHome.layout as { enabled?: boolean }).enabled === false, "home sync/save must turn the canvas off");
 assert((disabledHome.layout as { blocks?: unknown[] }).blocks?.length === 1, "home layout blocks are not wiped");
+assert(isTemplateLockedSlug("home"), "home is a locked Ocean Deep template");
+assert(isTemplateLockedSlug("meditation"), "Nourish Spirit is a locked Ocean Deep template");
+assert(!isTemplateLockedSlug("nutrition"), "Nourish Body stays on the designer");
 assert(!usesPublicBodyDesigner("home"), "public home never uses the freeform body designer");
+assert(!usesPublicBodyDesigner("meditation"), "public Nourish Spirit never uses the freeform body designer");
 assert(usesPublicBodyDesigner("nutrition"), "Nourish Body can still use the designer");
 assert(usesPublicBodyDesigner("about"), "About wrap can still use the designer");
 assert(usesPublicBodyDesigner("events"), "events designer stays available");
 assert(getPublicPageLayout("home", JSON.stringify(enabledHome)) === null, "enabled home layout must not render on the public site");
+assert(getPublicPageLayout("meditation", JSON.stringify(enabledHome)) === null, "enabled meditation layout must not render on the public site");
 assert(getPublicPageLayout("nutrition", JSON.stringify(enabledHome))?.enabled === true, "other pages still read an enabled layout");
+
+const enabledMeditation = {
+  gatherHeading: "Gather · Learn · Reconnect",
+  gatherIntro: "Workshops stay",
+  layout: enabledHome.layout,
+};
+const disabledMeditation = disablePublishedLayout(enabledMeditation);
+assert(disabledMeditation.gatherIntro === "Workshops stay", "disabling spirit layout must keep template copy");
+assert((disabledMeditation.layout as { enabled?: boolean }).enabled === false, "meditation sync/save must turn the canvas off");
+assert((disabledMeditation.layout as { blocks?: unknown[] }).blocks?.length === 1, "meditation layout blocks are not wiped");
 
 const otherPage = { intro: "About", layout: enabledHome.layout };
 const preservedOther = preserveLayout(otherPage, { intro: "About next" });
@@ -241,5 +257,27 @@ homeForm.set("layout", JSON.stringify(enabledHome.layout));
 const savedHome = JSON.parse(contentFromFormData("home", homeForm, JSON.stringify(enabledHome)));
 assert(savedHome.intro === "Saved intro", "home template fields still save");
 assert(savedHome.layout.enabled === false, "saving Home cannot publish a freeform canvas");
+
+const meditationForm = new FormData();
+meditationForm.set("contentMode", "template");
+meditationForm.set("sec_eyebrow", "SPIRIT");
+meditationForm.set("sec_gatherEyebrow", "Gather");
+meditationForm.set("sec_gatherHeading", "Gather · Learn · Reconnect");
+meditationForm.set("sec_gatherIntro", "Intro");
+meditationForm.set("sec_gatherMore", "More");
+meditationForm.set("sec_experienceHeading", "Experiences");
+meditationForm.set("sec_experienceItems", "One\nTwo");
+meditationForm.set("sec_retreatsEyebrow", "Retreats");
+meditationForm.set("sec_retreatsHeading", "Retreats");
+meditationForm.set("sec_retreatsLead", "Lead");
+meditationForm.set("sec_retreatsBody", "Body");
+meditationForm.set("sec_retreatsGreece", "Greece");
+meditationForm.set("sec_image1", "/one.jpg");
+meditationForm.set("sec_image2", "/two.jpg");
+meditationForm.set("sec_image3", "/three.jpg");
+meditationForm.set("layout", JSON.stringify(enabledHome.layout));
+const savedMeditation = JSON.parse(contentFromFormData("meditation", meditationForm, JSON.stringify(enabledMeditation)));
+assert(savedMeditation.gatherHeading === "Gather · Learn · Reconnect", "meditation template fields still save");
+assert(savedMeditation.layout.enabled === false, "saving Nourish Spirit cannot publish a freeform canvas");
 
 console.log("page-layout caption/fit/button checks passed");

@@ -37,7 +37,9 @@ export default async function EditPage({ params }: { params: Promise<{ id: strin
       <p className="mt-2 max-w-3xl text-sm text-muted">
         {page.slug === "home"
           ? "The live homepage always uses the Ocean Deep template: hero, mind/body/spirit pillars, Meet Anna, service area, and CTA. Edit those fields below — the freeform body designer is not used on the public home."
-          : "Three separate areas: the hero banner, the body canvas, and any template widgets. Selecting a body photo and pressing Delete removes it from the canvas and from the saved layout."}
+          : page.slug === "meditation"
+            ? "The live Nourish Spirit page always uses the Ocean Deep template: hero, Gather · Learn · Reconnect, retreats, and CTA. Edit those fields below — the freeform body designer is not used on the public /meditation page."
+            : "Three separate areas: the hero banner, the body canvas, and any template widgets. Selecting a body photo and pressing Delete removes it from the canvas and from the saved layout."}
       </p>
       <form action={savePage} className="mt-6 grid gap-8">
         <input type="hidden" name="id" value={page.id} />
@@ -154,6 +156,15 @@ export default async function EditPage({ params }: { params: Promise<{ id: strin
               <p className="text-sm text-muted">
                 Intro, pillars, and Meet Anna copy for the published homepage. Saving never turns on a
                 freeform canvas for this page.
+              </p>
+              <PageTemplateFields slug={page.slug} content={page.content} />
+            </section>
+          ) : page.slug === "meditation" ? (
+            <section className="grid gap-3 rounded-2xl bg-white p-5">
+              <h2 className="font-serif text-2xl text-forest">Template · Nourish Spirit</h2>
+              <p className="text-sm text-muted">
+                Gather · Learn · Reconnect, experience cards, and retreats copy for the published
+                /meditation page. Saving never turns on a freeform canvas for this page.
               </p>
               <PageTemplateFields slug={page.slug} content={page.content} />
             </section>

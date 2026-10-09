@@ -65,7 +65,7 @@ import {
   parsePageJson,
   retreatsContentDefaults,
 } from "../src/lib/page-templates";
-import { disablePublishedLayout, preserveLayout } from "../src/lib/page-layout";
+import { disablePublishedLayout, isTemplateLockedSlug, preserveLayout } from "../src/lib/page-layout";
 
 const prisma = new PrismaClient();
 
@@ -147,13 +147,14 @@ async function mergePage(
   const page = await prisma.page.findUnique({ where: { slug } });
   if (!page) return;
   const existingContent = parseJson(page.content);
-  const content = preserveLayout(
+  const merged = preserveLayout(
     existingContent,
     fillMissingContent(existingContent, {
       ...defaultContentFor(slug),
       ...(data.content || {}),
     }),
   );
+  const content = isTemplateLockedSlug(slug) ? disablePublishedLayout(merged) : merged;
   await prisma.page.update({
     where: { slug },
     data: {

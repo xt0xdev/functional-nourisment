@@ -7,8 +7,7 @@ import { SmartImage } from "@/components/site/SmartImage";
 import { SITE_IMAGES, isStockOrEmptyImage } from "@/lib/site-images";
 import { SPIRIT_HERO } from "@/lib/page-copy";
 import { resolveHeroText, resolveMeditationContent } from "@/lib/page-templates";
-import { getStoredLayout } from "@/lib/page-layout";
-import { PageBodyOrLayout } from "@/components/site/PageLayoutBody";
+import { SITE_CONTENT_CLASS } from "@/lib/page-layout";
 
 export async function generateMetadata() {
   const page = await getPage("meditation");
@@ -23,7 +22,6 @@ export default async function MeditationPage() {
   const [page, settings] = await Promise.all([getPage("meditation"), getSettings()]);
   const hero = resolveHeroText(page);
   const content = resolveMeditationContent(page?.content);
-  const layout = getStoredLayout(page?.content);
 
   return (
     <>
@@ -35,12 +33,8 @@ export default async function MeditationPage() {
         imageAlt={page?.heroImageAlt || SITE_IMAGES.spiritSoundbathAlt}
       />
 
-      <PageBodyOrLayout
-        layout={layout}
-        fallback={
-          <>
       <section className="bg-mist">
-        <div className="mx-auto max-w-6xl px-4 py-16 md:px-6">
+        <div className={`${SITE_CONTENT_CLASS} py-16`}>
           <p className="eyebrow">{content.gatherEyebrow}</p>
           <h2 className="mt-3 font-serif text-4xl text-primary md:text-5xl">{content.gatherHeading}</h2>
           <p className="mt-6 max-w-3xl leading-relaxed text-muted">{content.gatherIntro}</p>
@@ -68,7 +62,7 @@ export default async function MeditationPage() {
       </section>
 
       <section className="bg-background">
-        <div className="mx-auto max-w-6xl px-4 py-16 md:px-6">
+        <div className={`${SITE_CONTENT_CLASS} py-16`}>
           <p className="eyebrow">{content.retreatsEyebrow}</p>
           <h2 className="mt-3 font-serif text-4xl text-primary md:text-5xl">{content.retreatsHeading}</h2>
           <p className="mt-6 max-w-3xl font-serif text-2xl italic text-primary">{content.retreatsLead}</p>
@@ -105,21 +99,6 @@ export default async function MeditationPage() {
           </div>
         </div>
       </section>
-          </>
-        }
-      />
-      {layout?.enabled ? (
-        <section className="mx-auto max-w-6xl px-4 pb-12 md:px-6">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <Link href="/experiences" className="btn-primary">
-              Explore Upcoming Workshops & Retreats
-            </Link>
-            <Link href="/calendar" className="btn-outline">
-              View Upcoming Dates
-            </Link>
-          </div>
-        </section>
-      ) : null}
       <CtaBand berryStreetUrl={settings.berryStreetUrl} bookingUrl={settings.bookingUrl} />
     </>
   );

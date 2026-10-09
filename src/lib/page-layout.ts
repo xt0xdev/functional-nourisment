@@ -213,9 +213,16 @@ export function getStoredLayout(raw?: string | null): PageLayout | null {
   return parseLayoutFromUnknown(parsed.layout);
 }
 
-/** The marketing homepage always uses its locked Ocean Deep sections. */
+/** Marketing pages that always render their locked Ocean Deep sections. */
+const TEMPLATE_LOCKED_SLUGS = new Set(["home", "meditation"]);
+
+export function isTemplateLockedSlug(slug: string) {
+  return TEMPLATE_LOCKED_SLUGS.has(slug);
+}
+
+/** Home and Nourish Spirit always use their locked Ocean Deep sections. */
 export function usesPublicBodyDesigner(slug: string) {
-  return slug !== "home";
+  return !isTemplateLockedSlug(slug);
 }
 
 export function getPublicPageLayout(slug: string, raw?: string | null): PageLayout | null {
